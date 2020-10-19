@@ -8,6 +8,31 @@ Add import `import 'package:flutter_web3_provider/ethereum.dart';`
 
 Then you can access it just be using the `ethereum` variable.
 
+```dart
+if(ethereum != null){
+    // then an ethereum provider was injected
+    print(ethereum.selectedAddress);
+}
+```
+
+Ask user to connect their wallet:
+
+```dart
+RaisedButton(
+    child: Text("Connect Wallet"),
+    onPressed: () async {
+        var accounts = await promiseToFuture(
+            ethereum.request(RequestParams(method: 'eth_requestAccounts')));
+        print(accounts);
+        String se = ethereum.selectedAddress;
+        print("selectedAddress: $se");
+        setState(() {
+            selectedAddress = se;
+        });
+    },
+)
+```
+
 ### Using ethers.js
 
 Add ethers.js to `web/index.html`.

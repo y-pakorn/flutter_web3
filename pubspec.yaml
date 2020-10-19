@@ -1,6 +1,6 @@
 name: flutter_web3_provider
 description: Flutter web web3 provider.
-version: 0.0.2
+version: 0.0.4
 homepage: https://gochain.io
 
 environment:
@@ -21,9 +21,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-  plugin:
-    platforms:
-      web:
   # To add assets to your package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
