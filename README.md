@@ -49,4 +49,36 @@ Then create an ethers Web3Provider:
 Web3Provider web3 = Web3Provider(ethereum);
 ```
 
-Then use it like you would in javascript.
+Then you can do things like submit transactions, etc:
+
+```dart
+Future tx = promiseToFuture(web3.Signer().sendTransaction(TxParams(
+      to: to,
+      value: "0x" +
+          BigInt.parse(toBase(amount, 18).toString()).toRadixString(16))));
+```
+
+Or use a contract:
+
+```dart
+const erc20Abi = [
+    // Some details about the token
+    "function name() view returns (string)",
+    "function symbol() view returns (string)",
+
+    // Get the account balance
+    "function balanceOf(address) view returns (uint)",
+
+    // Send some of your tokens to someone else
+    "function transfer(address to, uint amount)",
+
+    // An event triggered whenever anyone transfers to someone else
+    "event Transfer(address indexed from, address indexed to, uint amount)"
+];
+var contract = Contract(address, erc20Abi, web3);
+contract = contract.connect(web3.getSigner()); // uses the connected wallet as signer
+Future tx = promiseToFuture(contract.transfer(
+      to,
+      "0x" +
+          BigInt.parse(toBase(amount, 18).toString()).toRadixString(16)));
+```
