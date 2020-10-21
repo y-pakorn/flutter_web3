@@ -2,6 +2,8 @@
 
 Flutter wrapper for using web3 providers, ie: accessing `window.ethereum`.
 
+NOTE: This is for web only!
+
 ## Getting Started
 
 Add import `import 'package:flutter_web3_provider/ethereum.dart';`
