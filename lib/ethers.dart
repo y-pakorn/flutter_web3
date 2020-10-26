@@ -32,6 +32,9 @@ class Signer {
 
   @JS("sendTransaction")
   external Future sendTransaction(TxParams params);
+
+  @JS("signMessage")
+  external Future signMessage(String message);
 }
 
 @JS()

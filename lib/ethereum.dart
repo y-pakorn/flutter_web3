@@ -35,7 +35,8 @@ class Ethereum {
 @anonymous
 class RequestParams {
   external String get method;
+  external List<dynamic> get params;
 
   // Must have an unnamed factory constructor with named arguments.
-  external factory RequestParams({String method});
+  external factory RequestParams({String method, List<dynamic> params});
 }
