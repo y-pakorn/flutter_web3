@@ -5,4 +5,6 @@ bump:
 
 publish: bump
 	git commit -am "bump version"
+	git push
 	flutter pub publish -f
+	

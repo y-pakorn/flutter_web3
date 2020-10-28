@@ -37,6 +37,12 @@ class Signer {
   external Future signMessage(String message);
 }
 
+@JS("utils")
+class Utils {
+  external static String verifyMessage(var hash, var sig);
+  external static String arrayify(var hash);
+}
+
 @JS()
 @anonymous
 class TxParams {
