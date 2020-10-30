@@ -4,7 +4,6 @@ bump:
 	docker run --rm -it -v ${CURDIR}:/app -w /app treeder/bump --filename pubspec.yaml bump
 
 publish: bump
-	git commit -am "bump version"
-	git push
 	flutter pub publish -f
-	
+	git commit -am "new version"
+	git push

@@ -64,4 +64,7 @@ class Contract {
 
   @JS("transfer")
   external Future transfer(String to, String amount);
+
+  @JS("balanceOf")
+  external Future balanceOf(String address);
 }
