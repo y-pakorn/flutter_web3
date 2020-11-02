@@ -1,5 +1,7 @@
 import 'dart:js_util';
 
+import 'package:decimal/decimal.dart';
+import 'package:example/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web3_provider/ethereum.dart';
 import 'package:flutter_web3_provider/ethers.dart';
@@ -31,6 +33,22 @@ class MyApp extends StatelessWidget {
   }
 }
 
+const erc20Abi = [
+  // Some details about the token
+  "function name() view returns (string)",
+  "function symbol() view returns (string)",
+
+  // Get the account balance
+  "function balanceOf(address) view returns (uint)",
+
+  // Send some of your tokens to someone else
+  "function transfer(address to, uint amount)",
+
+  // An event triggered whenever anyone transfers to someone else
+  "event Transfer(address indexed from, address indexed to, uint amount)"
+];
+const goUsdcAddress = '0x97a19aD887262d7Eca45515814cdeF75AcC4f713';
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
@@ -55,12 +73,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Web3Provider web3;
   TextEditingController _controller;
   TextEditingController _verifyController;
+  Future balanceF;
+  Future usdcBalanceF;
 
   @override
   void initState() {
     super.initState();
     if (ethereum != null) {
       web3 = Web3Provider(ethereum);
+      balanceF = promiseToFuture(web3.getBalance(ethereum.selectedAddress));
+      var contract = Contract(goUsdcAddress, erc20Abi, web3);
+      usdcBalanceF =
+          promiseToFuture(contract.balanceOf(ethereum.selectedAddress));
     }
     _controller = TextEditingController();
     _verifyController = TextEditingController();
@@ -158,6 +182,59 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 },
               ),
+        SizedBox(height: 10),
+        Text("Native balance:"),
+        FutureBuilder(
+          future: balanceF,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text("error: ${snapshot.error}");
+            }
+            if (!snapshot.hasData) {
+              return CircularProgressIndicator();
+            }
+            var big = BigInt.parse(snapshot.data.toString());
+            var d = toDecimal(big, 18);
+            return Text("${d}");
+          },
+        ),
+        SizedBox(height: 10),
+        Text("GO:USDC balance:"),
+        FutureBuilder(
+          future: usdcBalanceF,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text("error: ${snapshot.error}");
+            }
+            if (!snapshot.hasData) {
+              return CircularProgressIndicator();
+            }
+            var big = BigInt.parse(snapshot.data.toString());
+            var d = toDecimal(big, 6);
+            return Text("${d}");
+          },
+        ),
+        RaisedButton(
+          child: Text("Transfer \$0.01"),
+          onPressed: () async {
+            var contract = Contract(goUsdcAddress, erc20Abi, web3);
+            var contract2 = contract.connect(web3.getSigner());
+            try {
+              var res = await promiseToFuture(contract2.transfer(
+                  '0x39C5190c09ec04cF09C782bA4311C469473Ffe83',
+                  "0x" +
+                      BigInt.parse(toBase(Decimal.parse("0.01"), 6).toString())
+                          .toRadixString(16)));
+              print("Transferred: ${res.toString()}");
+            } catch (e) {
+              print("EXCEPTION:" + e.toString());
+            }
+            // setState(() {
+            //   _controller.text = signature;
+            // });
+          },
+        ),
+        SizedBox(height: 10),
         RaisedButton(
           child: Text("Sign Message"),
           onPressed: () async {
