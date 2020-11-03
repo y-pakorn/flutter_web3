@@ -6,6 +6,8 @@ NOTE: This is for web only!
 
 ## Getting Started
 
+For full example, see: https://github.com/gochain/flutter_web3_provider/blob/main/example/lib/main.dart
+
 Add import `import 'package:flutter_web3_provider/ethereum.dart';`
 
 Then you can access it just be using the `ethereum` variable.
@@ -77,10 +79,12 @@ const erc20Abi = [
     // An event triggered whenever anyone transfers to someone else
     "event Transfer(address indexed from, address indexed to, uint amount)"
 ];
-var contract = Contract(address, erc20Abi, web3);
+var contract = Contract(contractAddress, erc20Abi, web3);
 contract = contract.connect(web3.getSigner()); // uses the connected wallet as signer
-Future tx = promiseToFuture(contract.transfer(
-      to,
-      "0x" +
-          BigInt.parse(toBase(amount, 18).toString()).toRadixString(16)));
+var res =
+    await promiseToFuture(callMethod(contract, "transfer", [
+    '0x39C5190c09ec04cF09C782bA4311C469473Ffe83',
+    "0x" + amount.toString()).toRadixString(16)
+    ]));
 ```
+

@@ -220,11 +220,20 @@ class _MyHomePageState extends State<MyHomePage> {
             var contract = Contract(goUsdcAddress, erc20Abi, web3);
             var contract2 = contract.connect(web3.getSigner());
             try {
-              var res = await promiseToFuture(contract2.transfer(
-                  '0x39C5190c09ec04cF09C782bA4311C469473Ffe83',
-                  "0x" +
-                      BigInt.parse(toBase(Decimal.parse("0.01"), 6).toString())
-                          .toRadixString(16)));
+              // DEPRECATED:
+              // var res = await promiseToFuture(contract2.transfer(
+              //     '0x39C5190c09ec04cF09C782bA4311C469473Ffe83',
+              //     "0x" +
+              //         BigInt.parse(toBase(Decimal.parse("0.01"), 6).toString())
+              //             .toRadixString(16)));
+              // USE THIS INSTEAD:
+              var res =
+                  await promiseToFuture(callMethod(contract2, "transfer", [
+                '0x39C5190c09ec04cF09C782bA4311C469473Ffe83',
+                "0x" +
+                    BigInt.parse(toBase(Decimal.parse("0.01"), 6).toString())
+                        .toRadixString(16)
+              ]));
               print("Transferred: ${res.toString()}");
             } catch (e) {
               print("EXCEPTION:" + e.toString());
