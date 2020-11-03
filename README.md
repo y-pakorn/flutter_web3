@@ -53,9 +53,11 @@ Then create an ethers Web3Provider:
 Web3Provider web3 = Web3Provider(ethereum);
 ```
 
-Then you can do things like submit transactions, etc:
+Then you can do things like check balance and submit transactions, etc:
 
 ```dart
+var abalanceF = promiseToFuture(web3.getBalance(ethereum.selectedAddress));
+
 Future tx = promiseToFuture(web3.Signer().sendTransaction(TxParams(
       to: to,
       value: "0x" +
@@ -80,6 +82,8 @@ const erc20Abi = [
     "event Transfer(address indexed from, address indexed to, uint amount)"
 ];
 var contract = Contract(contractAddress, erc20Abi, web3);
+var usdcBalanceF = promiseToFuture(
+          callMethod(contract, "balanceOf", [ethereum.selectedAddress]));
 contract = contract.connect(web3.getSigner()); // uses the connected wallet as signer
 var res =
     await promiseToFuture(callMethod(contract, "transfer", [

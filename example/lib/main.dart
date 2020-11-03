@@ -83,8 +83,8 @@ class _MyHomePageState extends State<MyHomePage> {
       web3 = Web3Provider(ethereum);
       balanceF = promiseToFuture(web3.getBalance(ethereum.selectedAddress));
       var contract = Contract(goUsdcAddress, erc20Abi, web3);
-      usdcBalanceF =
-          promiseToFuture(contract.balanceOf(ethereum.selectedAddress));
+      usdcBalanceF = promiseToFuture(
+          callMethod(contract, "balanceOf", [ethereum.selectedAddress]));
     }
     _controller = TextEditingController();
     _verifyController = TextEditingController();
