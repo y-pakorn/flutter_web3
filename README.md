@@ -47,6 +47,12 @@ eg:
 <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js" type="application/javascript"></script>
 ```
 
+Import package:
+
+```
+import 'package:flutter_web3_provider/ethers.dart';
+```
+
 Then create an ethers Web3Provider:
 
 ```dart
