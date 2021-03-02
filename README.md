@@ -53,10 +53,13 @@ Import package:
 import 'package:flutter_web3_provider/ethers.dart';
 ```
 
-Then create an ethers Web3Provider:
+Then create an ethers provider:
 
 ```dart
-Web3Provider web3 = Web3Provider(ethereum);
+// For a read-only provider:
+var provider = JsonRpcProvider("https://rpc.gochain.io");
+// For a read-write provider (ie: metamask, trust wallet, etc)
+var web3 = Web3Provider(ethereum);
 ```
 
 Then you can do things like check balance and submit transactions, etc:
