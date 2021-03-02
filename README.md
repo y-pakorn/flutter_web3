@@ -101,3 +101,8 @@ var res =
     ]));
 ```
 
+NOTES:
+
+* If you're using the human readable ABI's (ethers.js feature) like above, use `uint`, not `uint256` even if the real abi is a uint256.
+* There are some common functions on the Contract, but you can also call any method using `callMethod` like above.
+ 

@@ -19,6 +19,14 @@ class Web3Provider {
   external Future<Network> getNetwork();
 }
 
+@JS("providers.JsonRpcProvider")
+class JsonRpcProvider {
+  external JsonRpcProvider(String rpcUrl);
+
+  @JS("getBalance")
+  external Future getBalance(String address);
+}
+
 @JS("networks.Network")
 class Network {
   @JS("chainId")
@@ -43,6 +51,11 @@ class Utils {
   external static String arrayify(var hash);
 }
 
+@JS("BigNumber")
+class BigNumber {
+  external static BigNumber from(String num);
+}
+
 @JS()
 @anonymous
 class TxParams {
@@ -52,9 +65,15 @@ class TxParams {
   external factory TxParams({String to, String value});
 }
 
+// I couldn't figure out how to call any ol' function with this package:js stuff
+// so I'm just adding the most common functions from ERC20 and ERC721.
+// To call other functions, use `callMethod`, see README for example.
 @JS("Contract")
 class Contract {
-  external Contract(String address, List<String> abi, Web3Provider provider);
+  external Contract(String address, List<String> abi, dynamic provider);
+
+  @JS("name")
+  external Future<String> name();
 
   @JS("symbol")
   external Future<String> symbol();
@@ -67,4 +86,7 @@ class Contract {
 
   @JS("balanceOf")
   external Future balanceOf(String address);
+
+  @JS("tokenURI")
+  external Future tokenURI(BigNumber tokenID);
 }
