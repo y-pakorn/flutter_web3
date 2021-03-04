@@ -49,6 +49,7 @@ class Signer {
 class Utils {
   external static String verifyMessage(var hash, var sig);
   external static String arrayify(var hash);
+  external static String getAddress(var address);
 }
 
 @JS("BigNumber")
@@ -60,9 +61,12 @@ class BigNumber {
 @anonymous
 class TxParams {
   external String get method;
+  external String get to;
+  external String get value;
+  external String get gasLimit;
 
   // Must have an unnamed factory constructor with named arguments.
-  external factory TxParams({String to, String value});
+  external factory TxParams({String? to, String? value, String? gasLimit});
 }
 
 // I couldn't figure out how to call any ol' function with this package:js stuff
