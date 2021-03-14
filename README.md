@@ -91,14 +91,26 @@ const erc20Abi = [
     "event Transfer(address indexed from, address indexed to, uint amount)"
 ];
 var contract = Contract(contractAddress, erc20Abi, web3);
+// call balanceOf function
 var usdcBalanceF = promiseToFuture(
           callMethod(contract, "balanceOf", [ethereum.selectedAddress]));
+          
+// to make a write transaction, first get the signer (this will use metamask/wallet)
 contract = contract.connect(web3.getSigner()); // uses the connected wallet as signer
+// then call the function:
 var res =
     await promiseToFuture(callMethod(contract, "transfer", [
     '0x39C5190c09ec04cF09C782bA4311C469473Ffe83',
     "0x" + amount.toString()).toRadixString(16)
     ]));
+```
+
+If you need to additional overrides like set gas price or passing the `value` param, you can add one extra param in the array with those fields, eg:
+
+```dart
+var res = await promiseToFuture(callMethod(
+    contract, "transfer", ['0x39C5190c09ec04cF09C782bA4311C469473Ffe83', "0x" + amount.toString()).toRadixString(16), 
+    TxParams(value: "1000000000000000000")]));
 ```
 
 NOTES:
