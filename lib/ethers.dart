@@ -48,7 +48,9 @@ class Signer {
 @JS("utils")
 class Utils {
   external static String verifyMessage(var hash, var sig);
+
   external static String arrayify(var hash);
+
   external static String getAddress(var address);
 }
 
@@ -61,8 +63,11 @@ class BigNumber {
 @anonymous
 class TxParams {
   external String get method;
+
   external String get to;
+
   external String get value;
+
   external String get gasLimit;
 
   // Must have an unnamed factory constructor with named arguments.
@@ -93,4 +98,28 @@ class Contract {
 
   @JS("tokenURI")
   external Future tokenURI(BigNumber tokenID);
+
+  /// Return the number of listeners that are subscribed to event. If no event is provided, returns the total count of all events.
+  @JS("listenerCount")
+  external Future listenerCount(String eventName);
+
+  /// Return a list of listeners that are subscribed to event.
+  @JS("listeners")
+  external Future listeners();
+
+  /// Subscribe to event calling listener when the event occurs.
+  @JS("on")
+  external Future on(String eventName, Function func);
+
+  /// Subscribe once to event calling listener when the event occurs.
+  @JS("once")
+  external Future once(String eventName, Function func);
+
+  /// Unsubscribe listener to event.
+  @JS("off")
+  external Future off(String eventName, Function func);
+
+  /// Unsubscribe all listeners for event. If no event is provided, all events are unsubscribed.
+  @JS("removeAllListeners")
+  external Future removeAllListeners(List<String>? events);
 }
