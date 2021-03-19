@@ -1,6 +1,6 @@
 name: flutter_web3_provider
 description: Flutter web web3 provider.
-version: 1.0.2
+version: 1.0.3
 homepage: https://gochain.io
 repository: https://github.com/gochain/flutter_web3_provider
 issue_tracker: https://github.com/gochain/flutter_web3_provider/issues
