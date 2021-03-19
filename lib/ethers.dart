@@ -70,8 +70,17 @@ class TxParams {
 
   external String get gasLimit;
 
+  external String get gasPrice;
+
+  external String get nonce;
+
   // Must have an unnamed factory constructor with named arguments.
-  external factory TxParams({String? to, String? value, String? gasLimit});
+  external factory TxParams(
+      {String? to,
+      String? value,
+      String? gasLimit,
+      String? gasPrice,
+      String? nonce});
 }
 
 // I couldn't figure out how to call any ol' function with this package:js stuff
