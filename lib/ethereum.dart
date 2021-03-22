@@ -65,3 +65,36 @@ class RequestParams {
 
 @JS("JSON.stringify")
 external String stringify(dynamic obj);
+
+@JS()
+@anonymous
+class CurrencyParams {
+  external String get name;
+
+  external String get symbol;
+
+  external int get decimals;
+
+  external factory CurrencyParams({String name, String symbol, int decimals});
+}
+
+@JS()
+@anonymous
+class ChainParams {
+  external String get chainId;
+
+  external String get chainName;
+
+  external CurrencyParams get nativeCurrency;
+
+  external List<String> get rpcUrls;
+
+  external List<String> get blockExplorerUrls;
+
+  external factory ChainParams(
+      {String chainId,
+      String chainName,
+      CurrencyParams nativeCurrency,
+      List<String> rpcUrls,
+      List<String> blockExplorerUrls});
+}
