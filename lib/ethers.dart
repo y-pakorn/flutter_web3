@@ -52,6 +52,18 @@ class Utils {
   external static String arrayify(var hash);
 
   external static String getAddress(var address);
+
+  @JS("defaultAbiCoder")
+  external static AbiCoder get defaultAbiCoder;
+}
+
+@JS("AbiCoder")
+class AbiCoder {
+  @JS("encode")
+  external String encode(List<String> types, List<dynamic> values);
+
+  @JS("decode")
+  external String decode(List<String> types, String data);
 }
 
 @JS("BigNumber")
