@@ -4,7 +4,7 @@ library ethereum;
 import 'package:js/js.dart';
 
 // @JS()
-external Ethereum get ethereum;
+external Ethereum? get ethereum;
 
 // LEGACY
 // @JS("web3")
