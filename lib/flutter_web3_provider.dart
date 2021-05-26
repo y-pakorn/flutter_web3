@@ -6,8 +6,12 @@ import 'ethers.dart';
 export 'ethereum.dart';
 export 'ethers.dart';
 
+Ethereum? getEthereum() {
+  return ethereum ?? binanceChain ?? web3;
+}
+
 Web3Provider? getWeb3Provider() {
-  final Ethereum? provider = ethereum ?? binanceChain ?? web3;
+  final Ethereum? provider = getEthereum();
   if (provider != null) {
     return Web3Provider(ethereum!);
   }
