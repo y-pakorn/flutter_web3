@@ -142,5 +142,5 @@ class Contract {
 
   /// Unsubscribe all listeners for event. If no event is provided, all events are unsubscribed.
   @JS("removeAllListeners")
-  external Future removeAllListeners(List<String>? events);
+  external Future removeAllListeners(String? events);
 }

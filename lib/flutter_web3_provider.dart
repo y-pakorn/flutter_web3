@@ -7,8 +7,8 @@ export 'ethereum.dart';
 export 'ethers.dart';
 
 Web3Provider? getWeb3Provider() {
-  if (ethereum != null) {
-    Web3Provider web3 = Web3Provider(ethereum!);
-    return web3;
+  final Ethereum? provider = ethereum ?? binanceChain ?? web3;
+  if (provider != null) {
+    return Web3Provider(ethereum!);
   }
 }
