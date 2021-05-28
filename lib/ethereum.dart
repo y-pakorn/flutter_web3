@@ -66,7 +66,7 @@ class RequestParams {
   external List<dynamic> get params;
 
   // Must have an unnamed factory constructor with named arguments.
-  external factory RequestParams({String? method, List<dynamic>? params});
+  external factory RequestParams({String? method, dynamic params});
 }
 
 @JS("JSON.stringify")
