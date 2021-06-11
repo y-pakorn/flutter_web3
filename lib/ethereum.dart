@@ -77,7 +77,7 @@ class WatchAssetParameters {
   external WatchAssetOptions get options;
 
   external factory WatchAssetParameters(
-      {String type, WatchAssetOptions options});
+      {required String type, required WatchAssetOptions options});
 }
 
 @JS()
@@ -92,7 +92,7 @@ class WatchAssetOptions {
   external String? get image;
 
   external factory WatchAssetOptions(
-      {String address, String? symbol, int? decimals, String? image});
+      {required String address, String? symbol, int? decimals, String? image});
 }
 
 @JS("JSON.stringify")
