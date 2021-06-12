@@ -13,7 +13,7 @@ class Web3Provider extends Provider {
   external Signer getSigner();
 
   @JS("getBalance")
-  external Future getBalance(String address);
+  external Future<BigNumber> getBalance(String address);
 
   @JS("getNetwork")
   external Future<Network> getNetwork();
@@ -45,7 +45,7 @@ class TxReceipt {
   external int get confirmations;
   external BigNumber get cumulativeGasUsed;
   external bool get byzantium;
-  external bool get status;
+  external int get status;
 
   external factory TxReceipt({
     String to,
@@ -62,7 +62,7 @@ class TxReceipt {
     int confirmations,
     BigNumber cumulativeGasUsed,
     bool byzantium,
-    bool status,
+    int status,
   });
 }
 
@@ -95,11 +95,11 @@ class Log {
 }
 
 @JS("providers.JsonRpcProvider")
-class JsonRpcProvider {
+class JsonRpcProvider extends Provider {
   external JsonRpcProvider(String rpcUrl);
 
   @JS("getBalance")
-  external Future getBalance(String address);
+  external Future<BigNumber> getBalance(String address);
 }
 
 @JS("networks.Network")
