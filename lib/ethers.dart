@@ -44,7 +44,7 @@ class TxReceipt {
   external bool get byzantium;
   external bool get status;
 
-  external factory TxReceipt(
+  external factory TxReceipt({
     String to,
     String from,
     String contractAddress,
@@ -60,7 +60,7 @@ class TxReceipt {
     BigNumber cumulativeGasUsed,
     bool byzantium,
     bool status,
-  );
+  });
 }
 
 @JS()
