@@ -31,11 +31,11 @@ class Provider {
 @JS()
 @anonymous
 class TxReceipt {
-  external String get to;
+  external String? get to;
   external String get from;
-  external String get contractAddress;
+  external String? get contractAddress;
   external int get transactionIndex;
-  external String get root;
+  external String? get root;
   external BigNumber get gasUsed;
   external String get logsBloom;
   external String get blockHash;
