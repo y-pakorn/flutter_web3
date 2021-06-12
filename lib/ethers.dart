@@ -6,7 +6,7 @@ import 'package:js/js.dart';
 import 'ethereum.dart';
 
 @JS("providers.Web3Provider")
-class Web3Provider {
+class Web3Provider extends Provider {
   external Web3Provider(Ethereum eth);
 
   @JS("getSigner")
@@ -17,7 +17,10 @@ class Web3Provider {
 
   @JS("getNetwork")
   external Future<Network> getNetwork();
+}
 
+@JS("providers")
+class Provider {
   @JS("waitForTransaction")
   external Future<TxReceipt> waitForTransaction(
     String hash, [
