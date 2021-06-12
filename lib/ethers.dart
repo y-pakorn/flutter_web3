@@ -17,6 +17,78 @@ class Web3Provider {
 
   @JS("getNetwork")
   external Future<Network> getNetwork();
+
+  @JS("waitForTransaction")
+  external Future<TxReceipt> waitForTransaction(
+    String hash, [
+    int confirms = 1,
+  ]);
+}
+
+@JS()
+@anonymous
+class TxReceipt {
+  external String get to;
+  external String get from;
+  external String get contractAddress;
+  external int get transactionIndex;
+  external String get root;
+  external BigNumber get gasUsed;
+  external String get logsBloom;
+  external String get blockHash;
+  external String get transactionHash;
+  external List<Log> get logs;
+  external int get blockNumber;
+  external int get confirmations;
+  external BigNumber get cumulativeGasUsed;
+  external bool get byzantium;
+  external bool get status;
+
+  external factory TxReceipt(
+    String to,
+    String from,
+    String contractAddress,
+    int transactionIndex,
+    String root,
+    BigNumber gasUsed,
+    String logsBloom,
+    String blockHash,
+    String transactionHash,
+    List<Log> logs,
+    int blockNumber,
+    int confirmations,
+    BigNumber cumulativeGasUsed,
+    bool byzantium,
+    bool status,
+  );
+}
+
+@JS()
+@anonymous
+class Log {
+  external int get blockNumber;
+  external String get blockHash;
+  external bool get removed;
+  external int get transactionLogIndex;
+  external String get address;
+  external String get data;
+  external List<String> get topics;
+  external String get transactionHash;
+  external String get transactionIndex;
+  external String get logIndex;
+
+  external factory Log({
+    int blockNumber,
+    String blockHash,
+    bool removed,
+    int transactionLogIndex,
+    String address,
+    String data,
+    List<String> topics,
+    String transactionHash,
+    String transactionIndex,
+    String logIndex,
+  });
 }
 
 @JS("providers.JsonRpcProvider")
