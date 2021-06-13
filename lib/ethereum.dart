@@ -1,12 +1,15 @@
 @JS("window")
 library ethereum;
 
+import 'dart:convert';
+
 import 'package:js/js.dart';
 import 'package:meta/meta.dart';
 
 import 'ethereum_wrapper.dart';
 import 'objects.dart';
 
+/// Getter for default Ethereum object, cycles through available injector in environment.
 Ethereum? get ethereum => _ethereum ?? _binanceChain;
 
 @deprecated
@@ -49,7 +52,7 @@ class Ethereum {
   external bool isConnected();
 
   /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
-  external int listenerCount(String eventName);
+  external int listenerCount([String? eventName]);
 
   /// Returns the list of Listeners for the [eventName] events.
   external List<dynamic> listeners(String eventName);
@@ -57,7 +60,7 @@ class Ethereum {
   /// Internal, use [offEvent] instead.
   @JS("off")
   @internal
-  external off(String eventName, [Function func]);
+  external off(String eventName, [Function? func]);
 
   /// Internal, use [onEvent] instead.
   @JS("on")
@@ -70,7 +73,7 @@ class Ethereum {
   external once(String eventName, Function func);
 
   /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
-  external removeAllListeners([String eventName]);
+  external removeAllListeners([String? eventName]);
 
   /// Internal, use [dartRequest] instead.
   @JS("request")

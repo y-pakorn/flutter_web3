@@ -2,109 +2,114 @@
 library ethers;
 
 import 'package:js/js.dart';
+import 'package:meta/meta.dart';
 
 import 'ethereum.dart';
 import 'objects.dart';
 
+/// Getter for default Web3Provider object.
+Web3Provider? get provider => ethereum != null ? Web3Provider(ethereum!) : null;
+
 @JS("AbiCoder")
 class AbiCoder {
-  @JS("decode")
   external String decode(List<String> types, String data);
 
-  @JS("encode")
   external String encode(List<String> types, List<dynamic> values);
 }
 
 @JS("BigNumber")
 class BigNumber {
+  external String toHexString();
+
+  external String toString();
+
   external static BigNumber from(String num);
 }
 
 @JS("Contract")
 class Contract {
-  external Contract(String address, List<String> abi, dynamic provider);
+  external Contract(String address, List<String> abi, dynamic providerOrSigner);
 
-  @JS("balanceOf")
-  external Future balanceOf(String address);
+  /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
+  external int listenerCount([String? eventName]);
 
-  @JS("connect")
-  external Contract connect(Signer signer);
+  /// Returns the list of Listeners for the [eventName] events.
+  external List<dynamic> listeners(String eventName);
 
-  /// Return the number of listeners that are subscribed to event. If no event is provided, returns the total count of all events.
-  @JS("listenerCount")
-  external Future listenerCount(String eventName);
-
-  /// Return a list of listeners that are subscribed to event.
-  @JS("listeners")
-  external Future listeners();
-
-  @JS("name")
-  external Future<String> name();
-
-  /// Unsubscribe listener to event.
+  /// Internal, use [offEvent] instead.
   @JS("off")
-  external Future off(String eventName, Function func);
+  @internal
+  external off(String eventName, [Function? func]);
 
-  /// Subscribe to event calling listener when the event occurs.
+  /// Internal, use [onEvent] instead.
   @JS("on")
-  external Future on(String eventName, Function func);
+  @internal
+  external on(String eventName, Function func);
 
-  /// Subscribe once to event calling listener when the event occurs.
+  /// Internal, use [onceEvent] instead.
   @JS("once")
-  external Future once(String eventName, Function func);
+  @internal
+  external once(String eventName, Function func);
 
-  /// Unsubscribe all listeners for event. If no event is provided, all events are unsubscribed.
-  @JS("removeAllListeners")
-  external Future removeAllListeners(String? events);
+  /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
+  external removeAllListeners([String? eventName]);
 
-  @JS("symbol")
-  external Future<String> symbol();
+  //@JS("balanceOf")
+  //external Future balanceOf(String address);
 
-  @JS("tokenURI")
-  external Future tokenURI(BigNumber tokenID);
+  //@JS("connect")
+  //external Contract connect(Signer signer);
 
-  @JS("transfer")
-  external Future transfer(String to, String amount);
+  //@JS("listenerCount")
+  //external Future listenerCount(String eventName);
+
+  //@JS("listeners")
+  //external Future listeners();
+
+  //@JS("name")
+  //external Future<String> name();
+
+  //@JS("off")
+  //external Future off(String eventName, Function func);
+
+  //@JS("on")
+  //external Future on(String eventName, Function func);
+
+  //@JS("once")
+  //external Future once(String eventName, Function func);
+
+  //@JS("removeAllListeners")
+  //external Future removeAllListeners(String? events);
+
+  //@JS("symbol")
+  //external Future<String> symbol();
+
+  //@JS("tokenURI")
+  //external Future tokenURI(BigNumber tokenID);
+
+  //@JS("transfer")
+  //external Future transfer(String to, String amount);
 }
 
 @JS("providers.JsonRpcProvider")
 class JsonRpcProvider extends Provider {
   external JsonRpcProvider(String rpcUrl);
-
-  @JS("getBalance")
-  external Future<BigNumber> getBalance(String address);
-}
-
-@JS("networks.Network")
-class Network {
-  @JS("chainId")
-  external int get chainId;
 }
 
 @JS("providers")
-class Provider {
-  @JS("waitForTransaction")
-  external Future<TxReceipt> waitForTransaction(
-    String hash, [
-    int confirms = 1,
-  ]);
-}
+class Provider {}
 
 @JS("signer.Signer")
 class Signer {
-  @JS("getAddress")
-  external Future getAddress();
+  external Future<dynamic> sendTransaction(TxParams params);
 
-  @JS("sendTransaction")
-  external Future sendTransaction(TxParams params);
+  external Future<String> signMessage(String message);
 
-  @JS("signMessage")
-  external Future signMessage(String message);
+  external static bool isSigner(Object object);
 }
 
 @JS("utils")
 class Utils {
-  @JS("defaultAbiCoder")
   external static AbiCoder get defaultAbiCoder;
 
   external static String arrayify(var hash);
@@ -114,19 +119,9 @@ class Utils {
   external static String verifyMessage(var hash, var sig);
 }
 
-// I couldn't figure out how to call any ol' function with this package:js stuff
-// so I'm just adding the most common functions from ERC20 and ERC721.
-// To call other functions, use `callMethod`, see README for example.
 @JS("providers.Web3Provider")
 class Web3Provider extends Provider {
   external Web3Provider(Ethereum eth);
 
-  @JS("getBalance")
-  external Future<BigNumber> getBalance(String address);
-
-  @JS("getNetwork")
-  external Future<Network> getNetwork();
-
-  @JS("getSigner")
   external Signer getSigner();
 }
