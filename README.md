@@ -1,82 +1,134 @@
-# flutter_web3_provider
 
-Flutter wrapper for using web3 providers, ie: accessing `window.ethereum`.
+# flutter_web3
+
+#### This is a fork of [flutter_web3_provider](https://github.com/gochain/flutter_web3_provider). Be sure to check out the original package
+
+**flutter_web3** is Dart class and method wrapper for Ethereum object and [Ethers js](https://docs.ethers.io/v5/) package.
+This package also offers others Blockchain data query utils and a lot of helper function for developing dapps.
+
+By utilizing dart2js functionality and dart extension, we manage to get Typing and Asynchonous into dart!
 
 NOTE: This is for web only!
 
-## Getting Started
+## Ethereum Object
 
-For full example, see: https://github.com/gochain/flutter_web3_provider/blob/main/example/lib/main.dart
-
-Add import `import 'package:flutter_web3_provider/ethereum.dart';`
-
-Then you can access it just be using the `ethereum` variable.
+You can access the Ethereum object by accessing the `ethereum` getter.
 
 ```dart
-if(ethereum != null){
-    // then an ethereum provider was injected
-    print(ethereum.selectedAddress);
+if (ethereum != null) {
+    final accs = await ethereum!.getAccounts(); // get all accounts in node disposal
+    accs // [foo,bar]
 }
 ```
 
-Ask user to connect their wallet:
+Prompt user to connect to provider, aka eth_requestAccounts,
 
 ```dart
-RaisedButton(
-    child: Text("Connect Wallet"),
-    onPressed: () async {
-        var accounts = await promiseToFuture(
-            ethereum.request(RequestParams(method: 'eth_requestAccounts')));
-        print(accounts);
-        String se = ethereum.selectedAddress;
-        print("selectedAddress: $se");
-        setState(() {
-            selectedAddress = se;
-        });
-    },
-)
+final accs = await ethereum!.requestAccount(); // prompt the connection, make sure to handle the error when user cancle.
+accs // [foo,bar]
 ```
 
-### Using ethers.js
+Subscribe to accountsChanged event,
 
-Add ethers.js to `web/index.html`.
+```dart
+ethereum!.onAccountChanged((accs) {
+ print(accs); // [foo,bar]
+});
+```
 
-eg: 
+Handle other dynamic event,
+
+```dart
+ethereum!.onEvent('message', (message) {
+ final json = convertToDart(message); // Convert js to Dart object.
+ json['foo'] // Foo
+ json['bar']['baz'] // Barbaz
+});
+```
+
+Or call other json rpc request method that have generic return type T,
+
+```dart
+final result = await ethereum!.dartRequest<BigNumber>('eth_gasPrice');
+result.toBigInt; // 100,000,000,000
+```
+
+## Ethers.js
+
+### Initialize
+
+To initialize, add ethers.js script to `web/index.html`.
 
 ```
 <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js" type="application/javascript"></script>
 ```
 
-Import package:
+---
 
-```
-import 'package:flutter_web3_provider/ethers.dart';
-```
+### Usage
+
+#### Provider
 
 Then create an ethers provider:
 
 ```dart
 // For a read-only provider:
-var provider = JsonRpcProvider("https://rpc.gochain.io");
-// For a read-write provider (ie: metamask, trust wallet, etc)
-var web3 = Web3Provider(ethereum);
+final provider = JsonRpcProvider("https://rpc.foo.io");
+// For a read-write provider (ie: metamask, trust wallet, binance chain, etc.)
+final provider = Web3Provider(ethereum!);
 ```
 
-Then you can do things like check balance and submit transactions, etc:
+Or use the default Web3Provider getter
 
 ```dart
-var abalanceF = promiseToFuture(web3.getBalance(ethereum.selectedAddress));
-
-Future tx = promiseToFuture(web3.Signer().sendTransaction(TxParams(
-      to: to,
-      value: "0x" +
-          BigInt.parse(toBase(amount, 18).toString()).toRadixString(16))));
+final web3provider = provider;
 ```
 
-Or use a contract:
+Then we can query various Blockchain data,
 
 ```dart
-const erc20Abi = [
+final balance = await provider!.getBalance('0xBar');
+balance // 100,000,000 (in Wei)
+
+final block = await provider!.getBlock(3949294);
+block.miner // 0xbar
+block.transaction // [0xfoo,0xbar,0xbarbaz]
+block.nounce // 1293014
+```
+
+Or directly calling Ethers js with specific result type,
+
+```dart
+final result  = await provider!.call<BigNumber>('getGasPrice');
+result.toBigInt;// 100,000,000,000,000
+```
+
+---
+
+#### Signer
+
+Use signer to get specific data about address in possession,
+
+```dart
+final balance = await provider!.getBalance();
+balance; // 100,000,000,000,000
+```
+
+Or use signer to send transaction,
+
+```dart
+final tx = await provider!.getSigner().send(TxParams(to: '0xbar',value: '100,000,000'));
+tx['hash'] // 0xbaz
+```
+
+----
+
+#### Contract
+
+Initializing Contract object, Supported Abi types refer to [Ether.js docs](https://docs.ethers.io/v5/api/utils/abi/formats/)
+
+```dart
+final abi = [
     // Some details about the token
     "function name() view returns (string)",
     "function symbol() view returns (string)",
@@ -90,31 +142,44 @@ const erc20Abi = [
     // An event triggered whenever anyone transfers to someone else
     "event Transfer(address indexed from, address indexed to, uint amount)"
 ];
-var contract = Contract(contractAddress, erc20Abi, web3);
-// call balanceOf function
-var usdcBalanceF = promiseToFuture(
-          callMethod(contract, "balanceOf", [ethereum.selectedAddress]));
-          
-// to make a write transaction, first get the signer (this will use metamask/wallet)
-contract = contract.connect(web3.getSigner()); // uses the connected wallet as signer
-// then call the function:
-var res =
-    await promiseToFuture(callMethod(contract, "transfer", [
-    '0x39C5190c09ec04cF09C782bA4311C469473Ffe83',
-    "0x" + amount.toString()).toRadixString(16)
-    ]));
+
+final contract = Contract('0xfoo', abi, provider!);
 ```
 
-If you need to additional overrides like set gas price or passing the `value` param, you can add one extra param in the array with those fields, eg:
+Calling view-only constant method,
 
 ```dart
-var res = await promiseToFuture(callMethod(
-    contract, "transfer", ['0x39C5190c09ec04cF09C782bA4311C469473Ffe83', "0x" + amount.toString()).toRadixString(16), 
-    TxParams(value: "1000000000000000000")]));
+final name = await contract.call<String>('name');
+name // FooBarBaz
+
+final symbol = await contract.call<String>('symbol');
+symbol // FBB
 ```
 
-NOTES:
+Sending write method,
 
-* If you're using the human readable ABI's (ethers.js feature) like above, use `uint`, not `uint256` even if the real abi is a uint256.
-* There are some common functions on the Contract, but you can also call any method using `callMethod` like above.
- 
+```dart
+final tx = await contract.send('transfer',['0xbarbaz','100,000,000']);
+tx['hash'] // 0xfoo
+```
+
+And wait until transaction is successfully mined
+
+```dart
+final receipt = await provider!.waitForTransaction(tx['hash']);
+receipt.isSuccessful // true if successful
+receipt.logs.firstWhere((e) => e.topics.first == '0xbar').data // 0xfoobar
+
+```
+
+Subscribe to any emitted event,
+
+```dart
+contract.onEvent('Transfer', (from,to,amount,data) {
+ convertToDart(data) // {'foo':'bar','baz':'foobar',...}
+ from // 0xbar
+ to // 0xbaz
+ amount // 100,000,000,000
+});
+```
+
