@@ -1,5 +1,5 @@
 @JS()
-library flutter_web_3_provider.internal.js;
+library flutter_web3.internal.object.js;
 
 import 'dart:core';
 
@@ -13,19 +13,19 @@ class Block {
   /// The maximum amount of gas that this block was permitted to use.
   ///
   /// This is a value that can be voted up or voted down by miners and is used to automatically adjust the bandwidth requirements of the network.
-  external BigNumber gasLimit;
+  external BigNumber get gasLimit;
 
   /// The total amount of gas used by all transactions in this block.
-  external BigNumber gasUsed;
+  external BigNumber get gasUsed;
 
   /// The coinbase address of this block, which indicates the address the miner that mined this block would like the subsidy reward to go to.
-  external String miner;
+  external String get miner;
 
   /// This is extra data a miner may choose to include when mining a block.
-  external String extraData;
+  external String get extraData;
 
   /// A list of the transactions hashes for each transaction this block includes.
-  external List<String> transactions;
+  external List<String> get transactions;
 
   /// The difficulty target required to be met by the miner of the block.
   external num get difficulty;
@@ -156,7 +156,10 @@ class RawTxParams {
     required String data,
   });
 
+  /// The address (or ENS name) this transaction it to.
   external String get to;
+
+  /// The transaction data.
   external String get data;
 }
 
@@ -170,13 +173,17 @@ class TxOverride {
     String? nonce,
   });
 
+  /// The maximum amount of gas this transaction is permitted to use.
   external String get gasLimit;
 
+  /// The price (in wei) per unit of gas this transaction will pay.
   external String get gasPrice;
 
-  external String get nonce;
-
+  /// The amount (in wei) this transaction is sending.
   external String get value;
+
+  /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
+  external String get nonce;
 }
 
 @JS()
@@ -190,17 +197,22 @@ class TxParams {
     String? nonce,
   });
 
+  /// The maximum amount of gas this transaction is permitted to use.
   external String get gasLimit;
 
+  /// The price (in wei) per unit of gas this transaction will pay.
   external String get gasPrice;
 
-  external String get method;
+  /// The amount (in wei) this transaction is sending.
+  external String get value;
 
+  /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
   external String get nonce;
 
+  /// The address (or ENS name) this transaction it to.
   external String get to;
 
-  external String get value;
+  external String get method;
 }
 
 @JS()
@@ -272,12 +284,16 @@ class WatchAssetOptions {
     String? image,
   });
 
+  /// The address of the token contract
   external String get address;
 
+  /// The number of token decimals
   external int get decimals;
 
+  /// A string url of the token logo
   external String? get image;
 
+  /// A ticker symbol or shorthand, up to 5 characters
   external String get symbol;
 }
 
@@ -289,7 +305,11 @@ class WatchAssetParams {
     required WatchAssetOptions options,
   });
 
+  /// Asset options.
   external WatchAssetOptions get options;
 
+  /// Asset type.
+  ///
+  /// In the future, other standards will be supported
   external String get type;
 }

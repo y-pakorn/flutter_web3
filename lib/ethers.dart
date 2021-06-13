@@ -28,6 +28,9 @@ class BigNumber {
 
 @JS("Contract")
 class Contract {
+  /// Contruct Contract object for invoking smart contract method.
+  ///
+  /// Use [Provider] in [providerOrSigner] for read-only contract calls, or use [Signer] for read-write contract calls.
   external Contract(String address, List<String> abi, dynamic providerOrSigner);
 
   /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.

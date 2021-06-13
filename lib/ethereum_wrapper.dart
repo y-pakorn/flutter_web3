@@ -6,11 +6,11 @@ import 'objects.dart';
 
 extension DartEthereum on Ethereum {
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
-  onceEvent(String eventName, void Function(dynamic event) listener) =>
+  onceEvent(String eventName, Function listener) =>
       once(eventName, allowInterop(listener));
 
   /// Add a [listener] to be triggered for each [eventName] event.
-  onEvent(String eventName, void Function(dynamic event) listener) =>
+  onEvent(String eventName, Function listener) =>
       on(eventName, allowInterop(listener));
 
   /// Add a [listener] to be triggered for each accountsChanged event
@@ -26,10 +26,9 @@ extension DartEthereum on Ethereum {
       on('disconnect', allowInterop(listener));
 
   /// Remove a [listener] for the [eventName] event. If no [listener] is provided, all listeners for [eventName] are removed.
-  offEvent(String eventName, [void Function(dynamic event)? listener]) =>
-      listener != null
-          ? off(eventName, allowInterop(listener))
-          : off(eventName);
+  offEvent(String eventName, [Function? listener]) => listener != null
+      ? off(eventName, allowInterop(listener))
+      : off(eventName);
 
   /// Use request to submit RPC requests to Ethereum via MetaMask.
   ///

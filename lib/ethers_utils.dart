@@ -1,19 +1,18 @@
 import 'dart:convert';
 
-import 'package:flutter_web3_provider/ethers.dart';
-
 import 'ethereum.dart';
+import 'ethers.dart';
+
+AbiCoder get abiCoder => Utils.defaultAbiCoder;
 
 BigInt bigNumberToBigInt(BigNumber bigNumber) =>
     BigInt.parse(bigNumber.toString());
 
-extension BigNumberExt on BigNumber {
-  BigInt get toBigInt => bigNumberToBigInt(this);
-}
-
-AbiCoder get abiCoder => Utils.defaultAbiCoder;
+dynamic convertToDart(dynamic jsObject) => json.decode(stringify(jsObject));
 
 Contract defaultContractWithSigner(String address, List<String> abi) =>
     Contract(address, abi, provider!.getSigner());
 
-dynamic convertToDart(dynamic jsObject) => json.decode(stringify(jsObject));
+extension BigNumberExt on BigNumber {
+  BigInt get toBigInt => bigNumberToBigInt(this);
+}

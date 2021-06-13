@@ -7,18 +7,17 @@ import 'objects.dart';
 
 extension ContractExtension on Contract {
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
-  onceEvent(String eventName, void Function(dynamic event) listener) =>
+  onceEvent(String eventName, Function listener) =>
       once(eventName, allowInterop(listener));
 
   /// Add a [listener] to be triggered for each [eventName] event.
-  onEvent(String eventName, void Function(dynamic event) listener) =>
+  onEvent(String eventName, Function listener) =>
       on(eventName, allowInterop(listener));
 
   /// Remove a [listener] for the [eventName] event. If no [listener] is provided, all listeners for [eventName] are removed.
-  offEvent(String eventName, [void Function(dynamic event)? listener]) =>
-      listener != null
-          ? off(eventName, allowInterop(listener))
-          : off(eventName);
+  offEvent(String eventName, [Function? listener]) => listener != null
+      ? off(eventName, allowInterop(listener))
+      : off(eventName);
 
   /// Call read-only constant method on the Contract.
   ///
@@ -45,7 +44,7 @@ extension ContractExtension on Contract {
 
 extension ProviderExtension on Provider {
   /// Direct Ethers provider call to access Blockchain data.
-  Future<T> call<T>(String method, List<dynamic> args) =>
+  Future<T> call<T>(String method, [List<dynamic> args = const []]) =>
       promiseToFuture<T>(callMethod(this, method, args));
 
   /// Returns the result of executing the transaction, using call.
@@ -143,4 +142,11 @@ extension SignerExtension on Signer {
                 this, 'getBalance', blockTag != null ? [blockTag] : [])))
             .toString(),
       );
+
+  /// Submits transaction to the network to be mined.
+  ///
+  /// The transaction must be valid (i.e. the nonce is correct and the account has sufficient balance to pay for the transaction).
+  Future<dynamic> send(TxParams params) async =>
+      convertToDart(await promiseToFuture<dynamic>(
+          callMethod(this, 'sendTransaction', [params])));
 }
