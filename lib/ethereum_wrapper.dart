@@ -14,11 +14,11 @@ extension DartEthereum on Ethereum {
       on(eventName, allowInterop(listener));
 
   /// Add a [listener] to be triggered for each accountsChanged event
-  onAccountsChanged(void Function(List<String> accounts) listener) =>
+  onAccountsChanged(void Function(List<dynamic> accounts) listener) =>
       on('accountsChanged', allowInterop(listener));
 
   /// Add a [listener] to be triggered for each chainChanged event
-  onChainChanged(void Function(String chainId) listener) =>
+  onChainChanged(void Function(dynamic chainId) listener) =>
       on('chainChanged', allowInterop(listener));
 
   /// Add a [listener] to be triggered for each disconnect event
