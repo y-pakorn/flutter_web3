@@ -1,17 +1,17 @@
-library flutter_web3_provider;
+import 'dart:convert';
 
 import 'ethereum.dart';
 import 'ethers.dart';
 
 export 'ethereum.dart';
+export 'ethereum_wrapper.dart';
 export 'ethers.dart';
+export 'objects.dart';
 
-Ethereum? getEthereum() {
-  return ethereum ?? binanceChain ?? web3;
-}
+dynamic convertToDart(dynamic jsObject) => json.decode(stringify(jsObject));
 
-Web3Provider? getWeb3Provider() {
-  final Ethereum? provider = getEthereum();
+Web3Provider? get web3 {
+  final Ethereum? provider = ethereum;
   if (provider != null) {
     return Web3Provider(ethereum!);
   }

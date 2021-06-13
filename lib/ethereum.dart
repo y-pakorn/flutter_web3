@@ -2,131 +2,78 @@
 library ethereum;
 
 import 'package:js/js.dart';
+import 'package:meta/meta.dart';
 
-@JS("ethereum")
-external Ethereum? get ethereum;
+import 'ethereum_wrapper.dart';
+import 'objects.dart';
 
-@JS("BinanceChain")
-external Ethereum? get binanceChain;
+Ethereum? get ethereum => _ethereum ?? _binanceChain;
 
+@deprecated
 @JS("web3")
 external Ethereum? get web3;
 
-// LEGACY
-// @JS("web3")
-// external Ethereum get web3Legacy;
+@JS("BinanceChain")
+external Ethereum? get _binanceChain;
 
-@JS("")
-class Ethereum {
-  @JS("chainId")
-  external String chainId();
+@JS("ethereum")
+external Ethereum? get _ethereum;
 
-  @JS("isConnected")
-  external bool isConnected();
-
-  @JS("selectedAddress")
-  external String get selectedAddress;
-
-  @JS("request")
-  external Future request(RequestParams params);
-
-  /// Add a listener to be triggered for each eventName event.
-  @JS("on")
-  external Future on(String eventName, Function func);
-
-  /// Add a listener to be triggered for only the next eventName event, at which time it will be removed.
-  @JS("once")
-  external Future once(String eventName, Function func);
-
-  /// Add a listener to be triggered for only the next eventName event, at which time it will be removed.
-  @JS("off")
-  external Future off(String eventName, Function func);
-
-  /// Add a listener to be triggered for only the next eventName event, at which time it will be removed.
-  @JS("removeAllListeners")
-  external Future removeAllListeners(String? events);
-
-  /// Return the number of listeners that are subscribed to event. If no event is provided, returns the total count of all events.
-  @JS("listenerCount")
-  external Future listenerCount(String eventName);
-
-  /// Return a list of listeners that are subscribed to event.
-  @JS("listeners")
-  external Future listeners();
-
-  @JS("autoRefreshOnNetworkChange")
-  external set autoRefreshOnNetworkChange(bool b);
-}
-
-@JS()
-@anonymous
-class RequestParams {
-  external String get method;
-
-  external dynamic get params;
-
-  // Must have an unnamed factory constructor with named arguments.
-  external factory RequestParams({String method, dynamic params});
-}
-
-@JS()
-@anonymous
-class WatchAssetParameters {
-  external String get type;
-
-  external WatchAssetOptions get options;
-
-  external factory WatchAssetParameters(
-      {required String type, required WatchAssetOptions options});
-}
-
-@JS()
-@anonymous
-class WatchAssetOptions {
-  external String get address;
-
-  external String? get symbol;
-
-  external int? get decimals;
-
-  external String? get image;
-
-  external factory WatchAssetOptions(
-      {required String address, String? symbol, int? decimals, String? image});
-}
-
+/// Convert JavaScript object or value to a JSON string,
+///
+/// optionally replacing values if a replacer function is specified or optionally including only the specified properties if a replacer array is specified.
 @JS("JSON.stringify")
 external String stringify(dynamic obj);
 
 @JS()
-@anonymous
-class CurrencyParams {
-  external String get name;
+class Ethereum {
+  external set autoRefreshOnNetworkChange(bool b);
 
-  external String get symbol;
-
-  external int get decimals;
-
-  external factory CurrencyParams({String name, String symbol, int decimals});
-}
-
-@JS()
-@anonymous
-class ChainParams {
+  /// Returns a hexadecimal string representing the current chain ID.
+  ///
+  /// Deprecated, Consider using [getChainId]
+  @deprecated
   external String get chainId;
 
-  external String get chainName;
+  /// Returns first [getAccounts] item but may return unexpected value.
+  ///
+  /// Deprecated, Consider using [getAccounts] instead.
+  @deprecated
+  external String? get selectedAddress;
 
-  external CurrencyParams get nativeCurrency;
+  /// Returns true if the provider is connected to the current chain, and false otherwise.
+  ///
+  /// Note that this method has nothing to do with the user's accounts.
+  ///
+  /// You may often encounter the word "connected" in reference to whether a web3 site can access the user's accounts. In the provider interface, however, "connected" and "disconnected" refer to whether the provider can make RPC requests to the current chain.
+  external bool isConnected();
 
-  external List<String> get rpcUrls;
+  /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
+  external int listenerCount(String eventName);
 
-  external List<String> get blockExplorerUrls;
+  /// Returns the list of Listeners for the [eventName] events.
+  external List<dynamic> listeners(String eventName);
 
-  external factory ChainParams(
-      {String chainId,
-      String chainName,
-      CurrencyParams nativeCurrency,
-      List<String> rpcUrls,
-      List<String> blockExplorerUrls});
+  /// Internal, use [offEvent] instead.
+  @JS("off")
+  @internal
+  external off(String eventName, [Function func]);
+
+  /// Internal, use [onEvent] instead.
+  @JS("on")
+  @internal
+  external on(String eventName, Function func);
+
+  /// Internal, use [onceEvent] instead.
+  @JS("once")
+  @internal
+  external once(String eventName, Function func);
+
+  /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
+  external removeAllListeners([String eventName]);
+
+  /// Internal, use [dartRequest] instead.
+  @JS("request")
+  @internal
+  external Future<dynamic> request(RequestArguments args);
 }
