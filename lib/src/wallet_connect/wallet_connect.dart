@@ -27,7 +27,7 @@ class WalletConnectProviderOptions {
   /// Required one of [infuraId] or [rpc] to be not null.
   external factory WalletConnectProviderOptions({
     String? infuraId,
-    Map<int, String>? rpc,
+    dynamic rpc,
     String? bridge,
     bool? qrCode,
     String? network,
@@ -43,5 +43,5 @@ class WalletConnectProviderOptions {
   external int? get networkId;
   external bool? get qrCode;
   external QrcodeModalOptions? get qrcodeModalOptions;
-  external Map<int, String>? get rpc;
+  external dynamic get rpc;
 }

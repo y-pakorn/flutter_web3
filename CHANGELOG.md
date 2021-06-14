@@ -1,3 +1,7 @@
+## 1.0.6
+
+- Wallet Connect buges fix
+
 ## 1.0.5
 
 - Reorganize directory structure

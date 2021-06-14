@@ -201,34 +201,37 @@ To initialize, add ethers.js script to `web/index.html`. We can use CDN from [js
 
 ### Usage
 
-Create Wallet Connect Provider object
+Create Wallet Connect Provider object,
+
+Since rpc argument in `WalletConnectProviderOptions` is js map object with dynamic keys and values, we need to wrap it in js converter.
 
 ```dart
-final wc = WalletConnectProvider(
- WalletConnectProviderOptions(
-   rpc: {
- 1:  "https://mainnet.foo.com",
- 3:  "https://ropsten.bar.com",
- 100:  "https://bash.network",
- ...
-   },
- ),
+final jsMap = jsify({ 
+  56: 'https://bsc-dataseed.binance.org/',
+});
+
+final option = WalletConnectProviderOptions(
+  rpc: jsMap,
+  network: 'binance', // select one sepcific network to connect
+  chainId: 56, // select one sepcific network to connect
 );
+
+final wc = WalletConnectProvider(option);
 ```
 
-Then enable the session by toggling QR code modal
+Then enable the session by toggling QR code modal,
 
 ```dart
 await wc.connect();
 ```
 
-After that, we can use the object normally as Ethereum object
+After that, we can use the object normally as Ethereum object,
 
 ```dart
 await wc.getChainId(); // 1
 ```
 
-Or  integrate into Ethers library and use Web3Provider to interact further
+Or  integrate into Ethers library and use Web3Provider to interact further,
 
 ```dart
 final w3 = Web3Provider(wc);
