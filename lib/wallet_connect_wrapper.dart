@@ -27,7 +27,7 @@ extension WalletConnectExtension on WalletConnectProvider {
 //class UserClosedModalException implements Exception {}
 
 //class NoRPCAvailableException implements Exception {
-  //final int chainId;
+//final int chainId;
 
-  //NoRPCAvailableException({required this.chainId});
+//NoRPCAvailableException({required this.chainId});
 //}
