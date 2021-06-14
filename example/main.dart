@@ -23,8 +23,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String address = '';
-  bool get isConnected =>
-      ethereum != null && (ethereum?.selectedAddress?.isNotEmpty ?? false);
+  bool get isConnected => ethereum != null && ethereum!.isConnected();
 
   connect() async {
     if (ethereum != null) address = (await ethereum!.requestAccount()).first;
