@@ -1,9 +1,4 @@
-export 'ethereum.dart';
-export 'ethereum_wrapper.dart';
-export 'ethers.dart';
-export 'ethers_utils.dart';
-export 'ethers_wrapper.dart';
-export 'objects.dart';
-export 'objects_wrapper.dart';
-export 'wallet_connect.dart';
-export 'wallet_connect_wrapper.dart';
+export 'src/ethereum/main.dart';
+export 'src/ethers/main.dart';
+export 'src/objects/main.dart';
+export 'src/wallet_connect//main.dart';

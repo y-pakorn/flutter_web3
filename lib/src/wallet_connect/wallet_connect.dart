@@ -1,14 +1,12 @@
 @JS("WalletConnectProvider")
-//@JS("@walletconnect/web3-provider")
 library wallet_connect_provider;
 
 import 'dart:core';
 
 import 'package:js/js.dart';
 
-import 'ethereum.dart';
+import '../ethereum/ethereum.dart';
 
-//@JS("WalletConnectProvider")
 @JS()
 @anonymous
 class QrcodeModalOptions {

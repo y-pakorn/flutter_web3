@@ -4,8 +4,8 @@ library ethers;
 import 'package:js/js.dart';
 import 'package:meta/meta.dart';
 
-import 'ethereum.dart';
-import 'objects.dart';
+import '../ethereum/ethereum.dart';
+import '../objects/objects.dart';
 
 /// Getter for default Web3Provider object.
 Web3Provider? get provider => ethereum != null ? Web3Provider(ethereum!) : null;

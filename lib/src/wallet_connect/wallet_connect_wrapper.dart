@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:js_util';
 
 import 'wallet_connect.dart';

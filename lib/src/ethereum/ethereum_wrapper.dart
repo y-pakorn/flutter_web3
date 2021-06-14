@@ -1,8 +1,8 @@
 import 'dart:js';
 import 'dart:js_util';
 
+import '../objects/objects.dart';
 import 'ethereum.dart';
-import 'objects.dart';
 
 extension DartEthereum on Ethereum {
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.

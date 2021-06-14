@@ -5,11 +5,17 @@ import 'dart:core';
 
 import 'package:js/js.dart';
 
-import 'ethers.dart';
+import '../ethers/ethers.dart';
 
 @JS()
 @anonymous
 class Block {
+  /// The difficulty target required to be met by the miner of the block.
+  external num get difficulty;
+
+  /// This is extra data a miner may choose to include when mining a block.
+  external String get extraData;
+
   /// The maximum amount of gas that this block was permitted to use.
   ///
   /// This is a value that can be voted up or voted down by miners and is used to automatically adjust the bandwidth requirements of the network.
@@ -18,20 +24,11 @@ class Block {
   /// The total amount of gas used by all transactions in this block.
   external BigNumber get gasUsed;
 
-  /// The coinbase address of this block, which indicates the address the miner that mined this block would like the subsidy reward to go to.
-  external String get miner;
-
-  /// This is extra data a miner may choose to include when mining a block.
-  external String get extraData;
-
-  /// A list of the transactions hashes for each transaction this block includes.
-  external List<String> get transactions;
-
-  /// The difficulty target required to be met by the miner of the block.
-  external num get difficulty;
-
   /// The hash of this block.
   external String get hash;
+
+  /// The coinbase address of this block, which indicates the address the miner that mined this block would like the subsidy reward to go to.
+  external String get miner;
 
   /// The nonce used as part of the proof-of-work to mine this block.
   external int get nounce;
@@ -44,6 +41,9 @@ class Block {
 
   /// The timestamp of this block.
   external int get timestamp;
+
+  /// A list of the transactions hashes for each transaction this block includes.
+  external List<String> get transactions;
 }
 
 @JS()
@@ -137,6 +137,21 @@ class Network {
 
 @JS()
 @anonymous
+class RawTxParams {
+  external factory RawTxParams({
+    required String to,
+    required String data,
+  });
+
+  /// The transaction data.
+  external String get data;
+
+  /// The address (or ENS name) this transaction it to.
+  external String get to;
+}
+
+@JS()
+@anonymous
 class RequestArguments {
   external factory RequestArguments({
     required String method,
@@ -146,21 +161,6 @@ class RequestArguments {
   external String get method;
 
   external dynamic get params;
-}
-
-@JS()
-@anonymous
-class RawTxParams {
-  external factory RawTxParams({
-    required String to,
-    required String data,
-  });
-
-  /// The address (or ENS name) this transaction it to.
-  external String get to;
-
-  /// The transaction data.
-  external String get data;
 }
 
 @JS()
@@ -179,11 +179,11 @@ class TxOverride {
   /// The price (in wei) per unit of gas this transaction will pay.
   external String get gasPrice;
 
-  /// The amount (in wei) this transaction is sending.
-  external String get value;
-
   /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
   external String get nonce;
+
+  /// The amount (in wei) this transaction is sending.
+  external String get value;
 }
 
 @JS()
@@ -203,8 +203,7 @@ class TxParams {
   /// The price (in wei) per unit of gas this transaction will pay.
   external String get gasPrice;
 
-  /// The amount (in wei) this transaction is sending.
-  external String get value;
+  external String get method;
 
   /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
   external String get nonce;
@@ -212,7 +211,8 @@ class TxParams {
   /// The address (or ENS name) this transaction it to.
   external String get to;
 
-  external String get method;
+  /// The amount (in wei) this transaction is sending.
+  external String get value;
 }
 
 @JS()

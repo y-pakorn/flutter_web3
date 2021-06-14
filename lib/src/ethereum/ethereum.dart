@@ -1,13 +1,11 @@
 @JS("window")
 library ethereum;
 
-import 'dart:convert';
-
 import 'package:js/js.dart';
 import 'package:meta/meta.dart';
 
+import '../objects/objects.dart';
 import 'ethereum_wrapper.dart';
-import 'objects.dart';
 
 /// Getter for default Ethereum object, cycles through available injector in environment.
 Ethereum? get ethereum => _ethereum ?? _binanceChain;
@@ -58,17 +56,14 @@ class Ethereum {
   external List<dynamic> listeners(String eventName);
 
   /// Internal, use [offEvent] instead.
-  @JS("off")
   @internal
   external off(String eventName, [Function? func]);
 
   /// Internal, use [onEvent] instead.
-  @JS("on")
   @internal
   external on(String eventName, Function func);
 
   /// Internal, use [onceEvent] instead.
-  @JS("once")
   @internal
   external once(String eventName, Function func);
 
@@ -76,7 +71,6 @@ class Ethereum {
   external removeAllListeners([String? eventName]);
 
   /// Internal, use [dartRequest] instead.
-  @JS("request")
   @internal
   external Future<dynamic> request(RequestArguments args);
 }

@@ -1,9 +1,10 @@
 import 'dart:js';
 import 'dart:js_util';
 
+import '../objects/objects.dart';
+import '../utils.dart';
 import 'ethers.dart';
 import 'ethers_utils.dart';
-import 'objects.dart';
 
 extension ContractExtension on Contract {
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
