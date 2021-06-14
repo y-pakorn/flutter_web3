@@ -1,4 +1,4 @@
-import 'dart:js_util';
+import 'package:js/js_util.dart';
 
 import 'wallet_connect.dart';
 

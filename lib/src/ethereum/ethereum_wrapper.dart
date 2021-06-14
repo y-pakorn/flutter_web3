@@ -1,5 +1,5 @@
-import 'dart:js';
-import 'dart:js_util';
+import 'package:js/js.dart';
+import 'package:js/js_util.dart';
 
 import '../objects/objects.dart';
 import 'ethereum.dart';
