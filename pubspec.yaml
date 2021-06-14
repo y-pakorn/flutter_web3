@@ -1,6 +1,6 @@
 name: flutter_web3
-description: Web3 Ethereum and Etherjs wrapper for Flutter Web.
-version: 1.0.2
+description: Web3 Ethereum, Etherjs and Wallet Connect wrapper for Flutter Web.
+version: 1.0.3
 repository: https://github.com/y-pakorn/flutter_web3
 issue_tracker: https://github.com/y-pakorn/flutter_web3/issues
 

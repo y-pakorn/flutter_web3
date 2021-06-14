@@ -1,10 +1,14 @@
-
 # flutter_web3
 
-#### This is a fork of [flutter_web3_provider](https://github.com/gochain/flutter_web3_provider). Be sure to check out the original package
+#### This is a fork of [flutter_web3_provider](https://github.com/gochain/flutter_web3_provider). Be sure to check out the original package!
 
-**flutter_web3** is Dart class and method wrapper for Ethereum object and [Ethers js](https://docs.ethers.io/v5/) package.
-This package also offers others Blockchain data query utils and a lot of helper function for developing dapps.
+**flutter_web3** is Dart class and method wrapper for
+
+- Ethereum object
+- [Ether.js](https://docs.ethers.io/v5/) package
+  - This can be used to sign transaction and interact with smart contract, also query Blockchain data utils and a lot of helper function for developing dapps.
+- [Wallet Connect Provider](https://docs.walletconnect.org/quick-start/dapps/web3-provider) package
+  - This enable QR code modal interaction and enable wallet that utilize Wallet Connect to use provider.
 
 By utilizing dart2js functionality and dart extension, we manage to get Typing and Asynchonous into dart!
 
@@ -181,5 +185,53 @@ contract.onEvent('Transfer', (from,to,amount,data) {
  to // 0xbaz
  amount // 100,000,000,000
 });
+```
+
+## Wallet Connect Provider
+
+### Initialize
+
+To initialize, add ethers.js script to `web/index.html`. We can use CDN from [jsdelivr](https://www.jsdelivr.com/package/npm/@walletconnect/web3-provider).
+
+```
+<script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.5.0-rc.2/dist/umd/index.min.js" type="application/javascript"></script>
+```
+
+---
+
+### Usage
+
+Create Wallet Connect Provider object
+
+```dart
+final wc = WalletConnectProvider(
+ WalletConnectProviderOptions(
+   rpc: {
+ 1:  "https://mainnet.foo.com",
+ 3:  "https://ropsten.bar.com",
+ 100:  "https://bash.network",
+ ...
+   },
+ ),
+);
+```
+
+Then enable the session by toggling QR code modal
+
+```dart
+await wc.connect();
+```
+
+After that, we can use the object normally as Ethereum object
+
+```dart
+await wc.getChainId(); // 1
+```
+
+Or  integrate into Ethers library and use Web3Provider to interact further
+
+```dart
+final w3 = Web3Provider(wc);
+await w3.getGasPrice(); // 100,000,000
 ```
 
