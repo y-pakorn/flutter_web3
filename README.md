@@ -1,6 +1,6 @@
 # flutter_web3
 
-#### This is a fork of [flutter_web3_provider](https://github.com/gochain/flutter_web3_provider). Be sure to check out the original package!
+#### This is a fork of [flutter_web3_provider](https://github.com/gochain/flutter_web3_provider). Be sure to check out the original package.
 
 **flutter_web3** is Dart class and method wrapper for
 
@@ -164,13 +164,16 @@ Sending write method,
 
 ```dart
 final tx = await contract.send('transfer',['0xbarbaz','100,000,000']);
-tx['hash'] // 0xfoo
+tx.hash // 0xfoo
 ```
 
 And wait until transaction is successfully mined
 
 ```dart
-final receipt = await provider!.waitForTransaction(tx['hash']);
+var receipt = await provider!.waitForTransaction(tx.hash);
+// or
+var receipt = await tx.wait();
+
 receipt.isSuccessful // true if successful
 receipt.logs.firstWhere((e) => e.topics.first == '0xbar').data // 0xfoobar
 
@@ -185,6 +188,16 @@ contract.onEvent('Transfer', (from,to,amount,data) {
  to // 0xbaz
  amount // 100,000,000,000
 });
+```
+
+Convert abi to different format,
+
+```dart
+final interface = Interface([
+  'function balanceOf(address) view returns (uint)',
+]);
+
+interface.format(FormatTypes.json); // [{"type":"function","name":"balanceOf","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address"}],"outputs":[{"type":"uint256"}]}]
 ```
 
 ## Wallet Connect Provider
@@ -237,4 +250,3 @@ Or  integrate into Ethers library and use Web3Provider to interact further,
 final w3 = Web3Provider(wc);
 await w3.getGasPrice(); // 100,000,000
 ```
-
