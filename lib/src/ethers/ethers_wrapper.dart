@@ -143,6 +143,10 @@ extension ProviderExtension on Provider {
 }
 
 extension SignerExtension on Signer {
+  /// Returns a Future that resolves to the account address.
+  Future<String> getAddress() =>
+      promiseToFuture<String>(callMethod(this, 'getAddress', []));
+
   /// Returns the balance of this wallet at [blockTag].
   Future<BigInt> getBalance([String? blockTag]) async =>
       (await promiseToFuture<BigNumber>(callMethod(
