@@ -1,6 +1,8 @@
 # flutter_web3
 
-#### This is a fork of [flutter_web3_provider](https://github.com/gochain/flutter_web3_provider). Be sure to check out the original package.
+### This is a fork of [flutter_web3_provider](https://github.com/gochain/flutter_web3_provider). Be sure to check out the original package.
+
+---
 
 **flutter_web3** is Dart class and method wrapper for
 
@@ -13,6 +15,10 @@
 By utilizing dart2js functionality and dart extension, we manage to get Typing and Asynchonous into dart!
 
 NOTE: This is for web only!
+
+---
+
+### API Reference can be view [here](https://pub.dev/documentation/flutter_web3/latest/).
 
 ## Ethereum Object
 
