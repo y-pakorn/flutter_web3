@@ -1,3 +1,8 @@
+## 1.0.10
+
+- Add more class and function wrapper
+- Rewrite some documentation
+
 ## 1.0.9
 
 - Implement new wrapping method that involve promise listener function
