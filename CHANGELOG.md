@@ -1,3 +1,8 @@
+## 1.0.7
+
+- Add more ethers js class and function wrapper
+- Breaking changes: TxReceipt changes to TransactionReceipt
+
 ## 1.0.6
 
 - Wallet Connect buges fix
