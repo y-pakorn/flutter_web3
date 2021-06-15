@@ -1,8 +1,22 @@
-# flutter_web3
 
-### This is a fork of [flutter_web3_provider](https://github.com/gochain/flutter_web3_provider). Be sure to check out the original package.
+<h1 align="center">flutter_web3</h1>
 
----
+
+<div align="center">
+<a href="https://pub.dev/packages/flutter_web3">
+<img alt="Pub Version" src="https://img.shields.io/pub/v/flutter_web3?style=flat-square">
+</a>
+<a href="https://github.com/y-pakorn/flutter_web3/issues">
+<img alt="GitHub issues" src="https://img.shields.io/github/issues/y-pakorn/flutter_web3?style=flat-square">
+</a>
+<a href="">
+<img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/y-pakorn/flutter_web3?style=flat-square">
+</a>
+</div>
+
+> This is a fork of [flutter_web3_provider](https://github.com/gochain/flutter_web3_provider). Be sure to check out the original package.
+
+## Introduction
 
 **flutter_web3** is Dart class and method wrapper for
 
@@ -14,11 +28,11 @@
 
 By utilizing dart2js functionality and dart extension, we manage to get Typing and Asynchonous into dart!
 
-NOTE: This is for web only!
-
----
+#### This package is made especially for developing Dapp on cross(multiple) chain in Flutter.
 
 ### API Reference can be view [here](https://pub.dev/documentation/flutter_web3/latest/).
+
+> NOTE: This is for web only!
 
 ## Ethereum Object
 
