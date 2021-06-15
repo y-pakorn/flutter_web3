@@ -1,3 +1,8 @@
+## 1.0.9
+
+- Implement new wrapping method that involve promise listener function
+- Add ERC20 Contract wrapper and more utility function for Ethers
+
 ## 1.0.7
 
 - Add more ethers js class and function wrapper

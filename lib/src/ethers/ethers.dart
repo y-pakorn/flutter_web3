@@ -2,7 +2,6 @@
 library ethers;
 
 import 'package:js/js.dart';
-import 'package:meta/meta.dart';
 
 import '../ethereum/ethereum.dart';
 

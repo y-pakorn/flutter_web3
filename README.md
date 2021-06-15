@@ -49,7 +49,7 @@ ethereum!.onAccountChanged((accs) {
 Handle other dynamic event,
 
 ```dart
-ethereum!.onEvent('message', (message) {
+ethereum!.on('message', (message) {
  final json = convertToDart(message); // Convert js to Dart object.
  json['foo'] // Foo
  json['bar']['baz'] // Barbaz
@@ -59,7 +59,7 @@ ethereum!.onEvent('message', (message) {
 Or call other json rpc request method that have generic return type T,
 
 ```dart
-final result = await ethereum!.dartRequest<BigNumber>('eth_gasPrice');
+final result = await ethereum!.request<BigNumber>('eth_gasPrice');
 result.toBigInt; // 100,000,000,000
 ```
 
@@ -131,7 +131,7 @@ final tx = await provider!.getSigner().send(TxParams(to: '0xbar',value: '100,000
 tx['hash'] // 0xbaz
 ```
 
-----
+---
 
 #### Contract
 
@@ -166,9 +166,11 @@ final symbol = await contract.call<String>('symbol');
 symbol // FBB
 ```
 
-Sending write method,
+Sending write method (need Signer to passed into the contract),
 
 ```dart
+final contract = Contract('0xfoo', abi, provider!.getSigner());
+
 final tx = await contract.send('transfer',['0xbarbaz','100,000,000']);
 tx.hash // 0xfoo
 ```
@@ -188,7 +190,7 @@ receipt.logs.firstWhere((e) => e.topics.first == '0xbar').data // 0xfoobar
 Subscribe to any emitted event,
 
 ```dart
-contract.onEvent('Transfer', (from,to,amount,data) {
+contract.on('Transfer', (from,to,amount,data) {
  convertToDart(data) // {'foo':'bar','baz':'foobar',...}
  from // 0xbar
  to // 0xbaz
@@ -204,6 +206,26 @@ final interface = Interface([
 ]);
 
 interface.format(FormatTypes.json); // [{"type":"function","name":"balanceOf","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address"}],"outputs":[{"type":"uint256"}]}]
+```
+
+Alternatively for ERC20 Contract, we can use ContractERC20 class.
+
+```dart
+final token = ContractERC20('0xfoo', provider!.getSigner());
+
+await token.name; // Foo
+await token.symbol; // Bar
+await token.decimals; // Baz
+
+final tx = await token.transfer('0xbar', BigInt.parse('10000000000000'));
+tx.hash // 0xbarbaz
+
+token.onApproval((owner, spender, value, data) {
+  owner // 0xfoo
+  spender //0xbar
+  value //0xbaz
+});
+
 ```
 
 ## Wallet Connect Provider
