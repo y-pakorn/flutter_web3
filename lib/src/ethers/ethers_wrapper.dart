@@ -2,7 +2,6 @@ import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 
 import '../objects/objects.dart';
-import '../utils.dart';
 import 'ethers.dart';
 import 'ethers_utils.dart';
 
@@ -37,10 +36,10 @@ extension ContractExtension on Contract {
   /// This transaction will be verified by every node on the entire network as well by the miner who will compute the new state of the blockchain after executing it against the current state.
   ///
   /// It cannot return a result. If a result is required, it should be logged using a Solidity event (or EVM log), which can then be queried from the transaction receipt.
-  Future<dynamic> send(String method,
-          [List<dynamic> args = const [], TxOverride? params]) async =>
-      convertToDart(await promiseToFuture(
-          callMethod(this, method, params != null ? [...args, params] : args)));
+  Future<TransactionResponse> send(String method,
+          [List<dynamic> args = const [], TxOverride? params]) =>
+      promiseToFuture<TransactionResponse>(
+          callMethod(this, method, params != null ? [...args, params] : args));
 }
 
 extension ProviderExtension on Provider {
@@ -60,17 +59,17 @@ extension ProviderExtension on Provider {
             : [RawTxParams(to: to, data: data)],
       ));
 
-  /// Returns a Future of [TxReceipt] which will not resolve until [transactionHash] is mined.
+  /// Returns a Future of [TransactionReceipt] which will not resolve until [transactionHash] is mined.
   ///
   /// If confirms is 0, this method is non-blocking and if the transaction has not been mined returns null.
   ///
   /// Otherwise, this method will block until the transaction has confirms blocks mined on top of the block in which is was mined.
-  Future<TxReceipt> waitForTransaction(
+  Future<TransactionReceipt> waitForTransaction(
     String transactionHash, [
     int confirms = 1,
     Duration? timeout,
   ]) =>
-      promiseToFuture<TxReceipt>(callMethod(
+      promiseToFuture<TransactionReceipt>(callMethod(
         this,
         'waitForTransaction',
         timeout != null
@@ -111,12 +110,37 @@ extension ProviderExtension on Provider {
   Future<Block> getBlock(int blockNumber) =>
       promiseToFuture<Block>(callMethod(this, 'getBlock', [blockNumber]));
 
-  /// Returns the [TxReceipt] for hash or [null] if the transaction has not been mined.
+  /// Returns the [TransactionReceipt] for [hash] or null if the transaction has not been mined.
   ///
   /// To stall until the transaction has been mined, consider the [waitForTransaction] method.
-  Future<TxReceipt?> getTransactionReceipt(String transactionHash) =>
-      promiseToFuture<TxReceipt?>(
-          callMethod(this, 'getTransactionReceipt', [transactionHash]));
+  Future<TransactionReceipt?> getTransactionReceipt(String hash) =>
+      promiseToFuture<TransactionReceipt?>(
+          callMethod(this, 'getTransactionReceipt', [hash]));
+
+  /// Returns the [TransactionResponse] with [hash] or null if the transaction is unknown.
+  ///
+  /// If a transaction has not been mined, this method will search the transaction pool.
+  ///
+  /// Various backends may have more restrictive transaction pool access (e.g. if the gas price is too low or the transaction was only recently sent and not yet indexed) in which case this method may also return null.
+  Future<TransactionResponse?> getTransaction(String hash) =>
+      promiseToFuture<TransactionResponse?>(
+          callMethod(this, 'getTransaction', [hash]));
+
+  /// Submits transaction to the network to be mined.
+  ///
+  /// The transaction must be signed, and be valid (i.e. the nonce is correct and the account has sufficient balance to pay for the transaction).
+  ///
+  /// ```dart
+  /// await provider.sendTransaction("0xf86e808502540be400825208948ba1f109551bd432803012645ac136ddd64dba72880de0b6b3a764000080820a96a0f0c5bcb11e5a16ab116c60a0e5837ae98ec36e7f217740076572e8183002edd2a01ed1b4411c2840b9793e8be5415a554507f1ea320069be6dcecabd7b9097dbd4");
+  /// ```
+  Future<TransactionResponse> sendTransaction(String data) =>
+      promiseToFuture<TransactionResponse>(
+          callMethod(this, 'sendTransaction', [data]));
+
+  /// Get the block from the network, where the [BlockWithTransaction.transactions] is an Array of [TransactionResponse].
+  Future<BlockWithTransaction> getBlockWithTransaction(int blockNumber) =>
+      promiseToFuture<BlockWithTransaction>(
+          callMethod(this, 'getBlockWithTransactions', [blockNumber]));
 }
 
 extension SignerExtension on Signer {
@@ -147,7 +171,25 @@ extension SignerExtension on Signer {
   /// Submits transaction to the network to be mined.
   ///
   /// The transaction must be valid (i.e. the nonce is correct and the account has sufficient balance to pay for the transaction).
-  Future<dynamic> send(TxParams params) async =>
-      convertToDart(await promiseToFuture<dynamic>(
-          callMethod(this, 'sendTransaction', [params])));
+  Future<TransactionResponse> sendTransaction(TransactionRequest request) =>
+      promiseToFuture<TransactionResponse>(
+          callMethod(this, 'sendTransaction', [request]));
+
+  /// Returns the result of calling using the [TransactionRequest], with this account address being used as the from field.
+  Future<String> call(TransactionRequest request) =>
+      promiseToFuture<String>(callMethod(this, 'call', [request]));
+
+  /// Returns the result of estimating the cost to send the [TransactionRequest], with this account address being used as the from field.
+  Future<BigInt> estimateGas(TransactionRequest request) async =>
+      (await promiseToFuture<BigNumber>(
+              callMethod(this, 'estimateGas', [request])))
+          .toBigInt;
+
+  /// Returns a Futuer which resolves to the signed transaction of the transactionRequest. This method does not populate any missing fields.
+  Future<String> signTransaction(TransactionRequest request) =>
+      promiseToFuture<String>(callMethod(this, 'sendTransaction', [request]));
+
+  /// Returns a Future which resolves to the Raw Signature of message.
+  Future<String> signMessage(String message) =>
+      promiseToFuture<String>(callMethod(this, 'signMessage', [message]));
 }

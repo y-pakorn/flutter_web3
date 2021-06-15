@@ -7,43 +7,30 @@ import 'package:js/js.dart';
 
 import '../ethers/ethers.dart';
 
+/// An EIP-2930 transaction allows an optional AccessList which causes a transaction to warm (i.e. pre-cache) another addresses state and the specified storage keys.
+///
+/// This incurs an increased intrinsic cost for the transaction, but provides discounts for storage and state access throughout the execution of the transaction.
 @JS()
 @anonymous
-class Block {
-  /// The difficulty target required to be met by the miner of the block.
-  external num get difficulty;
+class AccessList {
+  external String get address;
+  external List<String> get storageKey;
+}
 
-  /// This is extra data a miner may choose to include when mining a block.
-  external String get extraData;
-
-  /// The maximum amount of gas that this block was permitted to use.
-  ///
-  /// This is a value that can be voted up or voted down by miners and is used to automatically adjust the bandwidth requirements of the network.
-  external BigNumber get gasLimit;
-
-  /// The total amount of gas used by all transactions in this block.
-  external BigNumber get gasUsed;
-
-  /// The hash of this block.
-  external String get hash;
-
-  /// The coinbase address of this block, which indicates the address the miner that mined this block would like the subsidy reward to go to.
-  external String get miner;
-
-  /// The nonce used as part of the proof-of-work to mine this block.
-  external int get nounce;
-
-  /// The height (number) of this block.
-  external int get number;
-
-  /// The hash of the previous block.
-  external String get parentHash;
-
-  /// The timestamp of this block.
-  external int get timestamp;
-
+/// Often only the hashes of the transactions included in a block are needed, so by default a block only contains this information, as it is substantially less data.
+@JS()
+@anonymous
+class Block extends RawBlock {
   /// A list of the transactions hashes for each transaction this block includes.
   external List<String> get transactions;
+}
+
+/// If all transactions for a block are needed, this object instead includes the full details on each transaction.
+@JS()
+@anonymous
+class BlockWithTransaction extends RawBlock {
+  /// A list of the transactions this block includes.
+  external List<TransactionResponse> get transactions;
 }
 
 @JS()
@@ -120,6 +107,7 @@ class Log {
   external int get transactionLogIndex;
 }
 
+/// A Network represents an Ethereum network.
 @JS()
 @anonymous
 class Network {
@@ -133,6 +121,43 @@ class Network {
   ///
   ///If the network name is unknown, this will be "unknown".
   external String get name;
+}
+
+/// An object consist of basic information about block.
+@JS()
+@anonymous
+class RawBlock {
+  /// The difficulty target required to be met by the miner of the block.
+  external num get difficulty;
+
+  /// This is extra data a miner may choose to include when mining a block.
+  external String get extraData;
+
+  /// The maximum amount of gas that this block was permitted to use.
+  ///
+  /// This is a value that can be voted up or voted down by miners and is used to automatically adjust the bandwidth requirements of the network.
+  external BigNumber get gasLimit;
+
+  /// The total amount of gas used by all transactions in this block.
+  external BigNumber get gasUsed;
+
+  /// The hash of this block.
+  external String get hash;
+
+  /// The coinbase address of this block, which indicates the address the miner that mined this block would like the subsidy reward to go to.
+  external String get miner;
+
+  /// The nonce used as part of the proof-of-work to mine this block.
+  external int get nounce;
+
+  /// The height (number) of this block.
+  external int get number;
+
+  /// The hash of the previous block.
+  external String get parentHash;
+
+  /// The timestamp of this block.
+  external int get timestamp;
 }
 
 @JS()
@@ -163,61 +188,66 @@ class RequestArguments {
   external dynamic get params;
 }
 
+/// A generic object to represent a transaction.
 @JS()
 @anonymous
-class TxOverride {
-  external factory TxOverride({
-    String? value,
-    String? gasLimit,
-    String? gasPrice,
-    String? nonce,
-  });
+class Transaction {
+  ///The chain ID for transaction. This is used as part of EIP-155 to prevent replay attacks on different networks.
+  ///
+  ///For example, if a transaction was made on ropsten with an account also used on homestead, it would be possible for a transaction signed on ropsten to be executed on homestead, which is likely unintended.
+  ///
+  ///There are situations where replay may be desired, however these are very rare and it is almost always recommended to specify the chain ID.
+  external int get chainId;
 
-  /// The maximum amount of gas this transaction is permitted to use.
-  external String get gasLimit;
+  /// The data for transaction. In a contract this is the call data.
+  external dynamic get data;
 
-  /// The price (in wei) per unit of gas this transaction will pay.
-  external String get gasPrice;
+  /// The address transaction is from.
+  external String get from;
 
-  /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
-  external String get nonce;
+  /// The gas limit for transaction.
+  ///
+  /// An account must have enough ether to cover the gas (at the specified gasPrice).
+  ///
+  /// Any unused gas is refunded at the end of the transaction, and if there is insufficient gas to complete execution, the effects of the transaction are reverted, but the gas is fully consumed and an out-of-gas error occurs.
+  external BigNumber get gasLimit;
 
-  /// The amount (in wei) this transaction is sending.
-  external String get value;
+  /// The price (in wei) per unit of gas for transaction.
+  external BigNumber get gasPrice;
+
+  /// The transaction hash, which can be used as an identifier for transaction. This is the keccak256 of the serialized RLP encoded representation of transaction.
+  external String get hash;
+
+  /// The nonce for transaction.
+  ///
+  /// Each transaction sent to the network from an account includes this, which ensures the order and non-replayability of a transaction.
+  ///
+  /// This must be equal to the current number of transactions ever sent to the network by the from address.
+  external int get nounce;
+
+  /// The r portion of the elliptic curve signatures for transaction.
+  ///
+  /// This is more accurately, the x coordinate of the point r (from which the y can be computed, along with v).
+  external String get r;
+
+  /// The s portion of the elliptic curve signatures for transaction.
+  external String get s;
+
+  /// The address transaction is to.
+  external String? get to;
+
+  /// The v portion of the elliptic curve signatures for transaction.
+  ///
+  /// This is used to refine which of the two possible points a given x-coordinate can have, and in EIP-155 is additionally used to encode the chain ID into the serialized transaction.
+  external int get v;
+
+  /// The value (in wei) for transaction.
+  external BigNumber get value;
 }
 
 @JS()
 @anonymous
-class TxParams {
-  external factory TxParams({
-    String? to,
-    String? value,
-    String? gasLimit,
-    String? gasPrice,
-    String? nonce,
-  });
-
-  /// The maximum amount of gas this transaction is permitted to use.
-  external String get gasLimit;
-
-  /// The price (in wei) per unit of gas this transaction will pay.
-  external String get gasPrice;
-
-  external String get method;
-
-  /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
-  external String get nonce;
-
-  /// The address (or ENS name) this transaction it to.
-  external String get to;
-
-  /// The amount (in wei) this transaction is sending.
-  external String get value;
-}
-
-@JS()
-@anonymous
-class TxReceipt {
+class TransactionReceipt {
   external String get blockHash;
 
   /// The block height (number) of the block that this transaction was included in.
@@ -265,13 +295,98 @@ class TxReceipt {
 
   /// The address this transaction is to.
   ///
-  /// This is [null] if the transaction was an init transaction, used to deploy a contract.
+  /// This is null if the transaction was an init transaction, used to deploy a contract.
   external String? get to;
 
   external String get transactionHash;
 
   /// The index of this transaction in the list of transactions included in the block this transaction was mined in.
   external int get transactionIndex;
+}
+
+/// A transaction request describes a transaction that is to be sent to the network or otherwise processed.
+///
+/// All fields are optional and may be a promise which resolves to the required type.
+@JS()
+@anonymous
+class TransactionRequest {
+  external factory TransactionRequest({
+    String? to,
+    String? value,
+    String? gasLimit,
+    String? gasPrice,
+    String? nonce,
+    String? data,
+  });
+
+  /// The transaction data.
+  external String get data;
+
+  /// The maximum amount of gas this transaction is permitted to use.
+  external String get gasLimit;
+
+  /// The price (in wei) per unit of gas this transaction will pay.
+  external String get gasPrice;
+
+  external String get method;
+
+  /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
+  external String get nonce;
+
+  /// The address (or ENS name) this transaction it to.
+  external String get to;
+
+  /// The amount (in wei) this transaction is sending.
+  external String get value;
+}
+
+/// A TransactionResponse includes all properties of a [Transaction] as well as several properties that are useful once it has been mined.
+@JS()
+@anonymous
+class TransactionResponse extends Transaction {
+  /// The AccessList included in an EIP-2930 transaction, which will also have its type equal to 1.
+  external AccessList? get accessList;
+
+  /// The hash of the block this transaction was mined in. If the block has not been mined, this is null.
+  external String? get blockHash;
+
+  /// The number ("height") of the block this transaction was mined in. If the block has not been mined, this is null.
+  external int? get blockNumber;
+
+  /// The number of blocks that have been mined (including the initial block) since this transaction was mined.
+  external int get confirmations;
+
+  /// The serialized transaction.
+  external String get raw;
+
+  /// The timestamp of the block this transaction was mined in. If the block has not been mined, this is null.
+  external int? get timestamp;
+
+  /// The EIP-2718 type of this transaction envelope, or null for legacy transactions that do not have an envelope.
+  external int? get type;
+}
+
+@JS()
+@anonymous
+class TxOverride {
+  external factory TxOverride({
+    String? value,
+    String? gasLimit,
+    String? gasPrice,
+    String? nonce,
+  });
+
+  /// The maximum amount of gas this transaction is permitted to use.
+  external String get gasLimit;
+
+  /// The price (in wei) per unit of gas this transaction will pay.
+  external String get gasPrice;
+
+  /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
+  external String get nonce;
+
+  /// The amount (in wei) this transaction is sending.
+  external String get value;
 }
 
 @JS()
