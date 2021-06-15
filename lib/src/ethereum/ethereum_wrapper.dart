@@ -2,9 +2,10 @@ import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 
 import '../objects/objects.dart';
+import '../utils.dart';
 import 'ethereum.dart';
 
-extension DartEthereum on Ethereum {
+extension DartEthereum on EthereumBase {
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
   once(String eventName, Function listener) =>
       callMethod(this, 'once', [eventName, allowInterop(listener)]);
@@ -17,28 +18,50 @@ extension DartEthereum on Ethereum {
   off(String eventName, [Function? listener]) => callMethod(this, 'off',
       listener != null ? [eventName, allowInterop(listener)] : [eventName]);
 
-  /// Add a [listener] to be triggered for each accountsChanged event
+  /// Add a [listener] to be triggered for each accountsChanged event.
   onAccountsChanged(void Function(List<String> accounts) listener) => on(
       'accountsChanged',
       (List<dynamic> accs) => listener(accs.map((e) => e.toString()).toList()));
 
-  /// Add a [listener] to be triggered for each chainChanged event
+  /// Add a [listener] to be triggered for each chainChanged event.
   onChainChanged(void Function(int chainId) listener) =>
       on('chainChanged', (dynamic cId) => listener(int.parse(cId.toString())));
 
-  /// Use request to submit RPC requests to Ethereum via MetaMask.
+  /// Add a [listener] to be triggered for each disconnect event.
+  ///
+  /// This event is emitted if it becomes unable to submit RPC requests to any chain. In general, this will only happen due to network connectivity issues or some unforeseen error.
+  ///
+  /// Once disconnect has been emitted, the provider will not accept any new requests until the connection to the chain has been re-restablished, which requires reloading the page. You can also use the [Ethereum.isConnected] method to determine if the provider is disconnected.
+  onDisconnect(void Function(ProviderRpcError error) listeners) =>
+      on('disconnect', (ProviderRpcError error) => listeners(error));
+
+  /// Add a [listener] to be triggered for each connect event.
+  ///
+  /// This event is emitted when it first becomes able to submit RPC requests to a chain.
+  ///
+  /// We recommend using a connect event handler and the [Ethereum.isConnected] method in order to determine when/if the provider is connected.
+  onConnect(void Function(ConnectInfo connectInfo) listener) =>
+      on('connect', listener);
+
+  /// Add a [listener] to be triggered for each message event.
+  ///
+  /// The MetaMask provider emits this event when it receives some message that the consumer should be notified of. The kind of message is identified by the type string.
+  ///
+  /// RPC subscription updates are a common use case for the message event. For example, if you create a subscription using `eth_subscribe`, each subscription update will be emitted as a message event with a type of `eth_subscription`.
+  onMessage(void Function(String type, dynamic data) listener) => on(
+      'message',
+      (ProviderMessage message) =>
+          listener(message.type, convertToDart(message.data)));
+
+  /// Use request to submit RPC requests to Ethereum via MetaMask or provider that is currently using.
   ///
   /// Returns a Future of type [T] that resolves to the result of the RPC method call.
   Future<T> request<T>(String method, [dynamic params]) =>
-      promiseToFuture<T>(callMethod(
-        this,
-        'request',
-        [
-          params != null
-              ? RequestArguments(method: method, params: params)
-              : RequestArguments(method: method)
-        ],
-      ));
+      promiseToFuture<T>(callMethod(this, 'request', [
+        params != null
+            ? RequestArguments(method: method, params: params)
+            : RequestArguments(method: method)
+      ]));
 
   /// Creates a confirmation asking the user to add the specified chain to MetaMask.
   ///
@@ -50,7 +73,7 @@ extension DartEthereum on Ethereum {
 
   /// Requests that the user tracks the token in MetaMask.
   ///
-  /// Returns [bool] true if token is successfully added.
+  /// Returns [bool] `true` if token is successfully added.
   ///
   /// Most Ethereum wallets support some set of tokens, usually from a centrally curated registry of tokens. wallet_watchAsset enables web3 application developers to ask their users to track tokens in their wallets, at runtime. Once added, the token is indistinguishable from those added via legacy methods, such as a centralized registry.
   Future<bool> walletWatchAssets(WatchAssetOptions options,
@@ -60,7 +83,7 @@ extension DartEthereum on Ethereum {
 
   /// Request/Enable the accounts from the current environment.
   ///
-  /// Returns [List<String>] of accounts the node controls.
+  /// Returns List of accounts the node controls.
   ///
   /// This method will only work if you’re using the injected provider from a application like Metamask, Status or TrustWallet.
   ///
@@ -70,7 +93,7 @@ extension DartEthereum on Ethereum {
           .map((e) => e.toString())
           .toList();
 
-  /// Returns [List<String>] of accounts the node controls.
+  /// Returns List of accounts the node controls.
   Future<List<String>> getAccounts() async =>
       (await request<List<dynamic>>('eth_accounts'))
           .map((e) => e.toString())

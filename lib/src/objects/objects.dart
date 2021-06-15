@@ -5,6 +5,7 @@ import 'dart:core';
 
 import 'package:js/js.dart';
 
+import '../ethereum/ethereum.dart';
 import '../ethers/ethers.dart';
 
 /// An EIP-2930 transaction allows an optional AccessList which causes a transaction to warm (i.e. pre-cache) another addresses state and the specified storage keys.
@@ -53,6 +54,14 @@ class ChainParams {
   external CurrencyParams get nativeCurrency;
 
   external List<String> get rpcUrls;
+}
+
+/// Interface for connection info used by [Ethereum] method.
+@JS()
+@anonymous
+class ConnectInfo {
+  /// Chain id in hex that is currently connected to.
+  external String get chainId;
 }
 
 @JS()
@@ -121,6 +130,30 @@ class Network {
   ///
   ///If the network name is unknown, this will be "unknown".
   external String get name;
+}
+
+/// Interface for provier message used by [Ethereum] method.
+@JS()
+@anonymous
+class ProviderMessage {
+  /// The data of the message.
+  external dynamic get data;
+
+  /// The type of the message.
+  ///
+  /// If you create a subscription using `eth_subscribe`, each subscription update will be emitted as a message event with a type of `eth_subscription`.
+  external String get type;
+}
+
+/// Interface for provier error used by [Ethereum] method.
+@JS()
+@anonymous
+class ProviderRpcError {
+  external int get code;
+
+  external dynamic get data;
+
+  external String get message;
 }
 
 /// An object consist of basic information about block.
@@ -389,6 +422,7 @@ class TxOverride {
   external String get value;
 }
 
+/// The specific information of the asset to watch.
 @JS()
 @anonymous
 class WatchAssetOptions {
@@ -399,19 +433,20 @@ class WatchAssetOptions {
     String? image,
   });
 
-  /// The address of the token contract
+  /// The address of the token contract.
   external String get address;
 
-  /// The number of token decimals
+  /// The number of token decimals.
   external int get decimals;
 
-  /// A string url of the token logo
+  /// A string url of the token logo.
   external String? get image;
 
-  /// A ticker symbol or shorthand, up to 5 characters
+  /// A ticker symbol or shorthand, up to 5 characters.
   external String get symbol;
 }
 
+/// The metadata of the asset to watch.
 @JS()
 @anonymous
 class WatchAssetParams {
@@ -425,6 +460,6 @@ class WatchAssetParams {
 
   /// Asset type.
   ///
-  /// In the future, other standards will be supported
+  /// In the future, other standards will be supported.
   external String get type;
 }

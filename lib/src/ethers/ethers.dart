@@ -178,7 +178,7 @@ class Utils {
 /// This may also be used to wrap a standard [EIP-1193 Provider](link-eip-1193].
 @JS("providers.Web3Provider")
 class Web3Provider extends Provider {
-  external Web3Provider(Ethereum eth);
+  external Web3Provider(EthereumBase eth);
 
   external Signer getSigner();
 }
