@@ -7,17 +7,16 @@ import 'ethers_utils.dart';
 
 extension ContractExtension on Contract {
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
-  onceEvent(String eventName, Function listener) =>
-      once(eventName, allowInterop(listener));
+  once(String eventName, Function listener) =>
+      callMethod(this, 'once', [eventName, allowInterop(listener)]);
 
   /// Add a [listener] to be triggered for each [eventName] event.
-  onEvent(String eventName, Function listener) =>
-      on(eventName, allowInterop(listener));
+  on(String eventName, Function listener) =>
+      callMethod(this, 'on', [eventName, allowInterop(listener)]);
 
   /// Remove a [listener] for the [eventName] event. If no [listener] is provided, all listeners for [eventName] are removed.
-  offEvent(String eventName, [Function? listener]) => listener != null
-      ? off(eventName, allowInterop(listener))
-      : off(eventName);
+  off(String eventName, [Function? listener]) => callMethod(this, 'off',
+      listener != null ? [eventName, allowInterop(listener)] : [eventName]);
 
   /// Call read-only constant method on the Contract.
   ///

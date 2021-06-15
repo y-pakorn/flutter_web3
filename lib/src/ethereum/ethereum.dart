@@ -2,9 +2,7 @@
 library ethereum;
 
 import 'package:js/js.dart';
-import 'package:meta/meta.dart';
 
-import '../objects/objects.dart';
 import 'ethereum_wrapper.dart';
 
 /// Getter for default Ethereum object, cycles through available injector in environment.
@@ -55,22 +53,6 @@ class Ethereum {
   /// Returns the list of Listeners for the [eventName] events.
   external List<dynamic> listeners(String eventName);
 
-  /// Internal, use [offEvent] instead.
-  @internal
-  external off(String eventName, [Function? func]);
-
-  /// Internal, use [onEvent] instead.
-  @internal
-  external on(String eventName, Function func);
-
-  /// Internal, use [onceEvent] instead.
-  @internal
-  external once(String eventName, Function func);
-
   /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
   external removeAllListeners([String? eventName]);
-
-  /// Internal, use [dartRequest] instead.
-  @internal
-  external Future<dynamic> request(RequestArguments args);
 }
