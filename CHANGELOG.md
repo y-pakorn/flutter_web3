@@ -1,3 +1,8 @@
+## 1.0.11
+
+- Add balanceOf function to ERC20 Contract
+- Seperate constant class and add more Ethers method
+
 ## 1.0.10
 
 - Add more class and function wrapper
