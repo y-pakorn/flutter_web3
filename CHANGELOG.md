@@ -1,3 +1,7 @@
+## 1.0.12
+
+- Add multicalling functionality
+
 ## 1.0.11
 
 - Add balanceOf function to ERC20 Contract
