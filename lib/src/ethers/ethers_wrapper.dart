@@ -6,6 +6,30 @@ import 'ethers.dart';
 import 'ethers_utils.dart';
 
 extension ContractExtension on Contract {
+  /// Multicall read-only constant method on the Contract. `May not` be at the same block.
+  ///
+  /// If [eagerError] is `true`, returns the error immediately on the first error found.
+  Future<List<T>> multicall<T>(String method, List<List<dynamic>> args,
+          [bool eagerError = false]) =>
+      Future.wait(
+          Iterable<int>.generate(args.length).map(
+            (e) => call<T>(method, args[e]),
+          ),
+          eagerError: eagerError);
+
+  /// Multicall method and args on the Contract, this lose ability to annotate type.
+  Future<List<dynamic>> multicallMethod(
+    List<String> method,
+    List<List<dynamic>> args,
+  ) {
+    assert(method.isNotEmpty);
+    assert(args.isNotEmpty);
+    assert(method.length == args.length);
+
+    return Future.wait(Iterable<int>.generate(method.length)
+        .map((e) => call(method[e], args[e])));
+  }
+
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
   once(String eventName, Function listener) =>
       callMethod(this, 'once', [eventName, allowInterop(listener)]);

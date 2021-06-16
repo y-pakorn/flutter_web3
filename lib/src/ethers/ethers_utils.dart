@@ -70,9 +70,6 @@ class ContractERC20 {
   Future<BigInt> get totalSupply async =>
       (await contract.call<BigNumber>('totalSupply')).toBigInt;
 
-  Future<BigInt> balanceOf(String address) async =>
-      (await contract.call<BigNumber>('balanceOf', [address])).toBigInt;
-
   /// Returns the remaining number of tokens that [spender] will be allowed to spend on behalf of [owner] through `transferFrom`.
   ///
   /// This is zero by default.
@@ -83,14 +80,27 @@ class ContractERC20 {
   Future<TransactionResponse> approve(String spender, BigInt amount) =>
       contract.send('approve', [spender, amount.toString()]);
 
-  /// Transfer token from `msg.sender` to [recipient] in [amount]. Emits `Transfer` events when called.
-  Future<TransactionResponse> transfer(String recipient, BigInt amount) =>
-      contract.send('transfer', [recipient, amount.toString()]);
+  Future<BigInt> balanceOf(String address) async =>
+      (await contract.call<BigNumber>('balanceOf', [address])).toBigInt;
 
-  /// Transfer token from [sender] to [recipient] in [amount]. Emits `Transfer` events when called.
-  Future<TransactionResponse> transferFrom(
-          String sender, String recipient, BigInt amount) =>
-      contract.send('transfer', [sender, recipient, amount.toString()]);
+  /// Multicall of [allowance], may not be in the same block.
+  Future<List<BigInt>> multicallAllowance(
+      List<String> owners, List<String> spenders) async {
+    assert(owners.isNotEmpty, 'Owner list empty');
+    assert(spenders.isNotEmpty, 'Spender list empty');
+    assert(owners.length == spenders.length,
+        'Owner list length must be same as spender');
+    return Future.wait(Iterable<int>.generate(owners.length).map(
+      (e) => allowance(owners[e], spenders[e]),
+    ));
+  }
+
+  /// Multicall of [balanceOf], may not be in the same block.
+  Future<List<BigInt>> multicallBalanceOf(List<String> addresses) async {
+    assert(addresses.isNotEmpty, 'address should not be empty');
+    return Future.wait(Iterable<int>.generate(addresses.length)
+        .map((e) => balanceOf(addresses[e])));
+  }
 
   /// Emitted when the allowance of a `spender` for an `owner` is set by a call to `approve`.
   ///
@@ -114,6 +124,15 @@ class ContractERC20 {
           'Transfer',
           (String from, String to, BigNumber amount, dynamic data) =>
               callback(from, to, amount.toBigInt, convertToDart(data)));
+
+  /// Transfer token from `msg.sender` to [recipient] in [amount]. Emits `Transfer` events when called.
+  Future<TransactionResponse> transfer(String recipient, BigInt amount) =>
+      contract.send('transfer', [recipient, amount.toString()]);
+
+  /// Transfer token from [sender] to [recipient] in [amount]. Emits `Transfer` events when called.
+  Future<TransactionResponse> transferFrom(
+          String sender, String recipient, BigInt amount) =>
+      contract.send('transfer', [sender, recipient, amount.toString()]);
 }
 
 extension BigIntExt on BigInt {
