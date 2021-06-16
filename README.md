@@ -142,7 +142,7 @@ Or use signer to send transaction,
 
 ```dart
 final tx = await provider!.getSigner().send(TxParams(to: '0xbar',value: '100,000,000'));
-tx['hash'] // 0xbaz
+tx.hash // 0xbaz
 ```
 
 ---
@@ -170,7 +170,7 @@ final abi = [
 final contract = Contract('0xfoo', abi, provider!);
 ```
 
-Calling view-only constant method,
+Calling view-only property,
 
 ```dart
 final name = await contract.call<String>('name');
@@ -180,12 +180,25 @@ final symbol = await contract.call<String>('symbol');
 symbol // FBB
 ```
 
+Multicalling view-only constant method,
+
+```dart 
+final balances = await contract.multicall<String>('balanceOf', [
+  ['0xbar'],
+  ['0xfoo'],
+  ['0xbaz']
+]);
+
+balances // [1000000, 1000000, 1000000000] 
+```
+
 Sending write method (need Signer to passed into the contract),
 
 ```dart
 final contract = Contract('0xfoo', abi, provider!.getSigner());
 
-final tx = await contract.send('transfer',['0xbarbaz','100,000,000']);
+final tx = await contract.send('transfer', ['0xbarbaz','100000000']);
+
 tx.hash // 0xfoo
 ```
 
@@ -261,7 +274,7 @@ Create Wallet Connect Provider object,
 Since rpc argument in `WalletConnectProviderOptions` is js map object with dynamic keys and values, we need to wrap it in js converter.
 
 ```dart
-final jsMap = jsify({ 
+final jsMap = convertRpc({ 
   56: 'https://bsc-dataseed.binance.org/',
 });
 
