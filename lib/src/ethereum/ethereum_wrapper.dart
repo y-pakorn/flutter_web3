@@ -5,7 +5,7 @@ import '../objects/objects.dart';
 import '../utils.dart';
 import 'ethereum.dart';
 
-extension DartEthereum on EthereumBase {
+extension EthereumExtension on EthereumBase {
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
   once(String eventName, Function listener) =>
       callMethod(this, 'once', [eventName, allowInterop(listener)]);

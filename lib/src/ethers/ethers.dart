@@ -69,24 +69,6 @@ class Contract {
   external removeAllListeners([String? eventName]);
 }
 
-@JS('constants')
-class EtherConstants {
-  /// The Address Zero, which is 20 bytes (40 nibbles) of zero.
-  @JS('AddressZero')
-  // ignore: non_constant_identifier_names
-  external static String get AddressZero;
-
-  /// The Ether symbol,
-  @JS('EtherSymbol')
-  // ignore: non_constant_identifier_names
-  external static String get EtherSymbol;
-
-  /// The Hash Zero, which is 32 bytes (64 nibbles) of zero.
-  @JS('HashZero')
-  // ignore: non_constant_identifier_names
-  external static String get HashZero;
-}
-
 /// Format types of Interface
 @JS('utils.FormatTypes')
 class FormatTypes {
@@ -158,7 +140,16 @@ class Utils {
   external static String commify(String value);
 
   /// Returns a string representation of value formatted with unit digits (if it is a number) or to the unit specified (if a string).
-  external static BigNumber formatUnits(String value, [String unit = 'ether']);
+  external static String formatUnits(String value, [dynamic unit = 'ether']);
+
+  /// The equivalent to calling `formatUnits(value, "ether")`.
+  external static String formatEther(String value);
+
+  /// Returns a BigNumber representation of value, parsed with unit digits (if it is a number) or from the unit specified (if a string).
+  external static BigNumber parseUnit(String value, [dynamic unit = 'ether']);
+
+  /// The equivalent to calling parseUnits(value, "ether").
+  external static BigNumber parseEther(String value);
 
   /// Returns address as a Checksum Address.
   ///
