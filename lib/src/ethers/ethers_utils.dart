@@ -70,6 +70,9 @@ class ContractERC20 {
   Future<BigInt> get totalSupply async =>
       (await contract.call<BigNumber>('totalSupply')).toBigInt;
 
+  Future<BigInt> balanceOf(String address) async =>
+      (await contract.call<BigNumber>('balanceOf', [address])).toBigInt;
+
   /// Returns the remaining number of tokens that [spender] will be allowed to spend on behalf of [owner] through `transferFrom`.
   ///
   /// This is zero by default.
