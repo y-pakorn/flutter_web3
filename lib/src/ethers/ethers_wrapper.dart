@@ -6,6 +6,17 @@ import 'ethers.dart';
 import 'ethers_utils.dart';
 
 extension ContractExtension on Contract {
+  /// This is a promise that will resolve to the address the [Contract] object is attached to.
+  ///
+  /// If an Address was provided to the constructor, it will be equal to this; if an ENS name was provided, this will be the resolved address.
+  Future<String> get resolvedAddress =>
+      promiseToFuture<String>(getProperty(this, 'resolvedAddress'));
+
+  /// If the [Contract] object is the result of a ContractFactory deployment, this is the transaction which was used to deploy the contract.
+  Future<TransactionResponse> get deployTransaction =>
+      promiseToFuture<TransactionResponse>(
+          getProperty(this, 'deployTransaction'));
+
   /// Multicall read-only constant method on the Contract. `May not` be at the same block.
   ///
   /// If [eagerError] is `true`, returns the error immediately on the first error found.
@@ -66,6 +77,12 @@ extension ContractExtension on Contract {
 }
 
 extension ProviderExtension on Provider {
+  /// Returns a Future which will stall until the [Network] has heen established, ignoring errors due to the target node not being active yet.
+  ///
+  /// This can be used for testing or attaching scripts to wait until the node is up and running smoothly.
+  Future<Network> get ready =>
+      promiseToFuture<Network>(getProperty(this, 'ready'));
+
   /// Direct Ethers provider call to access Blockchain data.
   Future<T> call<T>(String method, [List<dynamic> args = const []]) =>
       promiseToFuture<T>(callMethod(this, method, args));

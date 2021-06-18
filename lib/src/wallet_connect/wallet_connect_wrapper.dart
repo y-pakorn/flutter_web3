@@ -11,13 +11,5 @@ extension WalletConnectExtension on WalletConnectProvider {
       promiseToFuture(callMethod(this, 'disconnect', []));
 }
 
-//class UserClosedModalException implements Exception {}
-
-//class NoRPCAvailableException implements Exception {
-//final int chainId;
-
-//NoRPCAvailableException({required this.chainId});
-//}
-
 /// Function to convert Dart rpc map into JS rpc map.
 dynamic convertRpc(Map<int, String> rpcMap) => jsify(rpcMap);

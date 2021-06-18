@@ -31,7 +31,7 @@ class BigNumber {
   /// Returns the value of BigNumber as a JavaScript value.
   ///
   /// This will throw an error if the value is greater than or equal to Number.MAX_SAFE_INTEGER or less than or equal to Number.MIN_SAFE_INTEGER.
-  external int toNumber();
+  external num toNumber();
 
   /// Returns the value of BigNumber as a base-10 string.
   external String toString();
@@ -50,6 +50,9 @@ class Contract {
   /// Use [Provider] in [providerOrSigner] for read-only contract calls, or use [Signer] for read-write contract calls.
   external Contract(String address, dynamic abi, dynamic providerOrSigner);
 
+  /// This is the address (or ENS name) the contract was constructed with.
+  external String get address;
+
   /// This is the ABI as an [Interface].
   external Interface get interface;
 
@@ -58,6 +61,13 @@ class Contract {
 
   /// If a [Signer] was provided to the constructor, this is that signer.
   external Signer get signer;
+
+  ///Returns a new instance of the [Contract], but connected to [Provider] or [Signer].
+  ///
+  ///By passing in a [Provider], this will return a downgraded Contract which only has read-only access (i.e. constant calls).
+  ///
+  ///By passing in a [Signer]. this will return a Contract which will act on behalf of that signer.
+  external Contract connect(dynamic providerOrSigner);
 
   /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
   external int listenerCount([String? eventName]);
@@ -139,17 +149,11 @@ class Utils {
   /// Returns a string with value grouped by 3 digits, separated by ,.
   external static String commify(String value);
 
-  /// Returns a string representation of value formatted with unit digits (if it is a number) or to the unit specified (if a string).
-  external static String formatUnits(String value, [dynamic unit = 'ether']);
-
   /// The equivalent to calling `formatUnits(value, "ether")`.
   external static String formatEther(String value);
 
-  /// Returns a BigNumber representation of value, parsed with unit digits (if it is a number) or from the unit specified (if a string).
-  external static BigNumber parseUnit(String value, [dynamic unit = 'ether']);
-
-  /// The equivalent to calling parseUnits(value, "ether").
-  external static BigNumber parseEther(String value);
+  /// Returns a string representation of value formatted with unit digits (if it is a number) or to the unit specified (if a string).
+  external static String formatUnits(String value, [dynamic unit = 'ether']);
 
   /// Returns address as a Checksum Address.
   ///
@@ -160,6 +164,12 @@ class Utils {
 
   /// Returns true if address is valid (in any supported format).
   external static bool isAddress(String address);
+
+  /// The equivalent to calling parseUnits(value, "ether").
+  external static BigNumber parseEther(String value);
+
+  /// Returns a BigNumber representation of value, parsed with unit digits (if it is a number) or from the unit specified (if a string).
+  external static BigNumber parseUnit(String value, [dynamic unit = 'ether']);
 
   external static String verifyMessage(String hash, String sig);
 }
