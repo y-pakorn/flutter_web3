@@ -1,3 +1,7 @@
+## 1.0.13
+
+- Add more Ethers method
+
 ## 1.0.12
 
 - Add multicalling functionality
