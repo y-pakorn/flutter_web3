@@ -133,6 +133,18 @@ class ContractERC20 {
   Future<TransactionResponse> transferFrom(
           String sender, String recipient, BigInt amount) =>
       contract.send('transfer', [sender, recipient, amount.toString()]);
+
+  /// [Log] of `Transfer` events.
+  Future<List<Log>> transferLogs(
+          [List<dynamic>? args, dynamic startBlock, dynamic endBlock]) =>
+      contract.queryFilter(
+          contract.getFilter('Transfer', args ?? []), startBlock, endBlock);
+
+  /// [Log] of `Approval` events.
+  Future<List<Log>> approvalLogs(
+          [List<dynamic>? args, dynamic startBlock, dynamic endBlock]) =>
+      contract.queryFilter(
+          contract.getFilter('Approval', args ?? []), startBlock, endBlock);
 }
 
 extension BigIntExt on BigInt {

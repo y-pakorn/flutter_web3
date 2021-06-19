@@ -82,6 +82,66 @@ class CurrencyParams {
 
 @JS()
 @anonymous
+class EventFilter {
+  external factory EventFilter({
+    String? address,
+    List<dynamic>? topics,
+  });
+
+  /// The address to filter by, or `null` to match any address.
+  external String? get address;
+
+  external set address(String? address);
+
+  /// The topics to filter by or `null` to match any topics.
+  ///
+  /// Each entry represents an AND condition that must match, or may be null to match anything.
+  ///
+  /// If a given entry is an Array, then that entry is treated as an OR for any value in the entry.
+  external List<dynamic>? get topics;
+
+  external set topics(List<dynamic>? topics);
+}
+
+@JS()
+@anonymous
+class Filter extends EventFilter {
+  external factory Filter({
+    String? address,
+    List<dynamic>? topics,
+    dynamic fromBlock,
+    dynamic toBlock,
+  });
+
+  /// The starting block (inclusive) to search for logs matching the filter criteria.
+  external dynamic get fromBlock;
+
+  /// "latest" - The most recently mined block
+  /// "earliest" - Block #0
+  /// "pending" - The block currently being prepared for mining; not all
+  ///
+  /// Or an [int] block number.
+  /// Positive number mean block at that height. Negative mean block that many block ago.
+  ///
+  /// Or a Hex [String] block at that height.
+  external set fromBlock(dynamic blockTag);
+
+  /// The end block (inclusive) to search for logs matching the filter criteria.
+  external dynamic get toBlock;
+
+  /// "latest" - The most recently mined block
+  /// "earliest" - Block #0
+  /// "pending" - The block currently being prepared for mining; not all
+  ///
+  /// Or an [int] block number.
+  /// Positive number mean block at that height. Negative mean block that many block ago.
+  ///
+  /// Or a Hex [String] block at that height.
+  external set toBlock(dynamic blockTag);
+}
+
+@JS()
+@anonymous
 class Log {
   /// The address of the contract that generated this log.
   external String get address;

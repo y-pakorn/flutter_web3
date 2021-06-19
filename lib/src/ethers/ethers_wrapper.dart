@@ -6,6 +6,19 @@ import 'ethers.dart';
 import 'ethers_utils.dart';
 
 extension ContractExtension on Contract {
+  /// Return a filter for [eventName], optionally filtering by additional constraints.
+  ///
+  /// Only indexed event parameters may be filtered. If a parameter is null (or not provided) then any value in that field matches.
+  Filter getFilter(String eventName, [List<dynamic> args = const []]) =>
+      callMethod(getProperty(this, 'filters'), eventName, args);
+
+  /// Return a [List] of [Logs] that have been emitted by the Contract by the [filter].
+  Future<List<Log>> queryFilter(EventFilter filter,
+          [dynamic startBlock, dynamic endBlock]) async =>
+      (await promiseToFuture<List<dynamic>>(callMethod(this, 'queryFilter',
+              [filter, startBlock, endBlock]..removeWhere((e) => e == null))))
+          .cast<Log>();
+
   /// This is a promise that will resolve to the address the [Contract] object is attached to.
   ///
   /// If an Address was provided to the constructor, it will be equal to this; if an ENS name was provided, this will be the resolved address.
@@ -77,6 +90,14 @@ extension ContractExtension on Contract {
 }
 
 extension ProviderExtension on Provider {
+  /// Returns the [List] of [Log] matching the filter.
+  ///
+  /// Keep in mind that many backends will discard old events, and that requests which are too broad may get dropped as they require too many resources to execute the query.
+  Future<List<Log>> getLogs(EventFilter filter) async =>
+      (await promiseToFuture<List<dynamic>>(
+              callMethod(this, 'getLogs', [filter])))
+          .cast<Log>();
+
   /// Returns a Future which will stall until the [Network] has heen established, ignoring errors due to the target node not being active yet.
   ///
   /// This can be used for testing or attaching scripts to wait until the node is up and running smoothly.
