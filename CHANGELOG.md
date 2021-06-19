@@ -1,3 +1,7 @@
+## 1.0.14
+
+- Add filter object and method to query past events
+
 ## 1.0.13
 
 - Add more Ethers method
