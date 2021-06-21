@@ -13,8 +13,10 @@ Web3Provider? get provider => ethereum != null ? Web3Provider(ethereum!) : null;
 /// Most developers will never need to use this class directly, since the [Interface] class greatly simplifies these operations.
 @JS("AbiCoder")
 class AbiCoder {
-  external String decode(List<String> types, String data);
+  /// Decode the list [data] according to the list of [types].
+  external List<dynamic> decode(List<String> types, String data);
 
+  /// Encode the list [values] according to the list of [types].
   external String encode(List<String> types, List<dynamic> values);
 }
 
@@ -60,7 +62,7 @@ class Contract {
   external Provider get provider;
 
   /// If a [Signer] was provided to the constructor, this is that signer.
-  external Signer get signer;
+  external Signer? get signer;
 
   ///Returns a new instance of the [Contract], but connected to [Provider] or [Signer].
   ///
@@ -77,6 +79,42 @@ class Contract {
 
   /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
   external removeAllListeners([String? eventName]);
+}
+
+/// These utilities are used extensively within the library, but are also quite useful for application developers.
+@JS("utils")
+class EthUtils {
+  /// An [AbiCoder] created when the library is imported which is used by the [Interface].
+  external static AbiCoder get defaultAbiCoder;
+
+  external static String arrayify(String hash);
+
+  /// Returns a string with value grouped by 3 digits, separated by ,.
+  external static String commify(String value);
+
+  /// The equivalent to calling `formatUnits(value, "ether")`.
+  external static String formatEther(String value);
+
+  /// Returns a string representation of value formatted with unit digits (if it is a number) or to the unit specified (if a string).
+  external static String formatUnits(String value, [dynamic unit = 'ether']);
+
+  /// Returns address as a Checksum Address.
+  ///
+  /// If address is an invalid 40-nibble HexString or if it contains mixed case and the checksum is invalid, an INVALID_ARGUMENT Error is thrown.
+  ///
+  /// The value of address may be any supported address format.
+  external static String getAddress(String address);
+
+  /// Returns true if address is valid (in any supported format).
+  external static bool isAddress(String address);
+
+  /// The equivalent to calling parseUnits(value, "ether").
+  external static BigNumber parseEther(String value);
+
+  /// Returns a BigNumber representation of value, parsed with unit digits (if it is a number) or from the unit specified (if a string).
+  external static BigNumber parseUnit(String value, [dynamic unit = 'ether']);
+
+  external static String verifyMessage(String hash, String sig);
 }
 
 /// Format types of Interface
@@ -133,45 +171,15 @@ class JsonRpcProvider extends Provider {
 @JS("providers")
 class Provider {}
 
+/// A Signer in ethers is an abstraction of an Ethereum Account, which can be used to sign messages and transactions and send signed transactions to the Ethereum Network to execute state changing operations.
+///
+/// The available operations depend largely on the sub-class used.
+///
+/// For example, a Signer from MetaMask can send transactions and sign messages but cannot sign a transaction (without broadcasting it).
 @JS("signer.Signer")
 class Signer {
+  /// Returns `true` if an only if object is a [Signer].
   external static bool isSigner(Object object);
-}
-
-/// These utilities are used extensively within the library, but are also quite useful for application developers.
-@JS("utils")
-class Utils {
-  /// An [AbiCoder] created when the library is imported which is used by the [Interface].
-  external static AbiCoder get defaultAbiCoder;
-
-  external static String arrayify(String hash);
-
-  /// Returns a string with value grouped by 3 digits, separated by ,.
-  external static String commify(String value);
-
-  /// The equivalent to calling `formatUnits(value, "ether")`.
-  external static String formatEther(String value);
-
-  /// Returns a string representation of value formatted with unit digits (if it is a number) or to the unit specified (if a string).
-  external static String formatUnits(String value, [dynamic unit = 'ether']);
-
-  /// Returns address as a Checksum Address.
-  ///
-  /// If address is an invalid 40-nibble HexString or if it contains mixed case and the checksum is invalid, an INVALID_ARGUMENT Error is thrown.
-  ///
-  /// The value of address may be any supported address format.
-  external static String getAddress(String address);
-
-  /// Returns true if address is valid (in any supported format).
-  external static bool isAddress(String address);
-
-  /// The equivalent to calling parseUnits(value, "ether").
-  external static BigNumber parseEther(String value);
-
-  /// Returns a BigNumber representation of value, parsed with unit digits (if it is a number) or from the unit specified (if a string).
-  external static BigNumber parseUnit(String value, [dynamic unit = 'ether']);
-
-  external static String verifyMessage(String hash, String sig);
 }
 
 /// The Web3Provider is meant to ease moving from a web3.js based application to ethers by wrapping an existing Web3-compatible (such as a Web3HttpProvider, Web3IpcProvider or Web3WsProvider) and exposing it as an ethers.js Provider which can then be used with the rest of the library.
@@ -181,5 +189,6 @@ class Utils {
 class Web3Provider extends Provider {
   external Web3Provider(EthereumBase eth);
 
+  /// Connect this to create new [Signer] object.
   external Signer getSigner();
 }
