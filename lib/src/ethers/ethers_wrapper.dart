@@ -3,7 +3,17 @@ import 'package:js/js_util.dart';
 
 import '../objects/objects.dart';
 import 'ethers.dart';
-import 'ethers_utils.dart';
+
+extension BigNumberExtension on BigNumber {
+  /// Convert JS [BigNumber] to Dart [BigInt].
+  BigInt get toBigInt => BigInt.parse(this.toString());
+
+  /// Convert JS [BigNumber] to Dart [int].
+  int get toInt => int.parse(this.toString());
+
+  /// Convert JS [BigNumber] to Dart [double].
+  double get toDouble => double.parse(this.toString());
+}
 
 extension ContractExtension on Contract {
   /// Return a filter for [eventName], optionally filtering by additional constraints.

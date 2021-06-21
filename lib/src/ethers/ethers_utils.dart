@@ -4,7 +4,7 @@ import 'ethers.dart';
 import 'ethers_wrapper.dart';
 
 /// Get default [AbiCoder].
-AbiCoder get abiCoder => Utils.defaultAbiCoder;
+AbiCoder get abiCoder => EthUtils.defaultAbiCoder;
 
 /// Convert JS [BigNumber] to Dart [BigInt].
 BigInt bigNumberToBigInt(BigNumber bigNumber) =>
@@ -37,7 +37,15 @@ class ContractERC20 {
   final Contract contract;
 
   /// True if [Signer] is attached to [contract].
-  final bool isReadOnly;
+  bool get isReadOnly => contract.signer == null;
+
+  int _decimals = 0;
+
+  String _name = '';
+
+  String _symbol = '';
+
+  BigInt _totalSupply = BigInt.zero;
 
   /// Instantiate ERC20 Contract using default abi.
   ///
@@ -45,9 +53,9 @@ class ContractERC20 {
   ContractERC20(String address, dynamic providerOrSigner)
       : assert(providerOrSigner != null, 'providerOrSigner should not be null'),
         assert(address.isNotEmpty, 'address should not be empty'),
-        assert(Utils.isAddress(address), 'address should be '),
-        contract = Contract(address, abi, providerOrSigner),
-        isReadOnly = !(providerOrSigner is Signer);
+        assert(
+            EthUtils.isAddress(address), 'address should be in address format'),
+        contract = Contract(address, abi, providerOrSigner);
 
   /// Returns the number of decimals used to get its user representation.
   ///
@@ -57,18 +65,32 @@ class ContractERC20 {
   /// Tokens usually opt for a value of 18, imitating the relationship between
   /// Ether and Wei. This is the value `ERC20` uses, unless this function is
   /// overridden
-  Future<int> get decimals async =>
-      (await contract.call<BigNumber>('decimals')).toInt;
+  Future<int> get decimals async {
+    if (_decimals == 0)
+      _decimals = (await contract.call<BigNumber>('decimals')).toInt;
+    return _decimals;
+  }
 
-  /// Returns the name of the token.
-  Future<String> get name => contract.call<String>('name');
+  /// Returns the name of the token. If token doesn't have name, return empty string.
+  Future<String> get name async {
+    try {
+      if (_name.isEmpty) _name = await contract.call<String>('name');
+    } catch (error) {}
+    return _name;
+  }
 
   /// Returns the symbol of the token, usually a shorter version of the name.
-  Future<String> get symbol => contract.call<String>('symbol');
+  Future<String> get symbol async {
+    if (_symbol.isEmpty) _symbol = await contract.call<String>('symbol');
+    return _symbol;
+  }
 
   /// Returns the amount of tokens in existence.
-  Future<BigInt> get totalSupply async =>
-      (await contract.call<BigNumber>('totalSupply')).toBigInt;
+  Future<BigInt> get totalSupply async {
+    if (_totalSupply == BigInt.zero)
+      _totalSupply = (await contract.call<BigNumber>('totalSupply')).toBigInt;
+    return _totalSupply;
+  }
 
   /// Returns the remaining number of tokens that [spender] will be allowed to spend on behalf of [owner] through `transferFrom`.
   ///
@@ -76,10 +98,17 @@ class ContractERC20 {
   Future<BigInt> allowance(String owner, String spender) async =>
       (await contract.call<BigNumber>('allowance', [owner, spender])).toBigInt;
 
+  /// [Log] of `Approval` events.
+  Future<List<Log>> approvalLogs(
+          [List<dynamic>? args, dynamic startBlock, dynamic endBlock]) =>
+      contract.queryFilter(
+          contract.getFilter('Approval', args ?? []), startBlock, endBlock);
+
   /// Sets [amount] as the allowance of [spender] over the caller's tokens.
   Future<TransactionResponse> approve(String spender, BigInt amount) =>
       contract.send('approve', [spender, amount.toString()]);
 
+  /// Returns the amount of tokens owned by [address]
   Future<BigInt> balanceOf(String address) async =>
       (await contract.call<BigNumber>('balanceOf', [address])).toBigInt;
 
@@ -139,26 +168,9 @@ class ContractERC20 {
           [List<dynamic>? args, dynamic startBlock, dynamic endBlock]) =>
       contract.queryFilter(
           contract.getFilter('Transfer', args ?? []), startBlock, endBlock);
-
-  /// [Log] of `Approval` events.
-  Future<List<Log>> approvalLogs(
-          [List<dynamic>? args, dynamic startBlock, dynamic endBlock]) =>
-      contract.queryFilter(
-          contract.getFilter('Approval', args ?? []), startBlock, endBlock);
 }
 
-extension BigIntExt on BigInt {
+extension BigIntExtension on BigInt {
   /// Convert Dart [BigInt] to JS [BigNumber].
   BigNumber get toBigNumber => BigNumber.from(this.toString());
-}
-
-extension BigNumberExt on BigNumber {
-  /// Convert JS [BigNumber] to Dart [BigInt].
-  BigInt get toBigInt => BigInt.parse(this.toString());
-
-  /// Convert JS [BigNumber] to Dart [int].
-  int get toInt => int.parse(this.toString());
-
-  /// Convert JS [BigNumber] to Dart [double].
-  double get toDouble => double.parse(this.toString());
 }
