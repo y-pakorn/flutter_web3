@@ -1,6 +1,4 @@
-
 <h1 align="center">flutter_web3</h1>
-
 
 <div align="center">
 <a href="https://pub.dev/packages/flutter_web3">
@@ -28,11 +26,15 @@
 
 By utilizing dart2js functionality and dart extension, we manage to get Typing and Asynchonous into dart!
 
-#### This package is made especially for developing Dapp on cross(multiple) chain in Flutter.
+#### This package is made especially for developing Dapp on cross(multiple) chain in Flutter
 
-### API Reference can be view [here](https://pub.dev/documentation/flutter_web3/latest/).
+### API Reference can be view [here](https://pub.dev/documentation/flutter_web3/latest/)
 
-> NOTE: This is for web only!
+> NOTE: This is for Flutter web only!
+
+## Breaking Changes
+
+- 1.0.15: Ethers `Utils` class was changed to `EthUtils`, Functionality remain the same.
 
 ## Ethereum Object
 
@@ -182,7 +184,7 @@ symbol // FBB
 
 Multicalling view-only constant method,
 
-```dart 
+```dart
 final balances = await contract.multicall<String>('balanceOf', [
   ['0xbar'],
   ['0xfoo'],

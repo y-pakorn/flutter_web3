@@ -1,3 +1,9 @@
+## 1.0.15
+
+- Add more Ethers utils method
+- Ethers bugs fix and change class name
+- Add variable caching to ERC20 Contract
+
 ## 1.0.14
 
 - Add filter object and method to query past events
@@ -46,4 +52,3 @@
 ## 1.0.2
 
 - Initial version
-
