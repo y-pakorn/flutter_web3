@@ -237,6 +237,19 @@ final interface = Interface([
 interface.format(FormatTypes.json); // [{"type":"function","name":"balanceOf","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address"}],"outputs":[{"type":"uint256"}]}]
 ```
 
+Query past event logs,
+
+```dart
+// Filter logs from 0xfoo to { 0xbar or 0xbaz }.
+final filter = contract.getFilter('Transfer', ['0xfoo', ['0xbar', '0xbaz']]); 
+
+// Apply filter and query all logs from block 111111 to lastest.
+final logs = await contract.queryFilter(filter, 111111);
+
+// The last is the most recent one.
+logs.last.transactionHash // 0xfoobar
+```
+
 Alternatively for ERC20 Contract, we can use ContractERC20 class.
 
 ```dart
@@ -261,7 +274,7 @@ token.onApproval((owner, spender, value, data) {
 
 ### Initialize
 
-To initialize, add ethers.js script to `web/index.html`. We can use CDN from [jsdelivr](https://www.jsdelivr.com/package/npm/@walletconnect/web3-provider).
+To initialize, add Wallet Connect Provider script to `web/index.html`. We can use CDN from [jsdelivr](https://www.jsdelivr.com/package/npm/@walletconnect/web3-provider).
 
 ```
 <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.5.0-rc.2/dist/umd/index.min.js" type="application/javascript"></script>
