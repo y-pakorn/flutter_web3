@@ -158,7 +158,7 @@ extension ProviderExtension on Provider {
               blockTag != null ? [address, blockTag] : [address])))
           .toBigInt;
 
-  /// Returns the number of transactions [address] has ever sent, as of blockTag.
+  /// Returns the number of transactions [address] has ever sent, as of [blockTag].
   ///
   /// This value is required to be the nonce for the next transaction from address sent to the network.
   Future<int> getTransactionCount(String address, [String? blockTag]) async =>
@@ -169,8 +169,8 @@ extension ProviderExtension on Provider {
       );
 
   /// Returns the block number (or height) of the most recently mined block.
-  Future<int> getBlockNumber() async =>
-      int.parse(await promiseToFuture(callMethod(this, 'getBlockNumber', [])));
+  Future<int> getBlockNumber() =>
+      promiseToFuture<int>(callMethod(this, 'getBlockNumber', []));
 
   /// Returns the current gas price.
   Future<BigInt> getGasPrice() async =>
@@ -260,7 +260,7 @@ extension SignerExtension on Signer {
               callMethod(this, 'estimateGas', [request])))
           .toBigInt;
 
-  /// Returns a Futuer which resolves to the signed transaction of the transactionRequest. This method does not populate any missing fields.
+  /// Returns a Future which resolves to the signed transaction of the transactionRequest. This method does not populate any missing fields.
   Future<String> signTransaction(TransactionRequest request) =>
       promiseToFuture<String>(callMethod(this, 'sendTransaction', [request]));
 
