@@ -1,4 +1,8 @@
-## 1.0.15
+# 1.0.16
+
+- Reorganize export library
+
+# 1.0.15
 
 - Add more Ethers utils method
 - Ethers bugs fix and change class name
