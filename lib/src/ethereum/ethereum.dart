@@ -2,11 +2,18 @@
 library ethereum;
 
 import 'package:js/js.dart';
+import 'package:js/js_util.dart';
 
 import 'ethereum_wrapper.dart';
 
 /// Getter for default Ethereum object, cycles through available injector in environment.
-Ethereum? get ethereum => _ethereum ?? _binanceChain;
+Ethereum? get ethereum =>
+    isEthereumSupported ? (_ethereum ?? _binanceChain) : null;
+
+bool get isEthereumSupported => hasProperty(_window, 'ethereum');
+
+@JS("window")
+external Object get _window;
 
 @deprecated
 @JS("web3")
