@@ -10,10 +10,9 @@ import 'ethereum_wrapper.dart';
 Ethereum? get ethereum =>
     isEthereumSupported ? (_ethereum ?? _binanceChain) : null;
 
-bool get isEthereumSupported => hasProperty(_window, 'ethereum');
-
-@JS("window")
-external Object get _window;
+/// Getter for boolean to detect Ethereum object support. without calling itself to prevent js undefined error.
+bool get isEthereumSupported =>
+    hasProperty(_window, 'ethereum') || hasProperty(_window, 'BinanceChain');
 
 @deprecated
 @JS("web3")
@@ -25,29 +24,14 @@ external Ethereum? get _binanceChain;
 @JS("ethereum")
 external Ethereum? get _ethereum;
 
+@JS("window")
+external Object get _window;
+
 /// Convert JavaScript object or value to a JSON string,
 ///
 /// optionally replacing values if a replacer function is specified or optionally including only the specified properties if a replacer array is specified.
 @JS("JSON.stringify")
 external String stringify(dynamic obj);
-
-@JS()
-class EthereumBase {
-  /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
-  external int listenerCount([String? eventName]);
-
-  /// Returns the list of Listeners for the [eventName] events.
-  external List<dynamic> listeners(String eventName);
-
-  /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
-  external removeAllListeners([String? eventName]);
-
-  /// Returns a hexadecimal string representing the current chain ID.
-  ///
-  /// Deprecated, Consider using [getChainId]
-  @deprecated
-  external String get chainId;
-}
 
 @JS()
 class Ethereum extends EthereumBase {
@@ -65,4 +49,22 @@ class Ethereum extends EthereumBase {
   ///
   /// You may often encounter the word "connected" in reference to whether a web3 site can access the user's accounts. In the provider interface, however, "connected" and "disconnected" refer to whether the provider can make RPC requests to the current chain.
   external bool isConnected();
+}
+
+@JS()
+class EthereumBase {
+  /// Returns a hexadecimal string representing the current chain ID.
+  ///
+  /// Deprecated, Consider using [getChainId]
+  @deprecated
+  external String get chainId;
+
+  /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
+  external int listenerCount([String? eventName]);
+
+  /// Returns the list of Listeners for the [eventName] events.
+  external List<dynamic> listeners(String eventName);
+
+  /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
+  external removeAllListeners([String? eventName]);
 }
