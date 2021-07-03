@@ -1,3 +1,10 @@
+# 1.0.17
+
+- Update breaking changes and add more element to README.md
+- Remove export redundancy
+- Add more useful method to ERC20Contract
+- Fix ethereum throw undefined error in some cases
+
 # 1.0.16
 
 - Reorganize export library
