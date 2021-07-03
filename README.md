@@ -34,6 +34,8 @@ By utilizing dart2js functionality and dart extension, we manage to get Typing a
 
 ## Breaking Changes
 
+- 1.0.17: `ethereumEnabled` getter was changed to `isEthereumSupported` to reflect its property more clearly.
+
 - 1.0.15: Ethers `Utils` class was changed to `EthUtils`, Functionality remain the same.
 
 ## Ethereum Object
@@ -41,8 +43,9 @@ By utilizing dart2js functionality and dart extension, we manage to get Typing a
 You can access the Ethereum object by accessing the `ethereum` getter.
 
 ```dart
-if (ethereum != null) {
-    final accs = await ethereum!.getAccounts(); // get all accounts in node disposal
+// use `isEthereumSupported` to avoid js undefined error on some browser.
+if (isEthereumSupported) {
+    final accs = await ethereum!.getAccounts(); // get all accounts in node disposal.
     accs // [foo,bar]
 }
 ```
