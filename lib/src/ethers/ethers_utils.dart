@@ -34,10 +34,7 @@ class ContractERC20 {
   ];
 
   /// Ethers Contract object.
-  final Contract contract;
-
-  /// True if [Signer] is attached to [contract].
-  bool get isReadOnly => contract.signer == null;
+  Contract contract;
 
   int _decimals = 0;
 
@@ -70,6 +67,9 @@ class ContractERC20 {
       _decimals = (await contract.call<BigNumber>('decimals')).toInt;
     return _decimals;
   }
+
+  /// True if [Signer] is attached to [contract].
+  bool get isReadOnly => contract.signer == null;
 
   /// Returns the name of the token. If token doesn't have name, return empty string.
   Future<String> get name async {
@@ -111,6 +111,12 @@ class ContractERC20 {
   /// Returns the amount of tokens owned by [address]
   Future<BigInt> balanceOf(String address) async =>
       (await contract.call<BigNumber>('balanceOf', [address])).toBigInt;
+
+  /// Connect current [contract] with [providerOrSigner]
+  void connect(dynamic providerOrSigner) {
+    assert(providerOrSigner is Provider || providerOrSigner is Signer);
+    contract = contract.connect(providerOrSigner);
+  }
 
   /// Multicall of [allowance], may not be in the same block.
   Future<List<BigInt>> multicallAllowance(
