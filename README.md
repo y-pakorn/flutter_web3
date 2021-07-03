@@ -34,7 +34,7 @@ By utilizing dart2js functionality and dart extension, we manage to get Typing a
 
 ## Breaking Changes
 
-- 1.0.17: `ethereumEnabled` getter was changed to `isEthereumSupported` to reflect its property more clearly.
+- 1.0.18: `ethereumEnabled` getter was changed to `isEthereumSupported` to reflect its property more clearly.
 
 - 1.0.15: Ethers `Utils` class was changed to `EthUtils`, Functionality remain the same.
 
