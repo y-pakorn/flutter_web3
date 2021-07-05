@@ -1,5 +1,5 @@
+import '../ethereum/ethereum_utils.dart';
 import '../objects/objects.dart';
-import '../utils.dart';
 import 'ethers.dart';
 import 'ethers_wrapper.dart';
 

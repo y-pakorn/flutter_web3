@@ -2,8 +2,8 @@ import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 
 import '../objects/objects.dart';
-import '../utils.dart';
 import 'ethereum.dart';
+import 'ethereum_utils.dart';
 
 extension EthereumExtension on EthereumBase {
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.

@@ -1,10 +1,3 @@
-import 'dart:convert';
-
-import 'ethereum/ethereum.dart';
-
-/// Convert JS object to Dart object to avoid type error.
-dynamic convertToDart(dynamic jsObject) => json.decode(stringify(jsObject));
-
 /// The class that contains commonly used values.
 class EthConstant {
   /// The Address Zero, which is 20 bytes (40 nibbles) of zero.
