@@ -11,5 +11,6 @@ extension TransactionResponseExtension on TransactionResponse {
 
 extension TxReceiptExtension on TransactionReceipt {
   bool get isSuccessful => status == 1;
+
   bool get isCreatingContract => to == null;
 }

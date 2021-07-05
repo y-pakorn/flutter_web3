@@ -5,6 +5,7 @@ import 'dart:core';
 
 import 'package:js/js.dart';
 
+import '../../objects.dart';
 import '../ethereum/ethereum.dart';
 import 'wallet_connect_wrapper.dart';
 
@@ -26,6 +27,10 @@ class WalletConnectProvider extends EthereumBase {
   external bool get connected;
 
   external bool get isConnecting;
+
+  external String get rpcUrl;
+
+  external WalletMeta get walletMeta;
 }
 
 /// Option for creating [WalletConnectProvider].
