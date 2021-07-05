@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../ethereum/ethereum_utils.dart';
 import '../objects/objects.dart';
 import 'ethers.dart';
@@ -62,9 +64,9 @@ class ContractERC20 {
   /// Tokens usually opt for a value of 18, imitating the relationship between
   /// Ether and Wei. This is the value `ERC20` uses, unless this function is
   /// overridden
-  Future<int> get decimals async {
+  FutureOr<int> get decimals async {
     if (_decimals == 0)
-      _decimals = (await contract.call<BigNumber>('decimals')).toInt;
+      _decimals = (await contract.call<BigInt>('decimals')).toInt();
     return _decimals;
   }
 
@@ -72,7 +74,7 @@ class ContractERC20 {
   bool get isReadOnly => contract.signer == null;
 
   /// Returns the name of the token. If token doesn't have name, return empty string.
-  Future<String> get name async {
+  FutureOr<String> get name async {
     try {
       if (_name.isEmpty) _name = await contract.call<String>('name');
     } catch (error) {}
@@ -80,15 +82,15 @@ class ContractERC20 {
   }
 
   /// Returns the symbol of the token, usually a shorter version of the name.
-  Future<String> get symbol async {
+  FutureOr<String> get symbol async {
     if (_symbol.isEmpty) _symbol = await contract.call<String>('symbol');
     return _symbol;
   }
 
   /// Returns the amount of tokens in existence.
-  Future<BigInt> get totalSupply async {
+  FutureOr<BigInt> get totalSupply async {
     if (_totalSupply == BigInt.zero)
-      _totalSupply = (await contract.call<BigNumber>('totalSupply')).toBigInt;
+      _totalSupply = await contract.call<BigInt>('totalSupply');
     return _totalSupply;
   }
 
@@ -96,7 +98,7 @@ class ContractERC20 {
   ///
   /// This is zero by default.
   Future<BigInt> allowance(String owner, String spender) async =>
-      (await contract.call<BigNumber>('allowance', [owner, spender])).toBigInt;
+      contract.call<BigInt>('allowance', [owner, spender]);
 
   /// [Log] of `Approval` events.
   Future<List<Log>> approvalLogs(
@@ -110,7 +112,7 @@ class ContractERC20 {
 
   /// Returns the amount of tokens owned by [address]
   Future<BigInt> balanceOf(String address) async =>
-      (await contract.call<BigNumber>('balanceOf', [address])).toBigInt;
+      contract.call<BigInt>('balanceOf', [address]);
 
   /// Connect current [contract] with [providerOrSigner]
   void connect(dynamic providerOrSigner) {
