@@ -1,15 +1,21 @@
-# 1.0.18
+# 1.0.19
+
+- Add BigInt wrapper for calling method on ethers
+- Modify ContractERC20 according to BigInt wrapper
+- Update README.md to recent changes
+
+## 1.0.18
 
 - Update breaking changes and add more element to README.md
 - Remove export redundancy
-- Add more useful method to ERC20Contract
+- Add more useful method to ContractERC20
 - Fix ethereum throw undefined error in some cases
 
-# 1.0.16
+## 1.0.16
 
 - Reorganize export library
 
-# 1.0.15
+## 1.0.15
 
 - Add more Ethers utils method
 - Ethers bugs fix and change class name
