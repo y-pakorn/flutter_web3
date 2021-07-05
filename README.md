@@ -34,6 +34,8 @@ By utilizing dart2js functionality and dart extension, we manage to get Typing a
 
 ## Breaking Changes
 
+- 1.0.19: You can now use `BigInt` as type in `call` method instead of using `BigNumber`.
+
 - 1.0.18: `ethereumEnabled` getter was changed to `isEthereumSupported` to reflect its property more clearly.
 
 - 1.0.15: Ethers `Utils` class was changed to `EthUtils`, Functionality remain the same.
@@ -78,8 +80,8 @@ ethereum!.on('message', (message) {
 Or call other json rpc request method that have generic return type T,
 
 ```dart
-final result = await ethereum!.request<BigNumber>('eth_gasPrice');
-result.toBigInt; // 100,000,000,000
+final result = await ethereum!.request<BigInt>('eth_gasPrice');
+result; // 100,000,000,000
 ```
 
 ## Ethers.js
@@ -128,8 +130,8 @@ block.nounce // 1293014
 Or directly calling Ethers js with specific result type,
 
 ```dart
-final result  = await provider!.call<BigNumber>('getGasPrice');
-result.toBigInt;// 100,000,000,000,000
+final result  = await provider!.call<BigInt>('getGasPrice');
+result;// 100,000,000,000,000
 ```
 
 ---
