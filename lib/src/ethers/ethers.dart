@@ -6,7 +6,8 @@ import 'package:js/js.dart';
 import '../ethereum/ethereum.dart';
 
 /// Getter for default Web3Provider object.
-Web3Provider? get provider => ethereum != null ? Web3Provider(ethereum!) : null;
+Web3Provider? get provider =>
+    defaultProviderImpl != null ? Web3Provider(defaultProviderImpl!) : null;
 
 /// The AbiCoder is a collection of Coders which can be used to encode and decode the binary data formats used to interoperate between the EVM and higher level libraries.
 ///
@@ -288,7 +289,7 @@ class Signer {
 /// This may also be used to wrap a standard [EIP-1193 Provider](link-eip-1193].
 @JS("providers.Web3Provider")
 class Web3Provider extends Provider {
-  external Web3Provider(EthereumBase eth);
+  external Web3Provider(EthereumBaseImpl eth);
 
   /// Connect this to create new [Signer] object.
   external Signer getSigner();

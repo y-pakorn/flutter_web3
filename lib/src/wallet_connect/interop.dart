@@ -9,7 +9,7 @@ class _QrcodeModalOptionsImpl {
 }
 
 @JS("default")
-class _WalletConnectProviderImpl extends EthereumBase {
+class _WalletConnectProviderImpl extends EthereumBaseImpl {
   ///  Create WalletConnect Provider object.
   external _WalletConnectProviderImpl(
       _WalletConnectProviderOptionsImpl options);
