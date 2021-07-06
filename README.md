@@ -40,6 +40,12 @@ By utilizing dart2js functionality and dart extension, we manage to get Typing a
 
 - 1.0.15: Ethers `Utils` class was changed to `EthUtils`, Functionality remain the same.
 
+### V2 Changes
+
+Version 2.0 of this package will introduce full dart wrapper instead of js interop class.
+
+This may or may not break everything, so keep in mind you may have to change your code a lot.
+
 ## Ethereum Object
 
 You can access the Ethereum object by accessing the `ethereum` getter.
