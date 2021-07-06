@@ -1,4 +1,8 @@
-# 1.0.19
+# 1.0.20
+
+- Add more method and property to wallet connect wrapper
+
+## 1.0.19
 
 - Add BigInt wrapper for calling method on ethers
 - Modify ContractERC20 according to BigInt wrapper
