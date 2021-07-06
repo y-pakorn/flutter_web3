@@ -482,18 +482,6 @@ class TxOverride {
   external String get value;
 }
 
-@JS()
-@anonymous
-class WalletMeta {
-  external String get description;
-
-  external List<String> get icons;
-
-  external String get name;
-
-  external String get url;
-}
-
 /// The specific information of the asset to watch.
 @JS()
 @anonymous
