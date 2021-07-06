@@ -192,6 +192,30 @@ class Network {
   external String get name;
 }
 
+/// Interface for provier message used by [Ethereum] method.
+@JS()
+@anonymous
+class ProviderMessage {
+  /// The data of the message.
+  external dynamic get data;
+
+  /// The type of the message.
+  ///
+  /// If you create a subscription using `eth_subscribe`, each subscription update will be emitted as a message event with a type of `eth_subscription`.
+  external String get type;
+}
+
+/// Interface for provier error used by [Ethereum] method.
+@JS()
+@anonymous
+class ProviderRpcError {
+  external int get code;
+
+  external dynamic get data;
+
+  external String get message;
+}
+
 /// An object consist of basic information about block.
 @JS()
 @anonymous

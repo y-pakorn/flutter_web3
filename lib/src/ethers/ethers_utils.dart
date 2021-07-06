@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../ethereum/ethereum_utils.dart';
+import '../ethereum/ethereum.dart';
 import '../objects/objects.dart';
 import 'ethers.dart';
 import 'ethers_wrapper.dart';
