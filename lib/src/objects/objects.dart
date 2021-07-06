@@ -192,30 +192,6 @@ class Network {
   external String get name;
 }
 
-/// Interface for provier message used by [Ethereum] method.
-@JS()
-@anonymous
-class ProviderMessage {
-  /// The data of the message.
-  external dynamic get data;
-
-  /// The type of the message.
-  ///
-  /// If you create a subscription using `eth_subscribe`, each subscription update will be emitted as a message event with a type of `eth_subscription`.
-  external String get type;
-}
-
-/// Interface for provier error used by [Ethereum] method.
-@JS()
-@anonymous
-class ProviderRpcError {
-  external int get code;
-
-  external dynamic get data;
-
-  external String get message;
-}
-
 /// An object consist of basic information about block.
 @JS()
 @anonymous
@@ -266,19 +242,6 @@ class RawTxParams {
 
   /// The address (or ENS name) this transaction it to.
   external String get to;
-}
-
-@JS()
-@anonymous
-class RequestArguments {
-  external factory RequestArguments({
-    required String method,
-    dynamic params,
-  });
-
-  external String get method;
-
-  external dynamic get params;
 }
 
 /// A generic object to represent a transaction.
@@ -480,46 +443,4 @@ class TxOverride {
 
   /// The amount (in wei) this transaction is sending.
   external String get value;
-}
-
-/// The specific information of the asset to watch.
-@JS()
-@anonymous
-class WatchAssetOptions {
-  external factory WatchAssetOptions({
-    required String address,
-    required String symbol,
-    required int decimals,
-    String? image,
-  });
-
-  /// The address of the token contract.
-  external String get address;
-
-  /// The number of token decimals.
-  external int get decimals;
-
-  /// A string url of the token logo.
-  external String? get image;
-
-  /// A ticker symbol or shorthand, up to 5 characters.
-  external String get symbol;
-}
-
-/// The metadata of the asset to watch.
-@JS()
-@anonymous
-class WatchAssetParams {
-  external factory WatchAssetParams({
-    required String type,
-    required WatchAssetOptions options,
-  });
-
-  /// Asset options.
-  external WatchAssetOptions get options;
-
-  /// Asset type.
-  ///
-  /// In the future, other standards will be supported.
-  external String get type;
 }
