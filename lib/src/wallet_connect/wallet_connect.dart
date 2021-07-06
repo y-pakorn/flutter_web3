@@ -4,71 +4,135 @@ library wallet_connect_provider;
 import 'dart:core';
 
 import 'package:js/js.dart';
+import 'package:js/js_util.dart';
 
-import '../../objects.dart';
 import '../ethereum/ethereum.dart';
-import 'wallet_connect_wrapper.dart';
+import '../ethereum/ethereum_utils.dart';
 
-@JS()
-@anonymous
-class QrcodeModalOptions {
-  external factory QrcodeModalOptions({List<String> mobileLinks});
+part 'interop.dart';
+part 'utils.dart';
 
-  external List<String> get mobileLinks;
-}
+class WalletConnectProvider implements _WalletConnectProviderImpl {
+  final _WalletConnectProviderImpl _impl;
 
-@JS("default")
-class WalletConnectProvider extends EthereumBase {
-  ///  Create WalletConnect Provider object.
-  external WalletConnectProvider(WalletConnectProviderOptions options);
-
-  external List<String> get accounts;
-
-  external bool get connected;
-
-  external bool get isConnecting;
-
-  external String get rpcUrl;
-
-  external WalletMeta get walletMeta;
-}
-
-/// Option for creating [WalletConnectProvider].
-@JS()
-@anonymous
-class WalletConnectProviderOptions {
-  /// Required one of [infuraId] or [rpc] to be not null.
-  ///
-  /// [rpc] must be js object type, thus can be instantiate with [convertRpc] function or wrap [Map] with [jsify].
-  external factory WalletConnectProviderOptions({
-    String? infuraId,
-    dynamic rpc,
+  factory WalletConnectProvider.fromInfura(
+    String infuraId, {
+    String? network,
     String? bridge,
     bool? qrCode,
-    String? network,
     int? chainId,
     int? networkId,
-    QrcodeModalOptions? qrcodeModalOptions,
-  });
+    List<String>? mobileLinks,
+  }) =>
+      WalletConnectProvider._internal(
+        _WalletConnectProviderImpl(
+          _WalletConnectProviderOptionsImpl(
+            infuraId: infuraId,
+            network: network,
+            bridge: bridge,
+            qrCode: qrCode,
+            chainId: chainId,
+            networkId: networkId,
+            qrcodeModalOptions: mobileLinks != null
+                ? _QrcodeModalOptionsImpl(mobileLinks: mobileLinks)
+                : null,
+          ),
+        ),
+      );
 
-  external String? get bridge;
+  factory WalletConnectProvider.fromRpc(
+    Map<int, String> rpc, {
+    String? network,
+    String? bridge,
+    bool? qrCode,
+    int? chainId,
+    int? networkId,
+    List<String>? mobileLinks,
+  }) =>
+      WalletConnectProvider._internal(
+        _WalletConnectProviderImpl(
+          _WalletConnectProviderOptionsImpl(
+            rpc: _convertRpc(rpc),
+            network: network,
+            bridge: bridge,
+            qrCode: qrCode,
+            chainId: chainId,
+            networkId: networkId,
+            qrcodeModalOptions: mobileLinks != null
+                ? _QrcodeModalOptionsImpl(mobileLinks: mobileLinks)
+                : null,
+          ),
+        ),
+      );
+  const WalletConnectProvider._internal(this._impl);
 
-  /// Main network chain id.
-  external int? get chainId;
+  @override
+  List<String> get accounts => _impl.accounts;
 
-  /// The infuraId will support the following chainId's: Mainnet (1), Ropsten (3), Rinkeby(4), Goerli (5) and Kovan (42).
-  external String? get infuraId;
+  @override
+  String get chainId => _impl.chainId;
 
-  /// Main network name.
-  external String? get network;
+  @override
+  bool get connected => _impl.connected;
 
-  /// Whether to enable QR Code modal
-  external bool? get qrCode;
+  @override
+  bool get isConnecting => _impl.isConnecting;
 
-  external QrcodeModalOptions? get qrcodeModalOptions;
+  Map<int, String> get rpc => (convertToDart(getProperty(_impl, 'rpc')) as Map)
+      .map((key, value) => MapEntry(int.parse(key), value.toString()));
 
-  /// The RPC URL mapping should be indexed by chainId and it requires at least one value.
-  ///
-  /// [rpc] must be js object type, thus can be instantiate with [convertRpc] function.
-  external dynamic get rpc;
+  @override
+  String get rpcUrl => _impl.rpcUrl;
+
+  @override
+  WalletMeta get walletMeta => WalletMeta._internal(_impl.walletMeta);
+
+  /// Enable session (triggers QR Code modal)
+  Future<void> connect() => promiseToFuture(callMethod(_impl, 'enable', []));
+
+  /// Close provider session
+  Future<void> disconnect() =>
+      promiseToFuture(callMethod(_impl, 'disconnect', []));
+
+  @override
+  int listenerCount([String? eventName]) => _impl.listenerCount(eventName);
+
+  @override
+  List listeners(String eventName) => _impl.listeners(eventName);
+
+  @override
+  removeAllListeners([String? eventName]) =>
+      _impl.removeAllListeners(eventName);
+
+  @override
+  String toString() => connected
+      ? 'connected to $rpcUrl($chainId) with $accounts'
+      : 'not connected to $rpcUrl($chainId)';
+
+  static WalletConnectProvider binance = WalletConnectProvider.fromRpc(
+    {56: 'https://bsc-dataseed.binance.org/'},
+    chainId: 56,
+    network: 'binance',
+  );
+}
+
+class WalletMeta implements _WalletMetaImpl {
+  final _WalletMetaImpl _impl;
+
+  const WalletMeta._internal(this._impl);
+
+  @override
+  String get description => _impl.description;
+
+  @override
+  List<String> get icons => _impl.icons;
+
+  @override
+  String get name => _impl.name;
+
+  @override
+  String get url => _impl.url;
+
+  @override
+  String toString() => '$name on $url';
 }
