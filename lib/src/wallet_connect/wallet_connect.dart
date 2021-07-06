@@ -13,6 +13,12 @@ part 'interop.dart';
 part 'utils.dart';
 
 class WalletConnectProvider implements _WalletConnectProviderImpl {
+  static WalletConnectProvider binance = WalletConnectProvider.fromRpc(
+    {56: 'https://bsc-dataseed.binance.org/'},
+    chainId: 56,
+    network: 'binance',
+  );
+
   final _WalletConnectProviderImpl _impl;
 
   factory WalletConnectProvider.fromInfura(
@@ -39,7 +45,6 @@ class WalletConnectProvider implements _WalletConnectProviderImpl {
           ),
         ),
       );
-
   factory WalletConnectProvider.fromRpc(
     Map<int, String> rpc, {
     String? network,
@@ -64,6 +69,7 @@ class WalletConnectProvider implements _WalletConnectProviderImpl {
           ),
         ),
       );
+
   const WalletConnectProvider._internal(this._impl);
 
   @override
@@ -108,12 +114,6 @@ class WalletConnectProvider implements _WalletConnectProviderImpl {
   String toString() => connected
       ? 'connected to $rpcUrl($chainId) with $accounts'
       : 'not connected to $rpcUrl($chainId)';
-
-  static WalletConnectProvider binance = WalletConnectProvider.fromRpc(
-    {56: 'https://bsc-dataseed.binance.org/'},
-    chainId: 56,
-    network: 'binance',
-  );
 }
 
 class WalletMeta implements _WalletMetaImpl {
