@@ -58,7 +58,7 @@ class _WalletConnectProviderOptionsImpl {
 class _WalletMetaImpl {
   external String get description;
 
-  external List<String> get icons;
+  external List<dynamic> get icons;
 
   external String get name;
 

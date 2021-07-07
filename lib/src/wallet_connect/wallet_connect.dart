@@ -192,7 +192,7 @@ class WalletMeta implements _WalletMetaImpl {
 
   /// List wallet's icons.
   @override
-  List<String> get icons => _impl.icons;
+  List<String> get icons => _impl.icons.cast<String>();
 
   /// Full name of wallet.
   @override
