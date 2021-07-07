@@ -1,13 +1,39 @@
 @JS("ethers")
 library ethers;
 
+import 'package:flutter_web3/src/objects/objects.dart';
+import '../wallet_connect/wallet_connect.dart';
 import 'package:js/js.dart';
+import 'package:js/js_util.dart';
 
 import '../ethereum/ethereum.dart';
 
+part 'filter.dart';
+part 'interop.dart';
+part 'log.dart';
+part 'network.dart';
+part 'provider.dart';
+part 'transaction.dart';
+part 'block.dart';
+part 'access_list.dart';
+part 'signer.dart';
+part 'ethers_wrapper.dart';
+
+extension BigNumberExtension on BigNumber {
+  /// Convert JS [BigNumber] to Dart [BigInt].
+  BigInt get toBigInt => BigInt.parse(this.toString());
+
+  /// Convert JS [BigNumber] to Dart [int].
+  int get toInt => int.parse(this.toString());
+
+  /// Convert JS [BigNumber] to Dart [double].
+  double get toDouble => double.parse(this.toString());
+}
+
 /// Getter for default Web3Provider object.
-Web3Provider? get provider =>
-    defaultProviderImpl != null ? Web3Provider(defaultProviderImpl!) : null;
+Web3Provider? get provider => defaultProviderImpl != null
+    ? Web3Provider._(_Web3ProviderImpl(defaultProviderImpl!))
+    : null;
 
 /// The AbiCoder is a collection of Coders which can be used to encode and decode the binary data formats used to interoperate between the EVM and higher level libraries.
 ///
@@ -19,28 +45,6 @@ class AbiCoder {
 
   /// Encode the list [values] according to the list of [types].
   external String encode(List<String> types, List<dynamic> values);
-}
-
-/// Many operations in Ethereum operate on numbers which are outside the range of safe values to use in JavaScript.
-///
-/// A BigNumber is an object which safely allows mathematical operations on numbers of any magnitude.
-///
-/// Most operations which need to return a value will return a BigNumber and parameters which accept values will generally accept them.
-@JS("BigNumber")
-class BigNumber {
-  /// Returns the value of BigNumber as a base-16, 0x-prefixed DataHexString.
-  external String toHexString();
-
-  /// Returns the value of BigNumber as a JavaScript value.
-  ///
-  /// This will throw an error if the value is greater than or equal to Number.MAX_SAFE_INTEGER or less than or equal to Number.MIN_SAFE_INTEGER.
-  external num toNumber();
-
-  /// Returns the value of BigNumber as a base-10 string.
-  external String toString();
-
-  /// The constructor of BigNumber cannot be called directly. Instead, Use the static BigNumber.from.
-  external static BigNumber from(String num);
 }
 
 /// A Contract is an abstraction of code that has been deployed to the blockchain.
@@ -60,10 +64,10 @@ class Contract {
   external Interface get interface;
 
   /// If a [Provider] was provided to the constructor, this is that provider. If a [Signer] was provided that had a [Provider], this is that provider.
-  external Provider get provider;
+  external _ProviderImpl get provider;
 
   /// If a [Signer] was provided to the constructor, this is that signer.
-  external Signer? get signer;
+  external _SignerImpl? get signer;
 
   ///Returns a new instance of the [Contract], but connected to [Provider] or [Signer].
   ///
@@ -259,38 +263,4 @@ class Interface {
   ///
   /// If the format type is json a single string is returned, otherwise an Array of the human-readable strings is returned.
   external dynamic format([dynamic types]);
-}
-
-/// The JSON-RPC API is a popular method for interacting with Ethereum and is available in all major Ethereum node implementations (e.g. Geth and Parity) as well as many third-party web services (e.g. INFURA)
-@JS("providers.JsonRpcProvider")
-class JsonRpcProvider extends Provider {
-  external JsonRpcProvider(String rpcUrl);
-}
-
-/// A Provider is an abstraction of a connection to the Ethereum network, providing a concise, consistent interface to standard Ethereum node functionality.
-///
-/// The ethers.js library provides several options which should cover the vast majority of use-cases, but also includes the necessary functions and classes for sub-classing if a more custom configuration is necessary.
-@JS("providers")
-class Provider {}
-
-/// A Signer in ethers is an abstraction of an Ethereum Account, which can be used to sign messages and transactions and send signed transactions to the Ethereum Network to execute state changing operations.
-///
-/// The available operations depend largely on the sub-class used.
-///
-/// For example, a Signer from MetaMask can send transactions and sign messages but cannot sign a transaction (without broadcasting it).
-@JS("signer.Signer")
-class Signer {
-  /// Returns `true` if an only if object is a [Signer].
-  external static bool isSigner(Object object);
-}
-
-/// The Web3Provider is meant to ease moving from a web3.js based application to ethers by wrapping an existing Web3-compatible (such as a Web3HttpProvider, Web3IpcProvider or Web3WsProvider) and exposing it as an ethers.js Provider which can then be used with the rest of the library.
-///
-/// This may also be used to wrap a standard [EIP-1193 Provider](link-eip-1193].
-@JS("providers.Web3Provider")
-class Web3Provider extends Provider {
-  external Web3Provider(EthereumBaseImpl eth);
-
-  /// Connect this to create new [Signer] object.
-  external Signer getSigner();
 }
