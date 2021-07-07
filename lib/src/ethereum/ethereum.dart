@@ -20,6 +20,9 @@ _EthereumImpl? get defaultProviderImpl =>
             : _binanceChain
         : null;
 
+@internal
+_EthereumImpl getEthereumImpl(Ethereum ethereum) => ethereum._impl;
+
 /// Getter for default Ethereum object, cycles through available injector in environment.
 Ethereum? get ethereum => Ethereum.provider;
 

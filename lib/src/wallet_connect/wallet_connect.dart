@@ -5,12 +5,17 @@ import 'dart:core';
 
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
+import 'package:meta/meta.dart';
 
 import '../ethereum/ethereum.dart';
 import '../objects/objects.dart';
 
 part 'interop.dart';
 part 'utils.dart';
+
+@internal
+_WalletConnectProviderImpl getWalletConnectImpl(WalletConnectProvider wc) =>
+    wc._impl;
 
 /// Web3 Provider for Wallet Connect connection, typically used in mobile phone connection.
 class WalletConnectProvider implements _WalletConnectProviderImpl {
