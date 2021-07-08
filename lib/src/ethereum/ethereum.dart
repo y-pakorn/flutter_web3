@@ -1,16 +1,14 @@
 @JS("window")
 library ethereum;
 
-import 'dart:convert';
-
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:meta/meta.dart';
 
+import './utils.dart';
 import '../../objects.dart';
 
 part 'interop.dart';
-part 'utils.dart';
 
 @internal
 _EthereumImpl? get defaultProviderImpl =>
@@ -19,9 +17,6 @@ _EthereumImpl? get defaultProviderImpl =>
             ? _ethereum
             : _binanceChain
         : null;
-
-@internal
-_EthereumImpl getEthereumImpl(Ethereum ethereum) => ethereum._impl;
 
 /// Getter for default Ethereum object, cycles through available injector in environment.
 Ethereum? get ethereum => Ethereum.provider;
@@ -41,6 +36,9 @@ external _EthereumImpl? get _web3;
 
 @JS("window")
 external Object get _window;
+
+@internal
+_EthereumImpl getEthereumImpl(Ethereum ethereum) => ethereum._impl;
 
 /// A Dart Ethereum Provider API for consistency across clients and applications.
 class Ethereum implements _EthereumImpl {
