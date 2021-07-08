@@ -1,4 +1,8 @@
-# 1.0.20
+## 2.0.0-pre.1
+
+- v2 Prerelease
+
+## 1.0.20
 
 - Add more method and property to wallet connect wrapper
 
