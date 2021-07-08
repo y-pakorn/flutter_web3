@@ -1,7 +1,6 @@
 @JS("ethers")
 library ethers;
 
-import 'package:flutter_web3/src/objects/objects.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 

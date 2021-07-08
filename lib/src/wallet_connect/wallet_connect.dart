@@ -9,7 +9,6 @@ import 'package:meta/meta.dart';
 
 import '../ethereum/ethereum.dart';
 import '../ethereum/utils.dart';
-import '../objects/objects.dart';
 
 part 'interop.dart';
 
