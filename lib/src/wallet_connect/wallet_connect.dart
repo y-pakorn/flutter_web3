@@ -8,14 +8,17 @@ import 'package:js/js_util.dart';
 import 'package:meta/meta.dart';
 
 import '../ethereum/ethereum.dart';
+import '../ethereum/utils.dart';
 import '../objects/objects.dart';
 
 part 'interop.dart';
-part 'utils.dart';
 
 @internal
 _WalletConnectProviderImpl getWalletConnectImpl(WalletConnectProvider wc) =>
     wc._impl;
+
+/// Function to convert Dart rpc map into JS rpc map.
+dynamic _convertRpc(Map<int, String> rpcMap) => jsify(rpcMap);
 
 /// Web3 Provider for Wallet Connect connection, typically used in mobile phone connection.
 class WalletConnectProvider implements _WalletConnectProviderImpl {
