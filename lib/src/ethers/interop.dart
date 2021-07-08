@@ -1,5 +1,62 @@
 part of ethers;
 
+@JS("Contract")
+class _ContractImpl {
+  external _ContractImpl(String address, dynamic abi, dynamic providerOrSigner);
+
+  external String get address;
+
+  external Interface get interface;
+
+  external _ProviderImpl get provider;
+
+  external _SignerImpl? get signer;
+
+  external _ContractImpl connect(dynamic providerOrSigner);
+
+  external int listenerCount([String? eventName]);
+
+  external List<dynamic> listeners(String eventName);
+
+  external removeAllListeners([String? eventName]);
+}
+
+@JS()
+@anonymous
+class _AccessListImpl {
+  external String get address;
+  external List<dynamic> get storageKey;
+}
+
+@JS()
+@anonymous
+class _BlockImpl extends _RawBlockImpl {
+  external List<dynamic> get transactions;
+}
+
+@JS()
+@anonymous
+class _BlockWithTransactionImpl extends _RawBlockImpl {
+  external List<dynamic> get transactions;
+}
+
+@JS()
+@anonymous
+class _EventFilterImpl {
+  external factory _EventFilterImpl({
+    String? address,
+    List<dynamic>? topics,
+  });
+
+  external String? get address;
+
+  external set address(String? address);
+
+  external List<dynamic>? get topics;
+
+  external set topics(List<dynamic>? topics);
+}
+
 @JS()
 @anonymous
 class _FilterImpl extends _EventFilterImpl {
@@ -19,49 +76,47 @@ class _FilterImpl extends _EventFilterImpl {
   external set toBlock(dynamic blockTag);
 }
 
-@JS()
-@anonymous
-class _TransactionRequestImpl {
-  external factory _TransactionRequestImpl({
-    String? to,
-    String? value,
-    String? gasLimit,
-    String? gasPrice,
-    int? nonce,
-    String? data,
-  });
-
-  external String? get data;
-
-  external dynamic get gasLimit;
-
-  external dynamic get gasPrice;
-
-  external String? get method;
-
-  external dynamic get nonce;
-
-  external String? get to;
-
-  external dynamic get value;
-}
-
-@JS("signer.Signer")
-class _SignerImpl {
-  external static bool isSigner(Object object);
-}
-
-@JS("providers.Web3Provider")
-class _Web3ProviderImpl extends _ProviderImpl {
-  external _Web3ProviderImpl(EthereumBaseImpl eth);
-
-  external _SignerImpl getSigner();
-}
-
 @JS("providers.JsonRpcProvider")
 class _JsonRpcProviderImpl extends _ProviderImpl {
   external _JsonRpcProviderImpl(String rpcUrl);
 }
+
+@JS()
+@anonymous
+class _LogImpl {
+  external String get address;
+
+  external String get blockHash;
+
+  external int get blockNumber;
+
+  external String get data;
+
+  external String get logIndex;
+
+  external bool get removed;
+
+  external List<dynamic> get topics;
+
+  external String get transactionHash;
+
+  external String get transactionIndex;
+
+  external int get transactionLogIndex;
+}
+
+@JS()
+@anonymous
+class _NetworkImpl {
+  external int get chainId;
+
+  external String? get ensAddress;
+
+  external String get name;
+}
+
+@JS("providers")
+class _ProviderImpl {}
 
 @JS()
 @anonymous
@@ -89,8 +144,20 @@ class _RawBlockImpl {
 
 @JS()
 @anonymous
-class _BlockWithTransactionImpl extends _RawBlockImpl {
-  external List<dynamic> get transactions;
+class _RawTxParamsImpl {
+  external factory _RawTxParamsImpl({
+    required String to,
+    required String data,
+  });
+
+  external String get data;
+
+  external String get to;
+}
+
+@JS("signer.Signer")
+class _SignerImpl {
+  external static bool isSigner(Object object);
 }
 
 @JS()
@@ -119,37 +186,6 @@ class _TransactionImpl {
   external int get v;
 
   external dynamic get value;
-}
-
-@JS()
-@anonymous
-class _AccessListImpl {
-  external String get address;
-  external List<dynamic> get storageKey;
-}
-
-@JS()
-@anonymous
-class _TransactionResponseImpl extends _TransactionImpl {
-  external _AccessListImpl? get accessList;
-
-  external String? get blockHash;
-
-  external int? get blockNumber;
-
-  external int get confirmations;
-
-  external String get raw;
-
-  external dynamic get timestamp;
-
-  external int? get type;
-}
-
-@JS()
-@anonymous
-class _BlockImpl extends _RawBlockImpl {
-  external List<dynamic> get transactions;
 }
 
 @JS()
@@ -188,89 +224,52 @@ class _TransactionReceiptImpl {
 
 @JS()
 @anonymous
-class _RawTxParamsImpl {
-  external factory _RawTxParamsImpl({
-    required String to,
-    required String data,
+class _TransactionRequestImpl {
+  external factory _TransactionRequestImpl({
+    String? to,
+    String? value,
+    String? gasLimit,
+    String? gasPrice,
+    int? nonce,
+    String? data,
   });
 
-  external String get data;
+  external String? get data;
 
-  external String get to;
-}
+  external dynamic get gasLimit;
 
-/// Many operations in Ethereum operate on numbers which are outside the range of safe values to use in JavaScript.
-///
-/// A BigNumber is an object which safely allows mathematical operations on numbers of any magnitude.
-///
-/// Most operations which need to return a value will return a BigNumber and parameters which accept values will generally accept them.
-@JS("BigNumber")
-class BigNumber {
-  /// Returns the value of BigNumber as a base-16, 0x-prefixed DataHexString.
-  external String toHexString();
+  external dynamic get gasPrice;
 
-  /// Returns the value of BigNumber as a JavaScript value.
-  ///
-  /// This will throw an error if the value is greater than or equal to Number.MAX_SAFE_INTEGER or less than or equal to Number.MIN_SAFE_INTEGER.
-  external num toNumber();
+  external String? get method;
 
-  /// Returns the value of BigNumber as a base-10 string.
-  external String toString();
+  external dynamic get nonce;
 
-  /// The constructor of BigNumber cannot be called directly. Instead, Use the static BigNumber.from.
-  external static BigNumber from(String num);
+  external String? get to;
+
+  external dynamic get value;
 }
 
 @JS()
 @anonymous
-class _LogImpl {
-  external String get address;
+class _TransactionResponseImpl extends _TransactionImpl {
+  external _AccessListImpl? get accessList;
 
-  external String get blockHash;
+  external String? get blockHash;
 
-  external int get blockNumber;
+  external int? get blockNumber;
 
-  external String get data;
+  external int get confirmations;
 
-  external String get logIndex;
+  external String get raw;
 
-  external bool get removed;
+  external dynamic get timestamp;
 
-  external List<dynamic> get topics;
-
-  external String get transactionHash;
-
-  external String get transactionIndex;
-
-  external int get transactionLogIndex;
+  external int? get type;
 }
 
-@JS()
-@anonymous
-class _EventFilterImpl {
-  external factory _EventFilterImpl({
-    String? address,
-    List<dynamic>? topics,
-  });
+@JS("providers.Web3Provider")
+class _Web3ProviderImpl extends _ProviderImpl {
+  external _Web3ProviderImpl(EthereumBaseImpl eth);
 
-  external String? get address;
-
-  external set address(String? address);
-
-  external List<dynamic>? get topics;
-
-  external set topics(List<dynamic>? topics);
+  external _SignerImpl getSigner();
 }
-
-@JS()
-@anonymous
-class _NetworkImpl {
-  external int get chainId;
-
-  external String? get ensAddress;
-
-  external String get name;
-}
-
-@JS("providers")
-class _ProviderImpl {}

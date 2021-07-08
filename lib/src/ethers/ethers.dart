@@ -2,33 +2,25 @@
 library ethers;
 
 import 'package:flutter_web3/src/objects/objects.dart';
-import '../wallet_connect/wallet_connect.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 
 import '../ethereum/ethereum.dart';
+import '../wallet_connect/wallet_connect.dart';
 
+part 'access_list.dart';
+part 'block.dart';
+part 'contract.dart';
 part 'filter.dart';
 part 'interop.dart';
 part 'log.dart';
 part 'network.dart';
 part 'provider.dart';
-part 'transaction.dart';
-part 'block.dart';
-part 'access_list.dart';
 part 'signer.dart';
-part 'ethers_wrapper.dart';
+part 'transaction.dart';
 
-extension BigNumberExtension on BigNumber {
-  /// Convert JS [BigNumber] to Dart [BigInt].
-  BigInt get toBigInt => BigInt.parse(this.toString());
-
-  /// Convert JS [BigNumber] to Dart [int].
-  int get toInt => int.parse(this.toString());
-
-  /// Convert JS [BigNumber] to Dart [double].
-  double get toDouble => double.parse(this.toString());
-}
+/// Get default [AbiCoder].
+AbiCoder get abiCoder => EthUtils.defaultAbiCoder;
 
 /// Getter for default Web3Provider object.
 Web3Provider? get provider => defaultProviderImpl != null
@@ -47,43 +39,26 @@ class AbiCoder {
   external String encode(List<String> types, List<dynamic> values);
 }
 
-/// A Contract is an abstraction of code that has been deployed to the blockchain.
+/// Many operations in Ethereum operate on numbers which are outside the range of safe values to use in JavaScript.
 ///
-/// A Contract may be sent transactions, which will trigger its code to be run with the input of the transaction data.
-@JS("Contract")
-class Contract {
-  /// Contruct Contract object for invoking smart contract method.
+/// A BigNumber is an object which safely allows mathematical operations on numbers of any magnitude.
+///
+/// Most operations which need to return a value will return a BigNumber and parameters which accept values will generally accept them.
+@JS("BigNumber")
+class BigNumber {
+  /// Returns the value of BigNumber as a base-16, 0x-prefixed DataHexString.
+  external String toHexString();
+
+  /// Returns the value of BigNumber as a JavaScript value.
   ///
-  /// Use [Provider] in [providerOrSigner] for read-only contract calls, or use [Signer] for read-write contract calls.
-  external Contract(String address, dynamic abi, dynamic providerOrSigner);
+  /// This will throw an error if the value is greater than or equal to Number.MAX_SAFE_INTEGER or less than or equal to Number.MIN_SAFE_INTEGER.
+  external num toNumber();
 
-  /// This is the address (or ENS name) the contract was constructed with.
-  external String get address;
+  /// Returns the value of BigNumber as a base-10 string.
+  external String toString();
 
-  /// This is the ABI as an [Interface].
-  external Interface get interface;
-
-  /// If a [Provider] was provided to the constructor, this is that provider. If a [Signer] was provided that had a [Provider], this is that provider.
-  external _ProviderImpl get provider;
-
-  /// If a [Signer] was provided to the constructor, this is that signer.
-  external _SignerImpl? get signer;
-
-  ///Returns a new instance of the [Contract], but connected to [Provider] or [Signer].
-  ///
-  ///By passing in a [Provider], this will return a downgraded Contract which only has read-only access (i.e. constant calls).
-  ///
-  ///By passing in a [Signer]. this will return a Contract which will act on behalf of that signer.
-  external Contract connect(dynamic providerOrSigner);
-
-  /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
-  external int listenerCount([String? eventName]);
-
-  /// Returns the list of Listeners for the [eventName] events.
-  external List<dynamic> listeners(String eventName);
-
-  /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
-  external removeAllListeners([String? eventName]);
+  /// The constructor of BigNumber cannot be called directly. Instead, Use the static BigNumber.from.
+  external static BigNumber from(String num);
 }
 
 /// These utilities are used extensively within the library, but are also quite useful for application developers.
@@ -263,4 +238,20 @@ class Interface {
   ///
   /// If the format type is json a single string is returned, otherwise an Array of the human-readable strings is returned.
   external dynamic format([dynamic types]);
+}
+
+extension BigIntExtension on BigInt {
+  /// Convert Dart [BigInt] to JS [BigNumber].
+  BigNumber get toBigNumber => BigNumber.from(this.toString());
+}
+
+extension BigNumberExtension on BigNumber {
+  /// Convert JS [BigNumber] to Dart [BigInt].
+  BigInt get toBigInt => BigInt.parse(this.toString());
+
+  /// Convert JS [BigNumber] to Dart [int].
+  int get toInt => int.parse(this.toString());
+
+  /// Convert JS [BigNumber] to Dart [double].
+  double get toDouble => double.parse(this.toString());
 }
