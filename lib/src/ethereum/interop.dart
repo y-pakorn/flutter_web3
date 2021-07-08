@@ -42,7 +42,6 @@ class _CurrencyParamsImpl {
 @JS()
 @anonymous
 class EthereumBaseImpl {
-  @deprecated
   external String get chainId;
 
   external int listenerCount([String? eventName]);
