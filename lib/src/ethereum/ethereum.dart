@@ -6,7 +6,6 @@ import 'package:js/js_util.dart';
 import 'package:meta/meta.dart';
 
 import './utils.dart';
-import '../../objects.dart';
 
 part 'interop.dart';
 
@@ -39,6 +38,29 @@ external Object get _window;
 
 @internal
 _EthereumImpl getEthereumImpl(Ethereum ethereum) => ethereum._impl;
+
+/// Interface for connection info used by [Ethereum] method.
+@JS()
+@anonymous
+class ConnectInfo {
+  /// Chain id in hex that is currently connected to.
+  external String get chainId;
+}
+
+class CurrencyParams implements _CurrencyParamsImpl {
+  final _CurrencyParamsImpl _impl;
+
+  const CurrencyParams._(this._impl);
+
+  @override
+  int get decimals => _impl.decimals;
+
+  @override
+  String get name => _impl.name;
+
+  @override
+  String get symbol => _impl.symbol;
+}
 
 /// A Dart Ethereum Provider API for consistency across clients and applications.
 class Ethereum implements _EthereumImpl {
@@ -204,11 +226,12 @@ class Ethereum implements _EthereumImpl {
     List<String>? blockExplorerUrls,
   }) =>
       request('wallet_addEthereumChain', [
-        ChainParams(
+        _ChainParamsImpl(
           chainId: chainId,
           chainName: chainName,
-          nativeCurrency: nativeCurrency,
+          nativeCurrency: nativeCurrency._impl,
           rpcUrls: rpcUrls,
+          blockExplorerUrls: blockExplorerUrls,
         )
       ]);
 
@@ -238,4 +261,28 @@ class Ethereum implements _EthereumImpl {
           ),
         ),
       );
+}
+
+/// Interface for provier message used by [Ethereum] method.
+@JS()
+@anonymous
+class ProviderMessage {
+  /// The data of the message.
+  external dynamic get data;
+
+  /// The type of the message.
+  ///
+  /// If you create a subscription using `eth_subscribe`, each subscription update will be emitted as a message event with a type of `eth_subscription`.
+  external String get type;
+}
+
+/// Interface for provier error used by [Ethereum] method.
+@JS()
+@anonymous
+class ProviderRpcError {
+  external int get code;
+
+  external dynamic get data;
+
+  external String get message;
 }

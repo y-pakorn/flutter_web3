@@ -1,5 +1,43 @@
 part of ethereum;
 
+@JS()
+@anonymous
+class _ChainParamsImpl {
+  external factory _ChainParamsImpl({
+    required String chainId,
+    required String chainName,
+    required _CurrencyParamsImpl nativeCurrency,
+    required List<String> rpcUrls,
+    List<String>? blockExplorerUrls,
+  });
+
+  external List<String> get blockExplorerUrls;
+
+  external String get chainId;
+
+  external String get chainName;
+
+  external CurrencyParams get nativeCurrency;
+
+  external List<String> get rpcUrls;
+}
+
+@JS()
+@anonymous
+class _CurrencyParamsImpl {
+  external factory _CurrencyParamsImpl({
+    required String name,
+    required String symbol,
+    required int decimals,
+  });
+
+  external int get decimals;
+
+  external String get name;
+
+  external String get symbol;
+}
+
 @internal
 @JS()
 @anonymous
