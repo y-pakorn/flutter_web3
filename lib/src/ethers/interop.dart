@@ -1,5 +1,24 @@
 part of ethers;
 
+@JS()
+@anonymous
+class _TransactionOverrideImpl {
+  external factory _TransactionOverrideImpl({
+    String? value,
+    String? gasLimit,
+    String? gasPrice,
+    int? nonce,
+  });
+
+  external dynamic get gasLimit;
+
+  external dynamic get gasPrice;
+
+  external int? get nonce;
+
+  external dynamic get value;
+}
+
 @JS("Contract")
 class _ContractImpl {
   external _ContractImpl(String address, dynamic abi, dynamic providerOrSigner);

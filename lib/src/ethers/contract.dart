@@ -147,9 +147,9 @@ class Contract implements _ContractImpl {
   ///
   /// It cannot return a result. If a result is required, it should be logged using a Solidity event (or EVM log), which can then be queried from the transaction receipt.
   Future<TransactionResponse> send(String method,
-          [List<dynamic> args = const [], TxOverride? params]) =>
+          [List<dynamic> args = const [], TransactionOverride? override]) =>
       _call<TransactionResponse>(
-          method, params != null ? [...args, params] : args);
+          method, override != null ? [...args, override._impl] : args);
 
   Future<T> _call<T>(String method, [List<dynamic> args = const []]) async {
     switch (T) {

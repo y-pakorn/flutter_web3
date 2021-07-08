@@ -1,5 +1,42 @@
 part of ethers;
 
+class TransactionOverride implements _TransactionOverrideImpl {
+  final _TransactionOverrideImpl _impl;
+
+  final BigInt? _gasLimit;
+  final BigInt? _gasPrice;
+  final BigInt? _value;
+  final int? _nonce;
+
+  TransactionOverride(
+    this._gasLimit,
+    this._gasPrice,
+    this._value,
+    this._nonce,
+  ) : _impl = _TransactionOverrideImpl(
+          value: _value.toString(),
+          nonce: _nonce,
+          gasLimit: _gasLimit.toString(),
+          gasPrice: _gasPrice.toString(),
+        );
+
+  /// The maximum amount of gas this transaction is permitted to use.
+  @override
+  BigInt? get gasLimit => _gasLimit;
+
+  /// The price (in wei) per unit of gas this transaction will pay.
+  @override
+  BigInt? get gasPrice => _gasPrice;
+
+  /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
+  @override
+  int? get nonce => _nonce;
+
+  /// The amount (in wei) this transaction is sending.
+  @override
+  BigInt? get value => _value;
+}
+
 /// A transaction request describes a transaction that is to be sent to the network or otherwise processed.
 ///
 /// All fields are optional and may be a promise which resolves to the required type.
