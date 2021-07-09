@@ -57,8 +57,8 @@ class ContractERC20 {
     return _decimals;
   }
 
-  /// True if [Signer] is attached to [contract].
-  bool get isReadOnly => contract.signer == null;
+  /// `true` if connected to [Provider], `false` if connected to [Signer].
+  bool get isReadOnly => contract.isReadOnly;
 
   /// Returns the name of the token. If token doesn't have name, return empty string.
   FutureOr<String> get name async {
@@ -130,24 +130,46 @@ class ContractERC20 {
   ///
   /// `value` is the new allowance.
   void onApproval(
-          void Function(
-                  String owner, String spender, BigInt value, dynamic data)
-              callback) =>
+    void Function(
+      String owner,
+      String spender,
+      BigInt value,
+      dynamic data,
+    )
+        callback,
+  ) =>
       contract.on(
-          'Approval',
-          (String owner, String spender, BigNumber value, dynamic data) =>
-              callback(owner, spender, value.toBigInt, convertToDart(data)));
+        'Approval',
+        (String owner, String spender, BigNumber value, dynamic data) =>
+            callback(
+          owner,
+          spender,
+          value.toBigInt,
+          convertToDart(data),
+        ),
+      );
 
   /// Emitted when `amount` tokens are moved from one account (`from`) to another (`to`).
   ///
   /// Note that `amount` may be zero.
   void onTransfer(
-          void Function(String from, String to, BigInt amount, dynamic data)
-              callback) =>
+    void Function(
+      String from,
+      String to,
+      BigInt amount,
+      dynamic data,
+    )
+        callback,
+  ) =>
       contract.on(
-          'Transfer',
-          (String from, String to, BigNumber amount, dynamic data) =>
-              callback(from, to, amount.toBigInt, convertToDart(data)));
+        'Transfer',
+        (String from, String to, BigNumber amount, dynamic data) => callback(
+          from,
+          to,
+          amount.toBigInt,
+          convertToDart(data),
+        ),
+      );
 
   /// Transfer token from `msg.sender` to [recipient] in [amount]. Emits `Transfer` events when called.
   Future<TransactionResponse> transfer(String recipient, BigInt amount) =>

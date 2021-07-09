@@ -6,19 +6,24 @@ part of ethers;
 class Contract implements _ContractImpl {
   final _ContractImpl _impl;
 
-  const Contract._(this._impl);
-
   /// Contruct Contract object for invoking smart contract method.
   ///
   /// Use [Provider] in [providerOrSigner] for read-only contract calls, or use [Signer] for read-write contract calls.
   Contract(String address, dynamic abi, dynamic providerOrSigner)
       : assert(
-          providerOrSigner is Provider || providerOrSigner is Signer,
+          providerOrSigner is _ProviderImpl || providerOrSigner is _SignerImpl,
           'providerOrSigner must be Provider or Signer',
         ),
-        _impl = providerOrSigner is Provider
-            ? _ContractImpl(address, abi, providerOrSigner._provImpl)
-            : _ContractImpl(address, abi, (providerOrSigner as Signer)._impl);
+        _impl = _ContractImpl(
+            address,
+            abi,
+            providerOrSigner is Provider
+                ? providerOrSigner._provImpl
+                : providerOrSigner is Signer
+                    ? providerOrSigner._impl
+                    : providerOrSigner);
+
+  const Contract._(this._impl);
 
   /// This is the address (or ENS name) the contract was constructed with.
   @override
@@ -31,6 +36,9 @@ class Contract implements _ContractImpl {
   /// This is the ABI as an [Interface].
   @override
   Interface get interface => _impl.interface;
+
+  /// `true` if connected to [Provider], `false` if connected to [Signer].
+  bool get isReadOnly => signer == null;
 
   /// If a [Provider] was provided to the constructor, this is that provider. If a [Signer] was provided that had a [Provider], this is that provider.
   @override
@@ -151,6 +159,10 @@ class Contract implements _ContractImpl {
       _call<TransactionResponse>(
           method, override != null ? [...args, override._impl] : args);
 
+  @override
+  String toString() =>
+      '$address connected to ${isReadOnly ? 'provider' : 'signer'}';
+
   Future<T> _call<T>(String method, [List<dynamic> args = const []]) async {
     switch (T) {
       case BigInt:
@@ -168,11 +180,4 @@ class Contract implements _ContractImpl {
         return promiseToFuture<T>(getProperty(_impl, method));
     }
   }
-
-  /// `true` if connected to [Provider], `false` if connected to [Signer].
-  bool get isReadOnly => signer == null;
-
-  @override
-  String toString() =>
-      '$address connected to ${isReadOnly ? 'provider' : 'signer'}';
 }

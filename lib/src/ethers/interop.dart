@@ -174,7 +174,7 @@ class _RawTxParamsImpl {
   external String get to;
 }
 
-@JS("signer.Signer")
+@JS("Signer")
 class _SignerImpl {
   external static bool isSigner(Object object);
 }
