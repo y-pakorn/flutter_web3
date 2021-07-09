@@ -46,6 +46,9 @@ flutter_web3:
 
 Version 2.0 of this package will introduce full dart wrapper instead of js interop class.
 
-This may or may not break everything, so keep in mind you may have to change your code a lot.
-
 Track V2 progress by navigating to [this Github issue](https://github.com/y-pakorn/flutter_web3/pull/2)
+
+### Breaking Changes
+
+- `WalletConnectProvider` completely change the internal structure and constructor, but core class feature and method remain the same.
+- `Web3Provider` unnamed constructor changed into `Web3Provider.fromEthereum` and `Web3Provider.fromWalletConnect` for `Ethereum` and `WalletConnectProvider` instance respectively.
