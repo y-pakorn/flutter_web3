@@ -10,12 +10,21 @@ class Web3Provider extends Provider implements _Web3ProviderImpl {
 
   /// Create new [Web3Provider] instance from provider instance.
   factory Web3Provider(dynamic provider) {
-    assert(provider is EthereumBaseImpl, 'Provider type must be valid.');
-    return Web3Provider._(_Web3ProviderImpl(provider is Ethereum
-        ? getEthereumImpl(provider)
-        : provider is WalletConnectProvider
-            ? getWalletConnectImpl(provider)
-            : provider));
+    assert(provider != null, 'Provider must not be null.');
+    assert(
+        provider is Ethereum ||
+            provider is WalletConnectProvider ||
+            provider is EthereumBaseImpl,
+        'Provider type must be valid.');
+    return Web3Provider._(
+      _Web3ProviderImpl(
+        provider is Ethereum
+            ? getEthereumImpl(provider)
+            : provider is WalletConnectProvider
+                ? getWalletConnectImpl(provider)
+                : provider,
+      ),
+    );
   }
 
   /// Create new [Web3Provider] instance from [Ethereum] instance.
@@ -35,16 +44,26 @@ class Web3Provider extends Provider implements _Web3ProviderImpl {
 class JsonRpcProvider extends Provider implements _JsonRpcProviderImpl {
   final _JsonRpcProviderImpl _impl;
 
-  JsonRpcProvider._(this._impl) : super._(_impl);
+  final String _rpcUrl;
+
+  JsonRpcProvider._(this._impl, this._rpcUrl) : super._(_impl);
 
   /// Create new [JsonRpcProvider] from [rpcUrl].
   factory JsonRpcProvider(String rpcUrl) {
-    return JsonRpcProvider._(_JsonRpcProviderImpl(rpcUrl));
+    assert(rpcUrl.isNotEmpty, 'Rpc url must not be empty');
+    return JsonRpcProvider._(_JsonRpcProviderImpl(rpcUrl), rpcUrl);
   }
 
+  /// Rpc url that [this] is connected to.
+  String get rpcUrl => _rpcUrl;
+
+  /// Returns a list of all account addresses managed by [this] provider.
   Future<List<String>> listAccounts() async =>
       (await promiseToFuture<List>(callMethod(_impl, 'listAccounts', [])))
           .cast<String>();
+
+  @override
+  String toString() => 'JsonRpcProvider $rpcUrl';
 }
 
 /// A Provider is an abstraction of a connection to the Ethereum network, providing a concise, consistent interface to standard Ethereum node functionality.
