@@ -161,7 +161,7 @@ class Contract implements _ContractImpl {
 
   @override
   String toString() =>
-      '$address connected to ${isReadOnly ? 'provider' : 'signer'}';
+      'Contract: $address connected to ${isReadOnly ? 'provider' : 'signer'}';
 
   Future<T> _call<T>(String method, [List<dynamic> args = const []]) async {
     switch (T) {

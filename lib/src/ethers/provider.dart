@@ -38,6 +38,9 @@ class Web3Provider extends Provider implements _Web3ProviderImpl {
   /// Connect this to create new [Signer] object.
   @override
   Signer getSigner() => Signer._(_impl.getSigner());
+
+  @override
+  String toString() => 'Web3Provider:';
 }
 
 /// The JSON-RPC API is a popular method for interacting with Ethereum and is available in all major Ethereum node implementations (e.g. Geth and Parity) as well as many third-party web services (e.g. INFURA)
@@ -63,7 +66,7 @@ class JsonRpcProvider extends Provider implements _JsonRpcProviderImpl {
           .cast<String>();
 
   @override
-  String toString() => 'JsonRpcProvider $rpcUrl';
+  String toString() => 'JsonRpcProvider: $rpcUrl';
 }
 
 /// A Provider is an abstraction of a connection to the Ethereum network, providing a concise, consistent interface to standard Ethereum node functionality.

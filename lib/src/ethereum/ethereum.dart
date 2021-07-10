@@ -195,9 +195,9 @@ class Ethereum implements _EthereumImpl {
   @override
   String toString() => isSupported
       ? isConnected() && selectedAddress != null
-          ? 'connected to chain ${int.tryParse(chainId)} with $selectedAddress'
-          : 'not connected to chain ${int.tryParse(chainId)}'
-      : 'provider not supported';
+          ? 'Ethereum: connected to chain ${int.tryParse(chainId)} with $selectedAddress'
+          : 'Ethereum: not connected to chain ${int.tryParse(chainId)}'
+      : 'Ethereum: provider not supported';
 
   /// Creates a confirmation asking the user to add the specified chain with [chainId], [chainName], [nativeCurrency], and [rpcUrls] to MetaMask.
   ///

@@ -50,7 +50,7 @@ class _RawBlock implements _RawBlockImpl {
 
   @override
   String toString() =>
-      '$hash mined at ${timestamp.toIso8601String()} with diff $difficulty';
+      'Block: $hash mined at ${timestamp.toIso8601String()} with diff $difficulty';
 }
 
 /// An object consist of basic information about block.

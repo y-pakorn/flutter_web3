@@ -176,8 +176,8 @@ class WalletConnectProvider implements _WalletConnectProviderImpl {
 
   @override
   String toString() => connected
-      ? 'connected to $rpcUrl($chainId) with $accounts'
-      : 'not connected to $rpcUrl($chainId)';
+      ? 'WalletConnectProvider: connected to $rpcUrl($chainId) with $accounts'
+      : 'WalletConnectProvider: not connected to $rpcUrl($chainId)';
 
   /// Instantiate [WalletConnectProvider] object with `Binance Mainnet` rpc and QR code enabled, ready to connect.
   static WalletConnectProvider binance() => WalletConnectProvider.fromRpc(
@@ -210,5 +210,5 @@ class WalletMeta implements _WalletMetaImpl {
   String get url => _impl.url;
 
   @override
-  String toString() => '$name on $url';
+  String toString() => 'WalletMeta: $name on $url';
 }

@@ -47,4 +47,7 @@ class Log implements _LogImpl {
   /// The index of this log across all logs in the entire block.
   @override
   int get transactionLogIndex => _impl.transactionLogIndex;
+
+  @override
+  String toString() => 'Log: ${topics.length} topics from $transactionHash';
 }

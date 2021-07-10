@@ -28,7 +28,7 @@ class EventFilter implements _EventFilterImpl {
   set topics(List<dynamic>? topics) => _eventImpl.topics = topics;
 
   @override
-  String toString() => '$address with $topics';
+  String toString() => 'Filter: $address with $topics';
 }
 
 class Filter extends EventFilter implements _FilterImpl {

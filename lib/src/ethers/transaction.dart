@@ -35,6 +35,10 @@ class TransactionOverride implements _TransactionOverrideImpl {
   /// The amount (in wei) this transaction is sending.
   @override
   BigInt? get value => _value;
+
+  @override
+  String toString() =>
+      'TransactionOverride: value $value with gas limit $gasLimit and gas price $gasPrice';
 }
 
 /// A transaction request describes a transaction that is to be sent to the network or otherwise processed.
@@ -67,7 +71,8 @@ class TransactionRequest implements _TransactionRequestImpl {
         );
 
   @override
-  String toString() => 'to $to with value $value and data $data';
+  String toString() =>
+      'TransactionRequest: to $to with value $value and data $data';
 
   /// The transaction data.
   @override
@@ -168,7 +173,7 @@ class Transaction implements _TransactionImpl {
   BigInt get value => (_txImpl.value as BigNumber).toBigInt;
 
   @override
-  String toString() => '$hash from $from with data $data';
+  String toString() => 'Transaction: $hash from $from with data $data';
 }
 
 class TransactionReceipt implements _TransactionReceiptImpl {
@@ -253,8 +258,8 @@ class TransactionReceipt implements _TransactionReceiptImpl {
 
   @override
   String toString() => status
-      ? 'mined $transactionHash with $confirmations confirmations'
-      : 'reverted $transactionHash';
+      ? 'TransactionReceipt: mined $transactionHash with $confirmations confirmations and ${logs.length} logs'
+      : 'TransactionReceipt: reverted $transactionHash';
 }
 
 /// A TransactionResponse includes all properties of a [Transaction] as well as several properties that are useful once it has been mined.

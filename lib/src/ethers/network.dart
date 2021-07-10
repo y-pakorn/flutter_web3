@@ -21,5 +21,5 @@ class Network implements _NetworkImpl {
   String get name => _impl.name;
 
   @override
-  String toString() => '$name at $chainId';
+  String toString() => 'Network: $name at $chainId';
 }
