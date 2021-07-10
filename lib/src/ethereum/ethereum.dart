@@ -20,9 +20,6 @@ _EthereumImpl? get defaultProviderImpl =>
 /// Getter for default Ethereum object, cycles through available injector in environment.
 Ethereum? get ethereum => Ethereum.provider;
 
-/// Getter for boolean to detect Ethereum object support. without calling itself to prevent js undefined error.
-bool get isEthereumSupported => Ethereum.isSupported;
-
 @internal
 _EthereumImpl getEthereumImpl(Ethereum ethereum) => ethereum._impl;
 
