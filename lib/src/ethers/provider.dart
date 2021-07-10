@@ -1,61 +1,18 @@
 part of ethers;
 
-/// The Web3Provider is meant to ease moving from a web3.js based application to ethers by wrapping an existing Web3-compatible (such as a Web3HttpProvider, Web3IpcProvider or Web3WsProvider) and exposing it as an ethers.js Provider which can then be used with the rest of the library.
-///
-/// This may also be used to wrap a standard [EIP-1193 Provider](link-eip-1193].
-class Web3Provider extends Provider implements _Web3ProviderImpl {
-  final _Web3ProviderImpl _impl;
-
-  const Web3Provider._(this._impl) : super._(_impl);
-
-  /// Create new [Web3Provider] instance from provider instance.
-  factory Web3Provider(dynamic provider) {
-    assert(provider != null, 'Provider must not be null.');
-    assert(
-        provider is Ethereum ||
-            provider is WalletConnectProvider ||
-            provider is EthereumBaseImpl,
-        'Provider type must be valid.');
-    return Web3Provider._(
-      _Web3ProviderImpl(
-        provider is Ethereum
-            ? getEthereumImpl(provider)
-            : provider is WalletConnectProvider
-                ? getWalletConnectImpl(provider)
-                : provider,
-      ),
-    );
-  }
-
-  /// Create new [Web3Provider] instance from [Ethereum] instance.
-  factory Web3Provider.fromEthereum(Ethereum ethereum) =>
-      Web3Provider._(_Web3ProviderImpl(getEthereumImpl(ethereum)));
-
-  /// Create new [Web3Provider] instance from [WalletConnectProvider] instance.
-  factory Web3Provider.fromWalletConnect(WalletConnectProvider walletConnect) =>
-      Web3Provider._(_Web3ProviderImpl(getWalletConnectImpl(walletConnect)));
-
-  /// Connect this to create new [Signer] object.
-  @override
-  Signer getSigner() => Signer._(_impl.getSigner());
-
-  @override
-  String toString() => 'Web3Provider:';
-}
-
 /// The JSON-RPC API is a popular method for interacting with Ethereum and is available in all major Ethereum node implementations (e.g. Geth and Parity) as well as many third-party web services (e.g. INFURA)
 class JsonRpcProvider extends Provider implements _JsonRpcProviderImpl {
   final _JsonRpcProviderImpl _impl;
 
   final String _rpcUrl;
 
-  JsonRpcProvider._(this._impl, this._rpcUrl) : super._(_impl);
-
   /// Create new [JsonRpcProvider] from [rpcUrl].
   factory JsonRpcProvider(String rpcUrl) {
     assert(rpcUrl.isNotEmpty, 'Rpc url must not be empty');
     return JsonRpcProvider._(_JsonRpcProviderImpl(rpcUrl), rpcUrl);
   }
+
+  JsonRpcProvider._(this._impl, this._rpcUrl) : super._(_impl);
 
   /// Rpc url that [this] is connected to.
   String get rpcUrl => _rpcUrl;
@@ -99,7 +56,7 @@ class Provider implements _ProviderImpl {
         blockTag != null ? [address, blockTag] : [address],
       );
 
-  /// Get the block from the network by [blockNumber], where the [Block.transactions] is a list of transaction hashes.
+  /// Get the [Block] from the network by [blockNumber], where the [Block.transactions] is a list of transaction hashes.
   Future<Block> getBlock(int blockNumber) async =>
       Block._(await call<_BlockImpl>('getBlock', [blockNumber]));
 
@@ -117,6 +74,10 @@ class Provider implements _ProviderImpl {
 
   /// Returns the current gas price.
   Future<BigInt> getGasPrice() => call<BigInt>('getGasPrice');
+
+  /// Get the lastest [Block] from the network.
+  Future<Block> getLastestBlock() async =>
+      Block._(await call<_BlockImpl>('getBlock', []));
 
   /// Returns the [List] of [Log] matching the filter.
   ///
@@ -160,6 +121,50 @@ class Provider implements _ProviderImpl {
     if (receipt != null) return TransactionReceipt._(receipt);
   }
 
+  /// Add a [listener] to be triggered for each [event].
+  on(dynamic event, Function listener) {
+    assert(event is String || event is _EventFilterImpl,
+        'Event type must be valid.');
+    return callMethod(_provImpl, 'on', [
+      event is EventFilter
+          ? event._eventImpl
+          : event is Filter
+              ? event._impl
+              : event,
+      allowInterop(listener),
+    ]);
+  }
+
+  /// Add a [listener] to be triggered for each new [Block];
+  void onBlock(void Function(int blockNumber) listener) =>
+      on('block', listener);
+
+  /// Add a [listener] to be triggered once for [event].
+  once(dynamic event, Function listener) {
+    assert(event is String || event is _EventFilterImpl,
+        'Event type must be valid.');
+    return callMethod(_provImpl, 'on', [
+      event is EventFilter
+          ? event._eventImpl
+          : event is Filter
+              ? event._impl
+              : event,
+      allowInterop(listener),
+    ]);
+  }
+
+  /// Add a [listener] to be triggered once for new [Block];
+  void onceBlock(void Function(int blockNumber) listener) =>
+      on('block', listener);
+
+  /// Add a [listener] to be triggered once for [filter];
+  void onceFilter(EventFilter filter, Function listener) =>
+      on(filter is Filter ? filter._impl : filter._eventImpl, listener);
+
+  /// Add a [listener] to be triggered for [filter];
+  void onFilter(EventFilter filter, Function listener) =>
+      on(filter is Filter ? filter._impl : filter._eventImpl, listener);
+
   /// Returns the result of executing the transaction, using call.
   ///
   /// A call does not require any ether, but cannot change any state. This is useful for calling getters on Contracts.
@@ -201,4 +206,47 @@ class Provider implements _ProviderImpl {
               : [transactionHash, confirms],
         ),
       );
+}
+
+/// The Web3Provider is meant to ease moving from a web3.js based application to ethers by wrapping an existing Web3-compatible (such as a Web3HttpProvider, Web3IpcProvider or Web3WsProvider) and exposing it as an ethers.js Provider which can then be used with the rest of the library.
+///
+/// This may also be used to wrap a standard [EIP-1193 Provider](link-eip-1193].
+class Web3Provider extends Provider implements _Web3ProviderImpl {
+  final _Web3ProviderImpl _impl;
+
+  /// Create new [Web3Provider] instance from provider instance.
+  factory Web3Provider(dynamic provider) {
+    assert(provider != null, 'Provider must not be null.');
+    assert(
+        provider is Ethereum ||
+            provider is WalletConnectProvider ||
+            provider is EthereumBaseImpl,
+        'Provider type must be valid.');
+    return Web3Provider._(
+      _Web3ProviderImpl(
+        provider is Ethereum
+            ? getEthereumImpl(provider)
+            : provider is WalletConnectProvider
+                ? getWalletConnectImpl(provider)
+                : provider,
+      ),
+    );
+  }
+
+  /// Create new [Web3Provider] instance from [Ethereum] instance.
+  factory Web3Provider.fromEthereum(Ethereum ethereum) =>
+      Web3Provider._(_Web3ProviderImpl(getEthereumImpl(ethereum)));
+
+  /// Create new [Web3Provider] instance from [WalletConnectProvider] instance.
+  factory Web3Provider.fromWalletConnect(WalletConnectProvider walletConnect) =>
+      Web3Provider._(_Web3ProviderImpl(getWalletConnectImpl(walletConnect)));
+
+  const Web3Provider._(this._impl) : super._(_impl);
+
+  /// Connect this to create new [Signer] object.
+  @override
+  Signer getSigner() => Signer._(_impl.getSigner());
+
+  @override
+  String toString() => 'Web3Provider:';
 }
