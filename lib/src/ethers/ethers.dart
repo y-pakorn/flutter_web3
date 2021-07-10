@@ -22,9 +22,8 @@ part 'transaction.dart';
 AbiCoder get abiCoder => EthUtils.defaultAbiCoder;
 
 /// Getter for default Web3Provider object.
-Web3Provider? get provider => defaultProviderImpl != null
-    ? Web3Provider._(_Web3ProviderImpl(defaultProviderImpl!))
-    : null;
+Web3Provider? get provider =>
+    defaultProviderImpl != null ? Web3Provider(defaultProviderImpl) : null;
 
 /// The AbiCoder is a collection of Coders which can be used to encode and decode the binary data formats used to interoperate between the EVM and higher level libraries.
 ///
