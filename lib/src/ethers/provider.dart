@@ -8,6 +8,16 @@ class Web3Provider extends Provider implements _Web3ProviderImpl {
 
   const Web3Provider._(this._impl) : super._(_impl);
 
+  /// Create new [Web3Provider] instance from provider instance.
+  factory Web3Provider(dynamic provider) {
+    assert(provider is EthereumBaseImpl, 'Provider type must be valid.');
+    return Web3Provider._(_Web3ProviderImpl(provider is Ethereum
+        ? getEthereumImpl(provider)
+        : provider is WalletConnectProvider
+            ? getWalletConnectImpl(provider)
+            : provider));
+  }
+
   /// Create new [Web3Provider] instance from [Ethereum] instance.
   factory Web3Provider.fromEthereum(Ethereum ethereum) =>
       Web3Provider._(_Web3ProviderImpl(getEthereumImpl(ethereum)));
@@ -23,7 +33,18 @@ class Web3Provider extends Provider implements _Web3ProviderImpl {
 
 /// The JSON-RPC API is a popular method for interacting with Ethereum and is available in all major Ethereum node implementations (e.g. Geth and Parity) as well as many third-party web services (e.g. INFURA)
 class JsonRpcProvider extends Provider implements _JsonRpcProviderImpl {
-  JsonRpcProvider(String rpcUrl) : super._(_JsonRpcProviderImpl(rpcUrl));
+  final _JsonRpcProviderImpl _impl;
+
+  JsonRpcProvider._(this._impl) : super._(_impl);
+
+  /// Create new [JsonRpcProvider] from [rpcUrl].
+  factory JsonRpcProvider(String rpcUrl) {
+    return JsonRpcProvider._(_JsonRpcProviderImpl(rpcUrl));
+  }
+
+  Future<List<String>> listAccounts() async =>
+      (await promiseToFuture<List>(callMethod(_impl, 'listAccounts', [])))
+          .cast<String>();
 }
 
 /// A Provider is an abstraction of a connection to the Ethereum network, providing a concise, consistent interface to standard Ethereum node functionality.
