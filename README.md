@@ -30,9 +30,9 @@
 
 ## Using V2 Package
 
-Add ref pointer to v2 branch in pubspec.yaml file of your Flutter project.
+Pre-release is available at [pub.dev](https://pub.dev/packages/flutter_web3/versions).
 
-Pre-release will soon publish into pub.dev after solid progress.
+Or add ref pointer to Git v2 branch in pubspec.yaml file of your Flutter project.
 
 ```
 flutter_web3:
@@ -50,14 +50,16 @@ Track V2 progress by navigating to [this Github issue](https://github.com/y-pako
 ### Breaking Changes
 
 - `Ethereum` class now include static method to access default Ethereum provider.
-  - `Ethereum.isSupported` is the same as `isEthereumSupported`.
-  - `Ethereum.provider` is the same as `ethereum`.
-  - `Ethereum.ethereum` to access exposed Ethereum provider with no undefined check.
+  - `isEthereumSupported` replaced with `Ethereum.isSupported`.
+  - `Ethereum.provider` is the same as `ethereum`, `ethereum` getter is still available.
+  - `Ethereum.ethereum` to access exposed Ethereum provider i.e. MetaMask with no undefined check.
   - `Ethereum.binanceChain` to access exposed Binance Chain Wallet provider with no undefined check.
   - `Ethereum.web3` to access old web3 provider object, deprecated in many provder.
 - `WalletConnectProvider` class instantiation changed to factory method.
   - `WalletConnectProvider.fromRpc` to instantiate using rpc map.
   - `WalletConnectProvider.fromInfura` to instantiate using Infura id.
   - Static `WalletConnectProvider.binance` to instantiate using Binance mainnet rpc.
-- `Web3Provider` unnamed constructor changed into `Web3Provider.fromEthereum` and `Web3Provider.fromWalletConnect` for `Ethereum` and `WalletConnectProvider` instance respectively.
-
+- `Web3Provider` class various constructor has been added.
+  - `Web3Provider` unnamed constructor remain the same.
+  - `Web3Provider.fromEthereum` instantiate using `Ethereum` instance.
+  - `Web3Provider.fromWalletConnect` instantiate using `WalletConnectProvider` instance.

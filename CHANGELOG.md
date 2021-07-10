@@ -1,3 +1,9 @@
+## 2.0.0-pre.3
+
+- Remove isEthereumSupported
+- Add class name to toString override for easier debugging
+- Add assertion to Provider constructor
+
 ## 2.0.0-pre.2
 
 - Assertion bug fixes
