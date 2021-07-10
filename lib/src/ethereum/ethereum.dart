@@ -52,10 +52,10 @@ class CurrencyParams implements _CurrencyParamsImpl {
 /// A Dart Ethereum Provider API for consistency across clients and applications.
 class Ethereum implements _EthereumImpl {
   /// Ethereeum provider api used in Binance Chain Wallet.
-  static Ethereum get binanceChain => Ethereum._internal(_binanceChain!);
+  static Ethereum get binanceChain => Ethereum._(_binanceChain!);
 
   /// Modern Ethereum provider api, injected by many famous environment such as `MetaMask` or `TrustWallet`.
-  static Ethereum get ethereum => Ethereum._internal(_ethereum!);
+  static Ethereum get ethereum => Ethereum._(_ethereum!);
 
   /// Getter for boolean to detect Ethereum object support. without calling itself to prevent js undefined error.
   static bool get isSupported =>
@@ -64,18 +64,17 @@ class Ethereum implements _EthereumImpl {
   /// Getter for default Ethereum provider object, cycles through available injector in environment.
   static Ethereum? get provider => isSupported
       ? _ethereum != null
-          ? Ethereum._internal(_ethereum!)
-          : Ethereum._internal(_binanceChain!)
+          ? Ethereum._(_ethereum!)
+          : Ethereum._(_binanceChain!)
       : null;
 
   /// Old web3 object, deprecated now.
   @deprecated
-  static Ethereum? get web3 =>
-      _web3 != null ? Ethereum._internal(_web3!) : null;
+  static Ethereum? get web3 => _web3 != null ? Ethereum._(_web3!) : null;
 
   final _EthereumImpl _impl;
 
-  const Ethereum._internal(this._impl);
+  const Ethereum._(this._impl);
 
   @override
   set autoRefreshOnNetworkChange(bool b) =>

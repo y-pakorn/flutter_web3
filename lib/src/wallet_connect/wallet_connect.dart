@@ -33,7 +33,7 @@ class WalletConnectProvider implements _WalletConnectProviderImpl {
     int? networkId,
     List<String>? mobileLinks,
   }) =>
-      WalletConnectProvider._internal(
+      WalletConnectProvider._(
         _WalletConnectProviderImpl(
           _WalletConnectProviderOptionsImpl(
             infuraId: infuraId,
@@ -60,7 +60,7 @@ class WalletConnectProvider implements _WalletConnectProviderImpl {
     List<String>? mobileLinks,
   }) {
     assert(rpc.containsKey(chainId), 'Chain id must be in rpc map.');
-    return WalletConnectProvider._internal(
+    return WalletConnectProvider._(
       _WalletConnectProviderImpl(
         _WalletConnectProviderOptionsImpl(
           rpc: _convertRpc(rpc),
@@ -77,7 +77,7 @@ class WalletConnectProvider implements _WalletConnectProviderImpl {
     );
   }
 
-  const WalletConnectProvider._internal(this._impl);
+  const WalletConnectProvider._(this._impl);
 
   /// Accounts which is at provider disposal.
   @override
