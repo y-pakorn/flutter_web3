@@ -24,7 +24,7 @@
 - [Wallet Connect Provider](https://docs.walletconnect.org/quick-start/dapps/web3-provider) package
   - This enable QR code modal interaction and enable wallet that utilize Wallet Connect to use provider.
 
-#### This package is made especially for developing Dapp on cross(multiple) chain in Flutter.
+#### This package is made especially for developing Dapp on cross(multiple) chain in Flutter
 
 > This is for Flutter web only!
 
@@ -41,7 +41,6 @@ flutter_web3:
     ref: v2
 ```
 
-
 ## V2 Changes
 
 Version 2.0 of this package will introduce full dart wrapper instead of js interop class.
@@ -50,5 +49,15 @@ Track V2 progress by navigating to [this Github issue](https://github.com/y-pako
 
 ### Breaking Changes
 
-- `WalletConnectProvider` completely change the internal structure and constructor, but core class feature and method remain the same.
+- `Ethereum` class now include static method to access default Ethereum provider.
+  - `Ethereum.isSupported` is the same as `isEthereumSupported`.
+  - `Ethereum.provider` is the same as `ethereum`.
+  - `Ethereum.ethereum` to access exposed Ethereum provider with no undefined check.
+  - `Ethereum.binanceChain` to access exposed Binance Chain Wallet provider with no undefined check.
+  - `Ethereum.web3` to access old web3 provider object, deprecated in many provder.
+- `WalletConnectProvider` class instantiation changed to factory method.
+  - `WalletConnectProvider.fromRpc` to instantiate using rpc map.
+  - `WalletConnectProvider.fromInfura` to instantiate using Infura id.
+  - Static `WalletConnectProvider.binance` to instantiate using Binance mainnet rpc.
 - `Web3Provider` unnamed constructor changed into `Web3Provider.fromEthereum` and `Web3Provider.fromWalletConnect` for `Ethereum` and `WalletConnectProvider` instance respectively.
+
