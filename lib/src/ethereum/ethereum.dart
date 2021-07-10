@@ -23,19 +23,6 @@ Ethereum? get ethereum => Ethereum.provider;
 /// Getter for boolean to detect Ethereum object support. without calling itself to prevent js undefined error.
 bool get isEthereumSupported => Ethereum.isSupported;
 
-@JS("BinanceChain")
-external _EthereumImpl? get _binanceChain;
-
-@JS("ethereum")
-external _EthereumImpl? get _ethereum;
-
-@deprecated
-@JS("web3")
-external _EthereumImpl? get _web3;
-
-@JS("window")
-external Object get _window;
-
 @internal
 _EthereumImpl getEthereumImpl(Ethereum ethereum) => ethereum._impl;
 

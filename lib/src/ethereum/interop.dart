@@ -1,5 +1,31 @@
 part of ethereum;
 
+@JS("BinanceChain")
+external _EthereumImpl? get _binanceChain;
+
+@JS("ethereum")
+external _EthereumImpl? get _ethereum;
+
+@deprecated
+@JS("web3")
+external _EthereumImpl? get _web3;
+
+@JS("window")
+external Object get _window;
+
+@internal
+@JS()
+@anonymous
+class EthereumBaseImpl {
+  external String get chainId;
+
+  external int listenerCount([String? eventName]);
+
+  external List<dynamic> listeners(String eventName);
+
+  external removeAllListeners([String? eventName]);
+}
+
 @JS()
 @anonymous
 class _ChainParamsImpl {
@@ -36,19 +62,6 @@ class _CurrencyParamsImpl {
   external String get name;
 
   external String get symbol;
-}
-
-@internal
-@JS()
-@anonymous
-class EthereumBaseImpl {
-  external String get chainId;
-
-  external int listenerCount([String? eventName]);
-
-  external List<dynamic> listeners(String eventName);
-
-  external removeAllListeners([String? eventName]);
 }
 
 @JS()
