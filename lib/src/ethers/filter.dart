@@ -4,6 +4,10 @@ class EventFilter implements _EventFilterImpl {
   final _EventFilterImpl _eventImpl;
 
   /// Instantiate [EventFilter] by providing [address] and [topics].
+  factory EventFilter({String? address, List<dynamic>? topics}) =>
+      EventFilter._(_EventFilterImpl(address: address, topics: topics));
+
+  /// Instantiate [EventFilter] by providing [address] and [topics], same as [EventFilter] default constructor.
   factory EventFilter.create({String? address, List<dynamic>? topics}) =>
       EventFilter._(_EventFilterImpl(address: address, topics: topics));
 
@@ -33,9 +37,22 @@ class EventFilter implements _EventFilterImpl {
 
 class Filter extends EventFilter implements _FilterImpl {
   final _FilterImpl _impl;
-  Filter._(this._impl) : super._(_impl);
 
   /// Instantiate [Filter] by providing [address], [topics], [toBlock], and [endBlock].
+  factory Filter({
+    String? address,
+    List<dynamic>? topics,
+    dynamic toBlock,
+    dynamic fromBlock,
+  }) =>
+      Filter._(_FilterImpl(
+        address: address,
+        topics: topics,
+        fromBlock: fromBlock,
+        toBlock: toBlock,
+      ));
+
+  /// Instantiate [Filter] by providing [address], [topics], [toBlock], and [endBlock], same as [Filter] default constructor.
   factory Filter.create({
     String? address,
     List<dynamic>? topics,
@@ -48,6 +65,8 @@ class Filter extends EventFilter implements _FilterImpl {
         fromBlock: fromBlock,
         toBlock: toBlock,
       ));
+
+  Filter._(this._impl) : super._(_impl);
 
   /// The starting block (inclusive) to search for logs matching the filter criteria.
   @override
@@ -78,4 +97,7 @@ class Filter extends EventFilter implements _FilterImpl {
   /// Or a Hex [String] block at that height.
   @override
   set toBlock(blockTag) => _impl.toBlock = blockTag;
+
+  @override
+  String toString() => '${super.toString()} from $fromBlock to $toBlock';
 }
