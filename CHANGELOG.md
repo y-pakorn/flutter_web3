@@ -1,3 +1,8 @@
+## 2.0.0-pre.4
+
+- Generalize interop class implementation
+- Remove redundant export and hide
+
 ## 2.0.0-pre.3
 
 - Remove isEthereumSupported
