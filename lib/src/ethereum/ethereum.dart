@@ -6,6 +6,7 @@ import 'package:js/js_util.dart';
 import 'package:meta/meta.dart';
 
 import './utils.dart';
+import '../interop_wrapper.dart';
 
 part 'interop.dart';
 
@@ -20,9 +21,6 @@ _EthereumImpl? get defaultProviderImpl =>
 /// Getter for default Ethereum object, cycles through available injector in environment.
 Ethereum? get ethereum => Ethereum.provider;
 
-@internal
-_EthereumImpl getEthereumImpl(Ethereum ethereum) => ethereum._impl;
-
 /// Interface for connection info used by [Ethereum] method.
 @JS()
 @anonymous
@@ -31,23 +29,18 @@ class ConnectInfo {
   external String get chainId;
 }
 
-class CurrencyParams implements _CurrencyParamsImpl {
-  final _CurrencyParamsImpl _impl;
+class CurrencyParams extends Interop<_CurrencyParamsImpl> {
+  const CurrencyParams._(_CurrencyParamsImpl impl) : super.internal(impl);
 
-  const CurrencyParams._(this._impl);
+  int get decimals => impl.decimals;
 
-  @override
-  int get decimals => _impl.decimals;
+  String get name => impl.name;
 
-  @override
-  String get name => _impl.name;
-
-  @override
-  String get symbol => _impl.symbol;
+  String get symbol => impl.symbol;
 }
 
 /// A Dart Ethereum Provider API for consistency across clients and applications.
-class Ethereum implements _EthereumImpl {
+class Ethereum extends Interop<_EthereumImpl> {
   /// Ethereeum provider api used in Binance Chain Wallet.
   static Ethereum get binanceChain => Ethereum._(_binanceChain!);
 
@@ -69,27 +62,21 @@ class Ethereum implements _EthereumImpl {
   @deprecated
   static Ethereum? get web3 => _web3 != null ? Ethereum._(_web3!) : null;
 
-  final _EthereumImpl _impl;
+  const Ethereum._(_EthereumImpl impl) : super.internal(impl);
 
-  const Ethereum._(this._impl);
-
-  @override
-  set autoRefreshOnNetworkChange(bool b) =>
-      _impl.autoRefreshOnNetworkChange = b;
+  set autoRefreshOnNetworkChange(bool b) => impl.autoRefreshOnNetworkChange = b;
 
   /// Returns a hexadecimal string representing the current chain ID.
   ///
   /// Deprecated, Consider using [getChainId] instead.
   @deprecated
-  @override
-  String get chainId => _impl.chainId;
+  String get chainId => impl.chainId;
 
   /// Returns first [getAccounts] item but may return unexpected value.
   ///
   /// Deprecated, Consider using [getAccounts] instead.
   @deprecated
-  @override
-  String? get selectedAddress => _impl.selectedAddress;
+  String? get selectedAddress => impl.selectedAddress;
 
   /// Returns List of accounts the node controls.
   Future<List<String>> getAccounts() async =>
@@ -106,24 +93,21 @@ class Ethereum implements _EthereumImpl {
   /// Note that this method has nothing to do with the user's accounts.
   ///
   /// You may often encounter the word `connected` in reference to whether a web3 site can access the user's accounts. In the provider interface, however, `connected` and `disconnected` refer to whether the provider can make RPC requests to the current chain.
-  @override
-  bool isConnected() => _impl.isConnected();
+  bool isConnected() => impl.isConnected();
 
   /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
-  @override
-  int listenerCount([String? eventName]) => _impl.listenerCount(eventName);
+  int listenerCount([String? eventName]) => impl.listenerCount(eventName);
 
   /// Returns the list of Listeners for the [eventName] events.
-  @override
-  List listeners(String eventName) => _impl.listeners(eventName);
+  List listeners(String eventName) => impl.listeners(eventName);
 
   /// Remove a [listener] for the [eventName] event. If no [listener] is provided, all listeners for [eventName] are removed.
-  off(String eventName, [Function? listener]) => callMethod(_impl, 'off',
+  off(String eventName, [Function? listener]) => callMethod(impl, 'off',
       listener != null ? [eventName, allowInterop(listener)] : [eventName]);
 
   /// Add a [listener] to be triggered for each [eventName] event.
   on(String eventName, Function listener) =>
-      callMethod(_impl, 'on', [eventName, allowInterop(listener)]);
+      callMethod(impl, 'on', [eventName, allowInterop(listener)]);
 
   /// Add a [listener] to be triggered for each accountsChanged event.
   onAccountsChanged(void Function(List<String> accounts) listener) => on(
@@ -132,7 +116,7 @@ class Ethereum implements _EthereumImpl {
 
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
   once(String eventName, Function listener) =>
-      callMethod(_impl, 'once', [eventName, allowInterop(listener)]);
+      callMethod(impl, 'once', [eventName, allowInterop(listener)]);
 
   /// Add a [listener] to be triggered for each chainChanged event.
   onChainChanged(void Function(int chainId) listener) =>
@@ -165,15 +149,13 @@ class Ethereum implements _EthereumImpl {
           listener(message.type, convertToDart(message.data)));
 
   /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
-  @override
-  removeAllListeners([String? eventName]) =>
-      _impl.removeAllListeners(eventName);
+  removeAllListeners([String? eventName]) => impl.removeAllListeners(eventName);
 
   /// Use request to submit RPC requests with [method] and optionally [params] to Ethereum via MetaMask or provider that is currently using.
   ///
   /// Returns a Future of generic type that resolves to the result of the RPC method call.
   Future<T> request<T>(String method, [dynamic params]) =>
-      promiseToFuture<T>(callMethod(_impl, 'request', [
+      promiseToFuture<T>(callMethod(impl, 'request', [
         params != null
             ? _RequestArgumentsImpl(method: method, params: params)
             : _RequestArgumentsImpl(method: method)
@@ -212,7 +194,7 @@ class Ethereum implements _EthereumImpl {
         _ChainParamsImpl(
           chainId: chainId,
           chainName: chainName,
-          nativeCurrency: nativeCurrency._impl,
+          nativeCurrency: nativeCurrency.impl,
           rpcUrls: rpcUrls,
           blockExplorerUrls: blockExplorerUrls,
         )

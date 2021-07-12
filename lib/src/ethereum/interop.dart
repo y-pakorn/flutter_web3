@@ -13,19 +13,6 @@ external _EthereumImpl? get _web3;
 @JS("window")
 external Object get _window;
 
-@internal
-@JS()
-@anonymous
-class EthereumBaseImpl {
-  external String get chainId;
-
-  external int listenerCount([String? eventName]);
-
-  external List<dynamic> listeners(String eventName);
-
-  external removeAllListeners([String? eventName]);
-}
-
 @JS()
 @anonymous
 class _ChainParamsImpl {
@@ -66,13 +53,21 @@ class _CurrencyParamsImpl {
 
 @JS()
 @anonymous
-class _EthereumImpl extends EthereumBaseImpl {
+class _EthereumImpl {
   external set autoRefreshOnNetworkChange(bool b);
+
+  external String get chainId;
 
   @deprecated
   external String? get selectedAddress;
 
   external bool isConnected();
+
+  external int listenerCount([String? eventName]);
+
+  external List<dynamic> listeners(String eventName);
+
+  external removeAllListeners([String? eventName]);
 }
 
 @JS()
