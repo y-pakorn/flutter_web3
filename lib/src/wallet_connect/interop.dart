@@ -9,11 +9,13 @@ class _QrcodeModalOptionsImpl {
 }
 
 @JS("default")
-class _WalletConnectProviderImpl extends EthereumBaseImpl {
+class _WalletConnectProviderImpl {
   external _WalletConnectProviderImpl(
       _WalletConnectProviderOptionsImpl options);
 
   external List<String> get accounts;
+
+  external String get chainId;
 
   external bool get connected;
 
@@ -22,6 +24,12 @@ class _WalletConnectProviderImpl extends EthereumBaseImpl {
   external String get rpcUrl;
 
   external _WalletMetaImpl get walletMeta;
+
+  external int listenerCount([String? eventName]);
+
+  external List<dynamic> listeners(String eventName);
+
+  external removeAllListeners([String? eventName]);
 }
 
 @JS()

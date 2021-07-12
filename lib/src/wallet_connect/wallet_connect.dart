@@ -5,24 +5,18 @@ import 'dart:core';
 
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
-import 'package:meta/meta.dart';
 
 import '../ethereum/ethereum.dart';
 import '../ethereum/utils.dart';
+import '../interop_wrapper.dart';
 
 part 'interop.dart';
-
-@internal
-_WalletConnectProviderImpl getWalletConnectImpl(WalletConnectProvider wc) =>
-    wc._impl;
 
 /// Function to convert Dart rpc map into JS rpc map.
 dynamic _convertRpc(Map<int, String> rpcMap) => jsify(rpcMap);
 
 /// Web3 Provider for Wallet Connect connection, typically used in mobile phone connection.
-class WalletConnectProvider implements _WalletConnectProviderImpl {
-  final _WalletConnectProviderImpl _impl;
-
+class WalletConnectProvider extends Interop<_WalletConnectProviderImpl> {
   /// Instantiate [WalletConnectProvider] using [infuraId].
   factory WalletConnectProvider.fromInfura(
     String infuraId, {
@@ -77,58 +71,51 @@ class WalletConnectProvider implements _WalletConnectProviderImpl {
     );
   }
 
-  const WalletConnectProvider._(this._impl);
+  const WalletConnectProvider._(_WalletConnectProviderImpl impl)
+      : super.internal(impl);
 
   /// Accounts which is at provider disposal.
-  @override
-  List<String> get accounts => _impl.accounts;
+  List<String> get accounts => impl.accounts;
 
   /// Main network chain id.
-  @override
-  String get chainId => _impl.chainId;
+  String get chainId => impl.chainId;
 
   /// `true` if [this] is connected successfully to rpc provider.
-  @override
-  bool get connected => _impl.connected;
+  bool get connected => impl.connected;
 
   /// `true` if [this] is connecting successfully to rpc provider.
-  @override
-  bool get isConnecting => _impl.isConnecting;
+  bool get isConnecting => impl.isConnecting;
 
   /// Chain id and rpc url map.
-  Map<int, String> get rpc => (convertToDart(getProperty(_impl, 'rpc')) as Map)
+  Map<int, String> get rpc => (convertToDart(getProperty(impl, 'rpc')) as Map)
       .map((key, value) => MapEntry(int.parse(key), value.toString()));
 
   /// Main network rpc url.
-  @override
-  String get rpcUrl => _impl.rpcUrl;
+  String get rpcUrl => impl.rpcUrl;
 
   /// Connected wallet metadata, contains serveral information about connected provider.
-  @override
-  WalletMeta get walletMeta => WalletMeta._internal(_impl.walletMeta);
+  WalletMeta get walletMeta => WalletMeta._(impl.walletMeta);
 
   /// Enable session and try to connect to provider. (triggers QR Code modal)
-  Future<void> connect() => promiseToFuture(callMethod(_impl, 'enable', []));
+  Future<void> connect() => promiseToFuture(callMethod(impl, 'enable', []));
 
   /// Close provider session.
   Future<void> disconnect() =>
-      promiseToFuture(callMethod(_impl, 'disconnect', []));
+      promiseToFuture(callMethod(impl, 'disconnect', []));
 
   /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
-  @override
-  int listenerCount([String? eventName]) => _impl.listenerCount(eventName);
+  int listenerCount([String? eventName]) => impl.listenerCount(eventName);
 
   /// Returns the list of Listeners for the [eventName] events.
-  @override
-  List listeners(String eventName) => _impl.listeners(eventName);
+  List listeners(String eventName) => impl.listeners(eventName);
 
   /// Remove a [listener] for the [eventName] event. If no [listener] is provided, all listeners for [eventName] are removed.
-  off(String eventName, [Function? listener]) => callMethod(_impl, 'off',
+  off(String eventName, [Function? listener]) => callMethod(impl, 'off',
       listener != null ? [eventName, allowInterop(listener)] : [eventName]);
 
   /// Add a [listener] to be triggered for each [eventName] event.
   on(String eventName, Function listener) =>
-      callMethod(_impl, 'on', [eventName, allowInterop(listener)]);
+      callMethod(impl, 'on', [eventName, allowInterop(listener)]);
 
   /// Add a [listener] to be triggered for each accountsChanged event.
   onAccountsChanged(void Function(List<String> accounts) listener) => on(
@@ -137,7 +124,7 @@ class WalletConnectProvider implements _WalletConnectProviderImpl {
 
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
   once(String eventName, Function listener) =>
-      callMethod(_impl, 'once', [eventName, allowInterop(listener)]);
+      callMethod(impl, 'once', [eventName, allowInterop(listener)]);
 
   /// Add a [listener] to be triggered for each chainChanged event.
   onChainChanged(void Function(int chainId) listener) =>
@@ -170,9 +157,7 @@ class WalletConnectProvider implements _WalletConnectProviderImpl {
           listener(message.type, convertToDart(message.data)));
 
   /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
-  @override
-  removeAllListeners([String? eventName]) =>
-      _impl.removeAllListeners(eventName);
+  removeAllListeners([String? eventName]) => impl.removeAllListeners(eventName);
 
   @override
   String toString() => connected
@@ -188,26 +173,20 @@ class WalletConnectProvider implements _WalletConnectProviderImpl {
 }
 
 /// Metadata information of specific wallet provider.
-class WalletMeta implements _WalletMetaImpl {
-  final _WalletMetaImpl _impl;
-
-  const WalletMeta._internal(this._impl);
+class WalletMeta extends Interop<_WalletMetaImpl> {
+  const WalletMeta._(_WalletMetaImpl impl) : super.internal(impl);
 
   /// Description of wallet.
-  @override
-  String get description => _impl.description;
+  String get description => impl.description;
 
   /// List wallet's icons.
-  @override
-  List<String> get icons => _impl.icons.cast<String>();
+  List<String> get icons => impl.icons.cast<String>();
 
   /// Full name of wallet.
-  @override
-  String get name => _impl.name;
+  String get name => impl.name;
 
   /// Url of wallet.
-  @override
-  String get url => _impl.url;
+  String get url => impl.url;
 
   @override
   String toString() => 'WalletMeta: $name on $url';
