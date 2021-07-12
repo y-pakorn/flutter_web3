@@ -5,10 +5,8 @@ part of ethers;
 /// The available operations depend largely on the sub-class used.
 ///
 /// For example, a Signer from MetaMask can send transactions and sign messages but cannot sign a transaction (without broadcasting it).
-class Signer implements _SignerImpl {
-  final _SignerImpl _impl;
-
-  const Signer._(this._impl);
+class Signer extends Interop<_SignerImpl> {
+  const Signer._(_SignerImpl impl) : super.internal(impl);
 
   /// Returns `true` if an only if object is a [Signer].
   static bool isSigner(Object object) =>
@@ -19,7 +17,7 @@ class Signer implements _SignerImpl {
       case BigInt:
         return (await _call<BigNumber>(method, args)).toBigInt as T;
       default:
-        return promiseToFuture<T>(callMethod(_impl, method, args));
+        return promiseToFuture<T>(callMethod(impl, method, args));
     }
   }
 
@@ -50,19 +48,19 @@ class Signer implements _SignerImpl {
   Future<TransactionResponse> sendTransaction(
           TransactionRequest request) async =>
       TransactionResponse._(await _call<_TransactionResponseImpl>(
-          'sendTransaction', [request._impl]));
+          'sendTransaction', [request.impl]));
 
   /// Returns the result of calling using the [TransactionRequest], with this account address being used as the from field.
   Future<String> call(TransactionRequest request) =>
-      _call<String>('call', [request._impl]);
+      _call<String>('call', [request.impl]);
 
   /// Returns the result of estimating the cost to send the [TransactionRequest], with this account address being used as the from field.
   Future<BigInt> estimateGas(TransactionRequest request) =>
-      _call<BigInt>('estimateGas', [request._impl]);
+      _call<BigInt>('estimateGas', [request.impl]);
 
   /// Returns a Future which resolves to the signed transaction of the transactionRequest. This method does not populate any missing fields.
   Future<String> signTransaction(TransactionRequest request) =>
-      _call<String>('signTransaction', [request._impl]);
+      _call<String>('signTransaction', [request.impl]);
 
   /// Returns a Future which resolves to the Raw Signature of message.
   Future<String> signMessage(String message) =>

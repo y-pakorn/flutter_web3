@@ -3,14 +3,10 @@ part of ethers;
 /// An EIP-2930 transaction allows an optional AccessList which causes a transaction to warm (i.e. pre-cache) another addresses state and the specified storage keys.
 ///
 /// This incurs an increased intrinsic cost for the transaction, but provides discounts for storage and state access throughout the execution of the transaction.
-class AccessList implements _AccessListImpl {
-  final _AccessListImpl _impl;
+class AccessList extends Interop<_AccessListImpl> {
+  const AccessList._(_AccessListImpl impl) : super.internal(impl);
 
-  const AccessList._(this._impl);
+  String get address => impl.address;
 
-  @override
-  String get address => _impl.address;
-
-  @override
-  List<String> get storageKey => _impl.storageKey.cast<String>();
+  List<String> get storageKey => impl.storageKey.cast<String>();
 }

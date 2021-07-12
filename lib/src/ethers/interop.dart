@@ -144,9 +144,9 @@ class _RawBlockImpl {
 
   external String get extraData;
 
-  external dynamic get gasLimit;
+  external BigNumber get gasLimit;
 
-  external dynamic get gasUsed;
+  external BigNumber get gasUsed;
 
   external String get hash;
 
@@ -158,7 +158,7 @@ class _RawBlockImpl {
 
   external String get parentHash;
 
-  external dynamic get timestamp;
+  external int get timestamp;
 }
 
 @JS()
@@ -188,9 +188,9 @@ class _TransactionImpl {
 
   external String get from;
 
-  external dynamic get gasLimit;
+  external BigNumber get gasLimit;
 
-  external dynamic get gasPrice;
+  external BigNumber get gasPrice;
 
   external String get hash;
 
@@ -204,7 +204,7 @@ class _TransactionImpl {
 
   external int get v;
 
-  external dynamic get value;
+  external BigNumber get value;
 }
 
 @JS()
@@ -224,7 +224,7 @@ class _TransactionReceiptImpl {
 
   external String get from;
 
-  external dynamic get gasUsed;
+  external BigNumber get gasUsed;
 
   external List<dynamic> get logs;
 
@@ -232,7 +232,7 @@ class _TransactionReceiptImpl {
 
   external String? get root;
 
-  external dynamic get status;
+  external int get status;
 
   external String? get to;
 
@@ -281,14 +281,14 @@ class _TransactionResponseImpl extends _TransactionImpl {
 
   external String get raw;
 
-  external dynamic get timestamp;
+  external int? get timestamp;
 
   external int? get type;
 }
 
 @JS("providers.Web3Provider")
 class _Web3ProviderImpl extends _ProviderImpl {
-  external _Web3ProviderImpl(EthereumBaseImpl eth);
+  external _Web3ProviderImpl(dynamic eth);
 
   external _SignerImpl getSigner();
 }

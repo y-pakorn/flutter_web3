@@ -3,46 +3,37 @@ part of ethers;
 /// A Contract is an abstraction of code that has been deployed to the blockchain.
 ///
 /// A Contract may be sent transactions, which will trigger its code to be run with the input of the transaction data.
-class Contract implements _ContractImpl {
-  final _ContractImpl _impl;
-
+class Contract extends Interop<_ContractImpl> {
   /// Contruct Contract object for invoking smart contract method.
   ///
   /// Use [Provider] in [providerOrSigner] for read-only contract calls, or use [Signer] for read-write contract calls.
-  Contract(String address, dynamic abi, dynamic providerOrSigner)
-      : assert(
-          providerOrSigner is _ProviderImpl || providerOrSigner is _SignerImpl,
-          'providerOrSigner must be Provider or Signer',
-        ),
-        _impl = _ContractImpl(
-            address,
-            abi,
-            providerOrSigner is Provider
-                ? providerOrSigner._provImpl
-                : providerOrSigner is Signer
-                    ? providerOrSigner._impl
-                    : providerOrSigner);
+  factory Contract(String address, dynamic abi, dynamic providerOrSigner) {
+    assert(
+      providerOrSigner is Interop &&
+          (providerOrSigner is Provider || providerOrSigner is Signer),
+      'providerOrSigner must be Provider or Signer',
+    );
+    return Contract._(
+        _ContractImpl(address, abi, (providerOrSigner as Interop).impl));
+  }
 
-  const Contract._(this._impl);
+  const Contract._(_ContractImpl impl) : super.internal(impl);
 
   /// This is the address (or ENS name) the contract was constructed with.
-  @override
-  String get address => _impl.address;
+  String get address => impl.address;
 
   /// If the [Contract] object is the result of a ContractFactory deployment, this is the transaction which was used to deploy the contract.
   Future<TransactionResponse> get deployTransaction =>
       _get<TransactionResponse>('deployTransaction');
 
   /// This is the ABI as an [Interface].
-  @override
-  Interface get interface => _impl.interface;
+  Interface get interface => impl.interface;
 
   /// `true` if connected to [Provider], `false` if connected to [Signer].
   bool get isReadOnly => signer == null;
 
   /// If a [Provider] was provided to the constructor, this is that provider. If a [Signer] was provided that had a [Provider], this is that provider.
-  @override
-  Provider get provider => Provider._(_impl.provider);
+  Provider get provider => Provider._(impl.provider);
 
   /// This is a promise that will resolve to the address the [Contract] object is attached to.
   ///
@@ -50,8 +41,7 @@ class Contract implements _ContractImpl {
   Future<String> get resolvedAddress => _get<String>('resolvedAddress');
 
   /// If a [Signer] was provided to the constructor, this is that signer.
-  @override
-  Signer? get signer => _impl.signer != null ? Signer._(_impl.signer!) : null;
+  Signer? get signer => impl.signer != null ? Signer._(impl.signer!) : null;
 
   /// Call read-only constant method on the Contract.
   ///
@@ -66,28 +56,25 @@ class Contract implements _ContractImpl {
   ///By passing in a [Provider], this will return a downgraded Contract which only has read-only access (i.e. constant calls).
   ///
   ///By passing in a [Signer]. this will return a Contract which will act on behalf of that signer.
-  @override
   Contract connect(dynamic providerOrSigner) {
     assert(
       providerOrSigner is Provider || providerOrSigner is Signer,
       'providerOrSigner must be Provider or Signer',
     );
-    return Contract._(_impl.connect(providerOrSigner));
+    return Contract._(impl.connect(providerOrSigner));
   }
 
   /// Return a filter for [eventName], optionally filtering by additional constraints.
   ///
   /// Only indexed event parameters may be filtered. If a parameter is null (or not provided) then any value in that field matches.
   Filter getFilter(String eventName, [List<dynamic> args = const []]) =>
-      Filter._(callMethod(getProperty(_impl, 'filters'), eventName, args));
+      Filter._(callMethod(getProperty(impl, 'filters'), eventName, args));
 
   /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
-  @override
-  int listenerCount([String? eventName]) => _impl.listenerCount(eventName);
+  int listenerCount([String? eventName]) => impl.listenerCount(eventName);
 
   /// Returns the list of Listeners for the [eventName] events.
-  @override
-  List listeners(String eventName) => _impl.listeners(eventName);
+  List listeners(String eventName) => impl.listeners(eventName);
 
   /// Multicall read-only constant method on the Contract. `May not` be at the same block.
   ///
@@ -114,16 +101,16 @@ class Contract implements _ContractImpl {
   }
 
   /// Remove a [listener] for the [eventName] event. If no [listener] is provided, all listeners for [eventName] are removed.
-  off(String eventName, [Function? listener]) => callMethod(_impl, 'off',
+  off(String eventName, [Function? listener]) => callMethod(impl, 'off',
       listener != null ? [eventName, allowInterop(listener)] : [eventName]);
 
   /// Add a [listener] to be triggered for each [eventName] event.
   on(String eventName, Function listener) =>
-      callMethod(_impl, 'on', [eventName, allowInterop(listener)]);
+      callMethod(impl, 'on', [eventName, allowInterop(listener)]);
 
   /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
   once(String eventName, Function listener) =>
-      callMethod(_impl, 'once', [eventName, allowInterop(listener)]);
+      callMethod(impl, 'once', [eventName, allowInterop(listener)]);
 
   /// Return a [List] of [Logs] that have been emitted by the Contract by the [filter].
   Future<List<Log>> queryFilter(EventFilter filter,
@@ -131,7 +118,7 @@ class Contract implements _ContractImpl {
       (await _call<List>(
         'queryFilter',
         [
-          filter._eventImpl,
+          filter.impl,
           startBlock,
           endBlock,
         ]..removeWhere((e) => e == null),
@@ -141,9 +128,7 @@ class Contract implements _ContractImpl {
           .toList();
 
   /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
-  @override
-  removeAllListeners([String? eventName]) =>
-      _impl.removeAllListeners(eventName);
+  removeAllListeners([String? eventName]) => impl.removeAllListeners(eventName);
 
   /// Send write method to the Contract.
   ///
@@ -157,7 +142,7 @@ class Contract implements _ContractImpl {
   Future<TransactionResponse> send(String method,
           [List<dynamic> args = const [], TransactionOverride? override]) =>
       _call<TransactionResponse>(
-          method, override != null ? [...args, override._impl] : args);
+          method, override != null ? [...args, override.impl] : args);
 
   @override
   String toString() =>
@@ -168,7 +153,7 @@ class Contract implements _ContractImpl {
       case BigInt:
         return (await call<BigNumber>(method, args)).toBigInt as T;
       default:
-        return promiseToFuture<T>(callMethod(_impl, method, args));
+        return promiseToFuture<T>(callMethod(impl, method, args));
     }
   }
 
@@ -177,7 +162,7 @@ class Contract implements _ContractImpl {
       case BigInt:
         return (await call<BigNumber>(method)).toBigInt as T;
       default:
-        return promiseToFuture<T>(getProperty(_impl, method));
+        return promiseToFuture<T>(getProperty(impl, method));
     }
   }
 }

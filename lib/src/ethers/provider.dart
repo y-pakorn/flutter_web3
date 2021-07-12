@@ -1,9 +1,7 @@
 part of ethers;
 
 /// The JSON-RPC API is a popular method for interacting with Ethereum and is available in all major Ethereum node implementations (e.g. Geth and Parity) as well as many third-party web services (e.g. INFURA)
-class JsonRpcProvider extends Provider implements _JsonRpcProviderImpl {
-  final _JsonRpcProviderImpl _impl;
-
+class JsonRpcProvider extends Provider<_JsonRpcProviderImpl> {
   final String _rpcUrl;
 
   /// Create new [JsonRpcProvider] from [rpcUrl].
@@ -12,14 +10,14 @@ class JsonRpcProvider extends Provider implements _JsonRpcProviderImpl {
     return JsonRpcProvider._(_JsonRpcProviderImpl(rpcUrl), rpcUrl);
   }
 
-  JsonRpcProvider._(this._impl, this._rpcUrl) : super._(_impl);
+  JsonRpcProvider._(_JsonRpcProviderImpl impl, this._rpcUrl) : super._(impl);
 
   /// Rpc url that [this] is connected to.
   String get rpcUrl => _rpcUrl;
 
   /// Returns a list of all account addresses managed by [this] provider.
   Future<List<String>> listAccounts() async =>
-      (await promiseToFuture<List>(callMethod(_impl, 'listAccounts', [])))
+      (await promiseToFuture<List>(callMethod(impl, 'listAccounts', [])))
           .cast<String>();
 
   @override
@@ -29,10 +27,8 @@ class JsonRpcProvider extends Provider implements _JsonRpcProviderImpl {
 /// A Provider is an abstraction of a connection to the Ethereum network, providing a concise, consistent interface to standard Ethereum node functionality.
 ///
 /// The ethers.js library provides several options which should cover the vast majority of use-cases, but also includes the necessary functions and classes for sub-classing if a more custom configuration is necessary.
-class Provider implements _ProviderImpl {
-  final _ProviderImpl _provImpl;
-
-  const Provider._(this._provImpl);
+class Provider<T extends _ProviderImpl> extends Interop<T> {
+  const Provider._(T impl) : super.internal(impl);
 
   /// Returns a Future which will stall until the [Network] has heen established, ignoring errors due to the target node not being active yet.
   ///
@@ -46,7 +42,7 @@ class Provider implements _ProviderImpl {
       case BigInt:
         return (await call<BigNumber>(method, args)).toBigInt as T;
       default:
-        return promiseToFuture<T>(callMethod(_provImpl, method, args));
+        return promiseToFuture<T>(callMethod(impl, method, args));
     }
   }
 
@@ -83,7 +79,7 @@ class Provider implements _ProviderImpl {
   ///
   /// Keep in mind that many backends will discard old events, and that requests which are too broad may get dropped as they require too many resources to execute the query.
   Future<List<Log>> getLogs(EventFilter filter) async =>
-      (await call<List>('getLogs', [filter._eventImpl]))
+      (await call<List>('getLogs', [filter.impl]))
           .cast<_LogImpl>()
           .map((e) => Log._(e))
           .toList();
@@ -125,12 +121,8 @@ class Provider implements _ProviderImpl {
   on(dynamic event, Function listener) {
     assert(event is String || event is _EventFilterImpl,
         'Event type must be valid.');
-    return callMethod(_provImpl, 'on', [
-      event is EventFilter
-          ? event._eventImpl
-          : event is Filter
-              ? event._impl
-              : event,
+    return callMethod(impl, 'on', [
+      event is EventFilter ? event.impl : event,
       allowInterop(listener),
     ]);
   }
@@ -143,12 +135,8 @@ class Provider implements _ProviderImpl {
   once(dynamic event, Function listener) {
     assert(event is String || event is _EventFilterImpl,
         'Event type must be valid.');
-    return callMethod(_provImpl, 'on', [
-      event is EventFilter
-          ? event._eventImpl
-          : event is Filter
-              ? event._impl
-              : event,
+    return callMethod(impl, 'on', [
+      event is EventFilter ? event.impl : event,
       allowInterop(listener),
     ]);
   }
@@ -159,11 +147,11 @@ class Provider implements _ProviderImpl {
 
   /// Add a [listener] to be triggered once for [filter];
   void onceFilter(EventFilter filter, Function listener) =>
-      on(filter is Filter ? filter._impl : filter._eventImpl, listener);
+      on(filter.impl, listener);
 
   /// Add a [listener] to be triggered for [filter];
   void onFilter(EventFilter filter, Function listener) =>
-      on(filter is Filter ? filter._impl : filter._eventImpl, listener);
+      on(filter.impl, listener);
 
   /// Returns the result of executing the transaction, using call.
   ///
@@ -211,41 +199,31 @@ class Provider implements _ProviderImpl {
 /// The Web3Provider is meant to ease moving from a web3.js based application to ethers by wrapping an existing Web3-compatible (such as a Web3HttpProvider, Web3IpcProvider or Web3WsProvider) and exposing it as an ethers.js Provider which can then be used with the rest of the library.
 ///
 /// This may also be used to wrap a standard [EIP-1193 Provider](link-eip-1193].
-class Web3Provider extends Provider implements _Web3ProviderImpl {
-  final _Web3ProviderImpl _impl;
-
+class Web3Provider extends Provider<_Web3ProviderImpl> {
   /// Create new [Web3Provider] instance from provider instance.
   factory Web3Provider(dynamic provider) {
     assert(provider != null, 'Provider must not be null.');
     assert(
-        provider is Ethereum ||
-            provider is WalletConnectProvider ||
-            provider is EthereumBaseImpl,
+        provider is Interop &&
+            (provider is Ethereum || provider is WalletConnectProvider),
         'Provider type must be valid.');
     return Web3Provider._(
-      _Web3ProviderImpl(
-        provider is Ethereum
-            ? getEthereumImpl(provider)
-            : provider is WalletConnectProvider
-                ? getWalletConnectImpl(provider)
-                : provider,
-      ),
+      _Web3ProviderImpl((provider as Interop).impl),
     );
   }
 
   /// Create new [Web3Provider] instance from [Ethereum] instance.
   factory Web3Provider.fromEthereum(Ethereum ethereum) =>
-      Web3Provider._(_Web3ProviderImpl(getEthereumImpl(ethereum)));
+      Web3Provider._(_Web3ProviderImpl(ethereum.impl));
 
   /// Create new [Web3Provider] instance from [WalletConnectProvider] instance.
   factory Web3Provider.fromWalletConnect(WalletConnectProvider walletConnect) =>
-      Web3Provider._(_Web3ProviderImpl(getWalletConnectImpl(walletConnect)));
+      Web3Provider._(_Web3ProviderImpl(walletConnect.impl));
 
-  const Web3Provider._(this._impl) : super._(_impl);
+  const Web3Provider._(_Web3ProviderImpl impl) : super._(impl);
 
   /// Connect this to create new [Signer] object.
-  @override
-  Signer getSigner() => Signer._(_impl.getSigner());
+  Signer getSigner() => Signer._(impl.getSigner());
 
   @override
   String toString() => 'Web3Provider:';
