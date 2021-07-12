@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 
 @internal
 abstract class Interop<T> {
-  /// JS Object.
+  /// Internal JS Object, should not be used directly.
   @internal
   final T impl;
 
