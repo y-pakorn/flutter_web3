@@ -75,6 +75,11 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   Future<Block> getLastestBlock() async =>
       Block._(await call<_BlockImpl>('getBlock', []));
 
+  /// Get the lastest [BlockWithTransaction] from the network.
+  Future<BlockWithTransaction> getLastestBlockWithTransaction() async =>
+      BlockWithTransaction._(await call<_BlockWithTransactionImpl>(
+          'getBlockWithTransactions', []));
+
   /// Returns the [List] of [Log] matching the filter.
   ///
   /// Keep in mind that many backends will discard old events, and that requests which are too broad may get dropped as they require too many resources to execute the query.
