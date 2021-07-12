@@ -3,20 +3,11 @@ library ethereum;
 
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
-import 'package:meta/meta.dart';
 
 import './utils.dart';
 import '../interop_wrapper.dart';
 
 part 'interop.dart';
-
-@internal
-_EthereumImpl? get defaultProviderImpl =>
-    hasProperty(_window, 'ethereum') || hasProperty(_window, 'BinanceChain')
-        ? _ethereum != null
-            ? _ethereum
-            : _binanceChain
-        : null;
 
 /// Getter for default Ethereum object, cycles through available injector in environment.
 Ethereum? get ethereum => Ethereum.provider;
