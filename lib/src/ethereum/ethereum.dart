@@ -23,6 +23,14 @@ class ConnectInfo {
 class CurrencyParams extends Interop<_CurrencyParamsImpl> {
   const CurrencyParams._(_CurrencyParamsImpl impl) : super.internal(impl);
 
+  factory CurrencyParams({
+    required String name,
+    required String symbol,
+    required int decimals,
+  }) =>
+      CurrencyParams._(
+          _CurrencyParamsImpl(name: name, symbol: symbol, decimals: decimals));
+
   int get decimals => impl.decimals;
 
   String get name => impl.name;
@@ -174,6 +182,15 @@ class Ethereum extends Interop<_EthereumImpl> {
   /// The user may choose to switch to the chain once it has been added.
   ///
   /// As with any method that causes a confirmation to appear, `wallet_addEthereumChain` should only be called as a result of direct user action, such as the click of a button.
+  ///
+  /// ---
+  ///
+  /// await ethereum!.walletAddChain(
+  ///   chainId: 97,
+  ///   chainName: 'Binance Testnet',
+  ///   nativeCurrency: CurrencyParams(name: 'BNB', symbol: 'BNB', decimals: 18),
+  ///   rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
+  /// );
   Future<void> walletAddChain({
     required int chainId,
     required String chainName,
@@ -200,6 +217,18 @@ class Ethereum extends Interop<_EthereumImpl> {
   /// MetaMask will automatically reject the request under the following circumstances:
   /// - If the chain ID is malformed
   /// - If the chain with the specified chain ID has not been added to MetaMask
+  ///
+  /// ---
+  ///
+  /// await ethereum!.walletSwitchChain(97, () async {
+  ///   await ethereum!.walletAddChain(
+  ///     chainId: 97,
+  ///     chainName: 'Binance Testnet',
+  ///     nativeCurrency:
+  ///         CurrencyParams(name: 'BNB', symbol: 'BNB', decimals: 18),
+  ///     rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
+  ///   );
+  /// });
   Future<void> walletSwitchChain(int chainId,
           [void Function()? unrecognizedChainHandle]) =>
       request('wallet_switchEthereumChain', [
