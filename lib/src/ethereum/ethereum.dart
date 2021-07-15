@@ -173,9 +173,9 @@ class Ethereum extends Interop<_EthereumImpl> {
   ///
   /// The user may choose to switch to the chain once it has been added.
   ///
-  /// As with any method that causes a confirmation to appear, wallet_addEthereumChain should only be called as a result of direct user action, such as the click of a button.
+  /// As with any method that causes a confirmation to appear, `wallet_addEthereumChain` should only be called as a result of direct user action, such as the click of a button.
   Future<void> walletAddChain({
-    required String chainId,
+    required int chainId,
     required String chainName,
     required CurrencyParams nativeCurrency,
     required List<String> rpcUrls,
@@ -183,7 +183,7 @@ class Ethereum extends Interop<_EthereumImpl> {
   }) =>
       request('wallet_addEthereumChain', [
         _ChainParamsImpl(
-          chainId: chainId,
+          chainId: '0x' + chainId.toRadixString(16),
           chainName: chainName,
           nativeCurrency: nativeCurrency.impl,
           rpcUrls: rpcUrls,
@@ -191,13 +191,33 @@ class Ethereum extends Interop<_EthereumImpl> {
         )
       ]);
 
+  /// Creates a confirmation asking the user to switch to the chain with the specified [chainId].
+  ///
+  /// [unrecognizedChainHandle] will be called when the chain with the specified chain ID has not been added.
+  ///
+  /// As with any method that causes a confirmation to appear, `wallet_switchEthereumChain` should only be called as a result of direct user action, such as the click of a button.
+  ///
+  /// MetaMask will automatically reject the request under the following circumstances:
+  /// - If the chain ID is malformed
+  /// - If the chain with the specified chain ID has not been added to MetaMask
+  Future<void> walletSwitchChain(int chainId,
+          [void Function()? unrecognizedChainHandle]) =>
+      request('wallet_switchEthereumChain', [
+        _AddEthereumChainParameterImpl(
+            chainId: '0x' + chainId.toRadixString(16)),
+      ]).onError((error, stackTrace) {
+        if (unrecognizedChainHandle != null &&
+            error != null &&
+            convertToDart(error)['code'] == 4902) unrecognizedChainHandle();
+      });
+
   /// Requests that the user tracks the token with [address], [symbol], and [decimals] in MetaMask, [decimals] is optional.
   ///
   /// Returns `true` if token is successfully added.
   ///
   /// Ethereum protocal only support [type] that is `ERC20` for now.
   ///
-  /// Most Ethereum wallets support some set of tokens, usually from a centrally curated registry of tokens. wallet_watchAsset enables web3 application developers to ask their users to track tokens in their wallets, at runtime. Once added, the token is indistinguishable from those added via legacy methods, such as a centralized registry.
+  /// Most Ethereum wallets support some set of tokens, usually from a centrally curated registry of tokens. `wallet_watchAsset` enables web3 application developers to ask their users to track tokens in their wallets, at runtime. Once added, the token is indistinguishable from those added via legacy methods, such as a centralized registry.
   Future<bool> walletWatchAssets({
     required String address,
     required String symbol,

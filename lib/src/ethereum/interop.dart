@@ -15,6 +15,16 @@ external Object get _window;
 
 @JS()
 @anonymous
+class _AddEthereumChainParameterImpl {
+  external factory _AddEthereumChainParameterImpl({
+    required String chainId,
+  });
+
+  external String get chainId;
+}
+
+@JS()
+@anonymous
 class _ChainParamsImpl {
   external factory _ChainParamsImpl({
     required String chainId,
