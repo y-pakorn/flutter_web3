@@ -97,7 +97,7 @@ class _FilterImpl extends _EventFilterImpl {
 
 @JS("providers.JsonRpcProvider")
 class _JsonRpcProviderImpl extends _ProviderImpl {
-  external _JsonRpcProviderImpl(String rpcUrl);
+  external _JsonRpcProviderImpl([String? rpcUrl]);
 }
 
 @JS()

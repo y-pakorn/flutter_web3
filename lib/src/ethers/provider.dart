@@ -5,9 +5,14 @@ class JsonRpcProvider extends Provider<_JsonRpcProviderImpl> {
   final String _rpcUrl;
 
   /// Create new [JsonRpcProvider] from [rpcUrl].
-  factory JsonRpcProvider(String rpcUrl) {
-    assert(rpcUrl.isNotEmpty, 'Rpc url must not be empty');
-    return JsonRpcProvider._(_JsonRpcProviderImpl(rpcUrl), rpcUrl);
+  ///
+  /// If [rpcUrl] is `null`, [JsonRpcProvider] will instantiate with default rpc, i.e. `http:/\/localhost:8545`.
+  factory JsonRpcProvider([String? rpcUrl]) {
+    if (rpcUrl != null) {
+      assert(rpcUrl.isNotEmpty, 'Rpc url must not be empty');
+      return JsonRpcProvider._(_JsonRpcProviderImpl(rpcUrl), rpcUrl);
+    }
+    return JsonRpcProvider._(_JsonRpcProviderImpl(), '');
   }
 
   JsonRpcProvider._(_JsonRpcProviderImpl impl, this._rpcUrl) : super._(impl);
