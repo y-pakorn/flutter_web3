@@ -6,10 +6,10 @@ import 'dart:convert';
 import 'package:js/js.dart';
 
 /// Convert JS object to Dart object to avoid type error.
-dynamic convertToDart(dynamic jsObject) => _convertToDart;
+dynamic convertToDart(dynamic jsObject) => _convertToDart(jsObject);
 
 /// Convert JS object to Dart object to avoid type error, same functionality as [convertToDart];
-dynamic dartify(dynamic jsObject) => _convertToDart;
+dynamic dartify(dynamic jsObject) => _convertToDart(jsObject);
 
 /// Convert JavaScript object or value to a JSON string,
 ///
