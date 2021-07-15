@@ -6,6 +6,7 @@ import 'package:js/js_util.dart';
 
 import './utils.dart';
 import '../interop_wrapper.dart';
+import 'exception.dart';
 
 part 'interop.dart';
 
@@ -167,8 +168,19 @@ class Ethereum extends Interop<_EthereumImpl> {
   /// This method will only work if you’re using the injected provider from a application like Metamask, Status or TrustWallet.
   ///
   /// It doesn’t work if you’re connected to a node with a default Web3.js provider (WebsocketProvider, HttpProvidder and IpcProvider).
-  Future<List<String>> requestAccount() async =>
-      (await request<List<dynamic>>('eth_requestAccounts')).cast<String>();
+  Future<List<String>> requestAccount() async {
+    try {
+      return (await request<List<dynamic>>('eth_requestAccounts'))
+          .cast<String>();
+    } catch (error) {
+      switch (convertToDart(error)['code']) {
+        case 4001:
+          throw EthereumUserRejected();
+        default:
+          rethrow;
+      }
+    }
+  }
 
   @override
   String toString() => isSupported
@@ -197,8 +209,9 @@ class Ethereum extends Interop<_EthereumImpl> {
     required CurrencyParams nativeCurrency,
     required List<String> rpcUrls,
     List<String>? blockExplorerUrls,
-  }) =>
-      request('wallet_addEthereumChain', [
+  }) async {
+    try {
+      await request('wallet_addEthereumChain', [
         _ChainParamsImpl(
           chainId: '0x' + chainId.toRadixString(16),
           chainName: chainName,
@@ -207,10 +220,20 @@ class Ethereum extends Interop<_EthereumImpl> {
           blockExplorerUrls: blockExplorerUrls,
         )
       ]);
+    } catch (error) {
+      switch (convertToDart(error)['code']) {
+        case 4001:
+          throw EthereumUserRejected();
+        default:
+          rethrow;
+      }
+    }
+  }
 
   /// Creates a confirmation asking the user to switch to the chain with the specified [chainId].
   ///
-  /// [unrecognizedChainHandle] will be called when the chain with the specified chain ID has not been added.
+  /// If the specified chain ID has not been added, [unrecognizedChainHandle] will be called if not `null`.
+  /// Else will throw [EthereumUnrecognizedChainException].
   ///
   /// As with any method that causes a confirmation to appear, `wallet_switchEthereumChain` should only be called as a result of direct user action, such as the click of a button.
   ///
@@ -230,15 +253,26 @@ class Ethereum extends Interop<_EthereumImpl> {
   ///   );
   /// });
   Future<void> walletSwitchChain(int chainId,
-          [void Function()? unrecognizedChainHandle]) =>
-      request('wallet_switchEthereumChain', [
+      [void Function()? unrecognizedChainHandler]) async {
+    try {
+      await request('wallet_switchEthereumChain', [
         _AddEthereumChainParameterImpl(
             chainId: '0x' + chainId.toRadixString(16)),
-      ]).onError((error, stackTrace) {
-        if (unrecognizedChainHandle != null &&
-            error != null &&
-            convertToDart(error)['code'] == 4902) unrecognizedChainHandle();
-      });
+      ]);
+    } catch (error) {
+      switch (convertToDart(error)['code']) {
+        case 4001:
+          throw EthereumUserRejected();
+        case 4902:
+          unrecognizedChainHandler != null
+              ? unrecognizedChainHandler.call()
+              : throw EthereumUnrecognizedChainException(chainId);
+          break;
+        default:
+          rethrow;
+      }
+    }
+  }
 
   /// Requests that the user tracks the token with [address], [symbol], and [decimals] in MetaMask, [decimals] is optional.
   ///
@@ -253,8 +287,9 @@ class Ethereum extends Interop<_EthereumImpl> {
     required int decimals,
     String? image,
     String type = 'ERC20',
-  }) =>
-      request<bool>(
+  }) async {
+    try {
+      return await request<bool>(
         'wallet_watchAsset',
         _WatchAssetParamsImpl(
           type: type,
@@ -266,6 +301,15 @@ class Ethereum extends Interop<_EthereumImpl> {
           ),
         ),
       );
+    } catch (error) {
+      switch (convertToDart(error)['code']) {
+        case 4001:
+          throw EthereumUserRejected();
+        default:
+          rethrow;
+      }
+    }
+  }
 }
 
 /// Interface for provier message used by [Ethereum] method.
