@@ -30,7 +30,7 @@ class EventFilter<T extends _EventFilterImpl> extends Interop<T> {
 }
 
 class Filter extends EventFilter<_FilterImpl> {
-  /// Instantiate [Filter] by providing [address], [topics], [toBlock], and [endBlock].
+  /// Instantiate [Filter] by providing [address], [topics], [toBlock], and [fromBlock].
   factory Filter({
     String? address,
     List<dynamic>? topics,
@@ -44,7 +44,7 @@ class Filter extends EventFilter<_FilterImpl> {
         toBlock: toBlock,
       ));
 
-  /// Instantiate [Filter] by providing [address], [topics], [toBlock], and [endBlock], same as [Filter] default constructor.
+  /// Instantiate [Filter] by providing [address], [topics], [toBlock], and [fromBlock], same as [Filter] default constructor.
   factory Filter.create({
     String? address,
     List<dynamic>? topics,

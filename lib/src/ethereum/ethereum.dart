@@ -27,11 +27,13 @@ class CurrencyParams extends Interop<_CurrencyParamsImpl> {
   ///
   /// ---
   ///
+  /// ```dart
   /// final currency = CurrencyParams(
   ///   name: 'Binance Coin',
   ///   symbol: 'BNB',
   ///   decimals: 18,
   /// );
+  /// ```
   factory CurrencyParams({
     required String name,
     required String symbol,
@@ -145,8 +147,8 @@ class Ethereum extends Interop<_EthereumImpl> {
   /// This event is emitted if it becomes unable to submit RPC requests to any chain. In general, this will only happen due to network connectivity issues or some unforeseen error.
   ///
   /// Once disconnect has been emitted, the provider will not accept any new requests until the connection to the chain has been re-restablished, which requires reloading the page. You can also use the [Ethereum.isConnected] method to determine if the provider is disconnected.
-  onDisconnect(void Function(ProviderRpcError error) listeners) =>
-      on('disconnect', (ProviderRpcError error) => listeners(error));
+  onDisconnect(void Function(ProviderRpcError error) listener) =>
+      on('disconnect', (ProviderRpcError error) => listener(error));
 
   /// Add a [listener] to be triggered for each message event [type].
   ///
@@ -207,12 +209,14 @@ class Ethereum extends Interop<_EthereumImpl> {
   ///
   /// ---
   ///
+  /// ```dart
   /// await ethereum!.walletAddChain(
   ///   chainId: 97,
   ///   chainName: 'Binance Testnet',
   ///   nativeCurrency: CurrencyParams(name: 'BNB', symbol: 'BNB', decimals: 18),
   ///   rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
   /// );
+  /// ```
   Future<void> walletAddChain({
     required int chainId,
     required String chainName,
@@ -242,7 +246,7 @@ class Ethereum extends Interop<_EthereumImpl> {
 
   /// Creates a confirmation asking the user to switch to the chain with the specified [chainId].
   ///
-  /// If the specified chain ID has not been added, [unrecognizedChainHandle] will be called if not `null`.
+  /// If the specified chain ID has not been added, [unrecognizedChainHandler] will be called if not `null`.
   /// Else will throw [EthereumUnrecognizedChainException].
   ///
   /// As with any method that causes a confirmation to appear, `wallet_switchEthereumChain` should only be called as a result of direct user action, such as the click of a button.
@@ -253,6 +257,7 @@ class Ethereum extends Interop<_EthereumImpl> {
   ///
   /// ---
   ///
+  /// ```dart
   /// await ethereum!.walletSwitchChain(97, () async {
   ///   await ethereum!.walletAddChain(
   ///     chainId: 97,
@@ -262,6 +267,7 @@ class Ethereum extends Interop<_EthereumImpl> {
   ///     rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
   ///   );
   /// });
+  /// ```
   Future<void> walletSwitchChain(int chainId,
       [void Function()? unrecognizedChainHandler]) async {
     try {

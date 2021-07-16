@@ -143,8 +143,8 @@ class WalletConnectProvider extends Interop<_WalletConnectProviderImpl> {
   /// This event is emitted if it becomes unable to submit RPC requests to any chain. In general, this will only happen due to network connectivity issues or some unforeseen error.
   ///
   /// Once disconnect has been emitted, the provider will not accept any new requests until the connection to the chain has been re-restablished, which requires reloading the page. You can also use the [Ethereum.isConnected] method to determine if the provider is disconnected.
-  onDisconnect(void Function(ProviderRpcError error) listeners) =>
-      on('disconnect', (ProviderRpcError error) => listeners(error));
+  onDisconnect(void Function(ProviderRpcError error) listener) =>
+      on('disconnect', (ProviderRpcError error) => listener(error));
 
   /// Add a [listener] to be triggered for each message event [type].
   ///

@@ -112,7 +112,7 @@ class Contract extends Interop<_ContractImpl> {
   once(String eventName, Function listener) =>
       callMethod(impl, 'once', [eventName, allowInterop(listener)]);
 
-  /// Return a [List] of [Logs] that have been emitted by the Contract by the [filter].
+  /// Return a List of [Log] that have been emitted by the Contract by the [filter].
   Future<List<Log>> queryFilter(EventFilter filter,
           [dynamic startBlock, dynamic endBlock]) async =>
       (await _call<List>(

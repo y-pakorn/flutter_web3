@@ -85,7 +85,7 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
       BlockWithTransaction._(await call<_BlockWithTransactionImpl>(
           'getBlockWithTransactions', []));
 
-  /// Returns the [List] of [Log] matching the filter.
+  /// Returns the List of [Log] matching the filter.
   ///
   /// Keep in mind that many backends will discard old events, and that requests which are too broad may get dropped as they require too many resources to execute the query.
   Future<List<Log>> getLogs(EventFilter filter) async =>
@@ -208,7 +208,7 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
 
 /// The Web3Provider is meant to ease moving from a web3.js based application to ethers by wrapping an existing Web3-compatible (such as a Web3HttpProvider, Web3IpcProvider or Web3WsProvider) and exposing it as an ethers.js Provider which can then be used with the rest of the library.
 ///
-/// This may also be used to wrap a standard [EIP-1193 Provider](link-eip-1193].
+/// This may also be used to wrap a standard [EIP-1193 Provider](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1193.md).
 class Web3Provider extends Provider<_Web3ProviderImpl> {
   /// Create new [Web3Provider] instance from provider instance.
   factory Web3Provider(dynamic provider) {

@@ -72,24 +72,29 @@ class EthUtils {
   ///
   /// ---
   ///
+  /// ```dart
   /// EthUtils.commify("-1000.3000");
   /// // '-1,000.3'
+  /// ```
   external static String commify(String value);
 
   /// The equivalent to calling `formatUnits(value, "ether")`.
   ///
   /// ---
   ///
+  /// ```dart
   /// final value = BigNumber.from("1000000000000000000");
   ///
   /// EthUtils.formatEther(value);
   /// // '1.0'
+  /// ```
   external static String formatEther(String value);
 
   /// Returns a [String] representation of [value] formatted with [unit] digits (if it is a number) or to the [unit] specified (if a string).
   ///
   /// ---
   ///
+  /// ```dart
   /// final oneGwei = "1000000000";
   /// final oneEther = "1000000000000000000";
   ///
@@ -107,6 +112,7 @@ class EthUtils {
   ///
   /// EthUtils.formatUnits(oneEther, 18);
   /// // '1.0'
+  /// ```
   external static String formatUnits(String value, [dynamic unit = 'ether']);
 
   /// Returns address as a Checksum Address.
@@ -122,13 +128,15 @@ class EthUtils {
   ///
   /// ---
   ///
-  /// Hashing a string message
+  /// ```dart
+  /// // Hashing a string message
   /// EthUtils.hashMessage("Hello World")
   /// // '0xa1de988600a42c4b4ab089b619297c17d53cffae5d5120d82d8a92d0bb3b78f2'
   ///
-  /// Hashing binary data (also "Hello World", but as bytes)
+  /// // Hashing binary data (also "Hello World", but as bytes)
   /// utils.hashMessage( [ 72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100 ])
   /// // '0xa1de988600a42c4b4ab089b619297c17d53cffae5d5120d82d8a92d0bb3b78f2'
+  /// ```
   external static String hashMessage(dynamic message);
 
   /// The Ethereum Identity function computes the `KECCAK256` hash of the text bytes.
@@ -141,17 +149,20 @@ class EthUtils {
   ///
   /// ---
   ///
+  /// ```dart
   /// parseEther("1.0");
   /// // { BigNumber: "1000000000000000000" }
   ///
   /// parseEther("-0.5");
   /// // { BigNumber: "-500000000000000000" }
+  /// ```
   external static BigNumber parseEther(String value);
 
   /// Returns a [BigNumber] representation of [value], parsed with [unit] digits (if it is a number) or from the [unit] specified (if a string).
   ///
   /// ---
   ///
+  /// ```dart
   /// EthUtils.parseUnits("1.0");
   /// // { BigNumber: "1000000000000000000" }
   ///
@@ -166,14 +177,17 @@ class EthUtils {
   ///
   /// EthUtils.parseUnits("121.0", 9);
   /// // { BigNumber: "121000000000" }
+  /// ```
   external static BigNumber parseUnit(String value, [dynamic unit = 'ether']);
 
   /// Returns the `KECCAK256` of the non-standard encoded [values] packed according to their respective type in [types].
   ///
   /// ---
   ///
+  /// ```dart
   /// utils.solidityKeccak256([ "int16", "uint48" ], [ -1, 12 ])
   /// // '0x81da7abb5c9c7515f57dab2fc946f01217ab52f3bd8958bc36bd55894451a93c'
+  /// ```
   external static String solidityKeccak256(
       List<String> types, List<dynamic> values);
 
@@ -181,19 +195,23 @@ class EthUtils {
   ///
   /// ---
   ///
+  /// ```dart
   /// utils.solidityPack([ "int16", "uint48" ], [ -1, 12 ])
   /// // '0xffff00000000000c'
   ///
   /// utils.solidityPack([ "string", "uint8" ], [ "Hello", 3 ])
   /// // '0x48656c6c6f03'
+  /// ```
   external static String solidityPack(List<String> types, List<dynamic> values);
 
   /// Returns the `SHA2-256` of the non-standard encoded [values] packed according to their respective type in [types].
   ///
   /// ---
   ///
+  /// ```dart
   /// utils.soliditySha256([ "int16", "uint48" ], [ -1, 12 ])
   /// // '0xa5580fb602f6e2ba9c588011dc4e6c2335e0f5d970dc45869db8f217efc6911a'
+  /// ```
   external static String soliditySha256(
       List<String> types, List<dynamic> values);
 
@@ -203,17 +221,23 @@ class EthUtils {
 /// Format types of Interface
 @JS('utils.FormatTypes')
 class FormatTypes {
+  /// ```dart
   /// [{"type":"function","name":"balanceOf","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address"}],"outputs":[{"type":"uint256"}]}]
+  /// ```
   external static dynamic json;
 
+  /// ```dart
   /// [
   /// 'function balanceOf(address owner) view returns (uint256)',
   /// ]
+  /// ```dart
   external static dynamic full;
 
+  /// ```dart
   /// [
   /// 'function balanceOf(address) view returns (uint256)',
   /// ]
+  /// ```
   external static dynamic minimal;
 }
 
@@ -239,11 +263,13 @@ class Interface {
   external dynamic format([dynamic types]);
 }
 
+/// [BigInt] extension for converting between Dart and JS class.
 extension BigIntExtension on BigInt {
   /// Convert Dart [BigInt] to JS [BigNumber].
   BigNumber get toBigNumber => BigNumber.from(this.toString());
 }
 
+/// [BigNumber] extension for converting between Dart and JS class.
 extension BigNumberExtension on BigNumber {
   /// Convert JS [BigNumber] to Dart [BigInt].
   BigInt get toBigInt => BigInt.parse(this.toString());
