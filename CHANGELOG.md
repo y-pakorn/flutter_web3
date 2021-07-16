@@ -1,3 +1,10 @@
+## 2.0.0-pre.5
+
+- Bugs fix
+- Dartdoc unresolved docs fix
+- Add custom exception throwing and handling
+- Add more method to Ethers and Ethereum
+
 ## 2.0.0-pre.4
 
 - Generalize interop class implementation
