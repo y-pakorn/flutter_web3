@@ -4,6 +4,9 @@
 <a href="https://pub.dev/packages/flutter_web3">
 <img alt="Pub Version" src="https://img.shields.io/pub/v/flutter_web3?style=flat-square">
 </a>
+<a href="https://pub.dev/packages/flutter_web3/versions">
+<img alt="Pub Version Include Prerelease" src="https://img.shields.io/pub/v/flutter_web3?include_prereleases&style=flat-square">
+</a>
 <a href="https://github.com/y-pakorn/flutter_web3/issues">
 <img alt="GitHub issues" src="https://img.shields.io/github/issues/y-pakorn/flutter_web3?style=flat-square">
 </a>
@@ -34,7 +37,7 @@ Pre-release is available at [pub.dev](https://pub.dev/packages/flutter_web3/vers
 
 Or add ref pointer to Git v2 branch in pubspec.yaml file of your Flutter project.
 
-```
+```yaml
 flutter_web3:
   git:
     url: git://github.com/y-pakorn/flutter_web3.git
@@ -50,8 +53,8 @@ Track V2 progress by navigating to [this Github issue](https://github.com/y-pako
 ### Breaking Changes
 
 - `Ethereum` class now include static method to access default Ethereum provider.
-  - `isEthereumSupported` replaced with `Ethereum.isSupported`.
   - `Ethereum.provider` is the same as `ethereum`, `ethereum` getter is still available.
+  - `isEthereumSupported` replaced with `Ethereum.isSupported`. Or alternatively `ethereum != null`.
   - `Ethereum.ethereum` to access exposed Ethereum provider i.e. MetaMask with no undefined check.
   - `Ethereum.binanceChain` to access exposed Binance Chain Wallet provider with no undefined check.
   - `Ethereum.web3` to access old web3 provider object, deprecated in many provder.
