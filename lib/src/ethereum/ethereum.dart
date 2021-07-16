@@ -21,9 +21,17 @@ class ConnectInfo {
   external String get chainId;
 }
 
+/// Parameter for specifying currency, used in [Ethereum.walletAddChain].
 class CurrencyParams extends Interop<_CurrencyParamsImpl> {
-  const CurrencyParams._(_CurrencyParamsImpl impl) : super.internal(impl);
-
+  /// Instantiate [CurrencyParams] by using [name], [symbol], and [decimals].
+  ///
+  /// ---
+  ///
+  /// final currency = CurrencyParams(
+  ///   name: 'Binance Coin',
+  ///   symbol: 'BNB',
+  ///   decimals: 18,
+  /// );
   factory CurrencyParams({
     required String name,
     required String symbol,
@@ -31,6 +39,8 @@ class CurrencyParams extends Interop<_CurrencyParamsImpl> {
   }) =>
       CurrencyParams._(
           _CurrencyParamsImpl(name: name, symbol: symbol, decimals: decimals));
+
+  const CurrencyParams._(_CurrencyParamsImpl impl) : super.internal(impl);
 
   int get decimals => impl.decimals;
 
