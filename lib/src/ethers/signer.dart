@@ -9,8 +9,11 @@ class Signer extends Interop<_SignerImpl> {
   const Signer._(_SignerImpl impl) : super.internal(impl);
 
   /// Returns `true` if an only if object is a [Signer].
-  static bool isSigner(Object object) =>
-      _SignerImpl.isSigner(object) || object is Signer;
+  static bool isSigner(Object object) {
+    if (object is Interop)
+      return object is Signer || _SignerImpl.isSigner(object.impl);
+    return false;
+  }
 
   Future<T> _call<T>(String method, [List<dynamic> args = const []]) async {
     switch (T) {

@@ -1,12 +1,25 @@
 part of ethers;
 
+/// An event filter is made up of topics, which are values logged in a Bloom Filter, allowing efficient searching for entries which match a filter.
 class EventFilter<T extends _EventFilterImpl> extends Interop<T> {
   /// Instantiate [EventFilter] by providing [address] and [topics].
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// // Filter for BUSD BEP20 Token
+  /// final filter = EventFilter(
+  ///   // BUSD Address
+  ///   address: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+  ///   topics: [
+  ///     // Tranfer event hash
+  ///     '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
+  ///     // From this specific address (padded to 32 bytes)
+  ///     '0x0000000000000000000000002caa4694cb7daf7d49a198dc1103c06d4991ae52',
+  ///   ],
+  /// );
+  /// ```
   factory EventFilter({String? address, List<dynamic>? topics}) =>
-      EventFilter._(_EventFilterImpl(address: address, topics: topics));
-
-  /// Instantiate [EventFilter] by providing [address] and [topics], same as [EventFilter] default constructor.
-  factory EventFilter.create({String? address, List<dynamic>? topics}) =>
       EventFilter._(_EventFilterImpl(address: address, topics: topics));
 
   const EventFilter._(_EventFilterImpl impl) : super.internal(impl as T);
@@ -31,21 +44,28 @@ class EventFilter<T extends _EventFilterImpl> extends Interop<T> {
 
 class Filter extends EventFilter<_FilterImpl> {
   /// Instantiate [Filter] by providing [address], [topics], [toBlock], and [fromBlock].
-  factory Filter({
-    String? address,
-    List<dynamic>? topics,
-    dynamic toBlock,
-    dynamic fromBlock,
-  }) =>
-      Filter._(_FilterImpl(
-        address: address,
-        topics: topics,
-        fromBlock: fromBlock,
-        toBlock: toBlock,
-      ));
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// // Filter for BUSD BEP20 Token
+  /// final filter = EventFilter(
+  ///   // BUSD Address
+  ///   address: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+  ///   topics: [
+  ///     // Tranfer event hash
+  ///     '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
+  ///     // From this specific address (padded to 32 bytes)
+  ///     '0x0000000000000000000000002caa4694cb7daf7d49a198dc1103c06d4991ae52',
+  ///   ],
+  ///   // To specific blocktag
+  ///   toBlock: BlockTag.latest,
+  ///   // From specific blocktag
+  ///   fromBlock: 2482480,
+  /// );
+  /// ```
 
-  /// Instantiate [Filter] by providing [address], [topics], [toBlock], and [fromBlock], same as [Filter] default constructor.
-  factory Filter.create({
+  factory Filter({
     String? address,
     List<dynamic>? topics,
     dynamic toBlock,

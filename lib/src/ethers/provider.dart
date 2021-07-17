@@ -12,9 +12,9 @@ class JsonRpcProvider extends Provider<_JsonRpcProviderImpl> {
   ///
   /// ```dart
   /// final localRpcProvider = JsonRpcProvider();
-  /// print(localRpcProvider); // JsonRpcProvider: http://localhost:8545/
-  ///
   /// final binanceRpcProvider = JsonRpcProvider('https://bsc-dataseed.binance.org/');
+  ///
+  /// print(localRpcProvider); // JsonRpcProvider: http://localhost:8545/
   /// print(binanceRpcProvider); // JsonRpcProvider: https://bsc-dataseed.binance.org/
   /// ```
   factory JsonRpcProvider([String? rpcUrl]) {
@@ -67,6 +67,7 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   ///
   /// ```dart
   /// final balance = await getBalance('0xfooBar');
+  ///
   /// print(balance); // 10000000000000
   /// print(balance is BigInt); // true
   /// ```
@@ -81,9 +82,11 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   ///
   /// ```dart
   /// final block = await provider!.getBlock(2000000);
+  ///
   /// print(block);
-  /// // Block: 2000000 0x9d2e2d20a07108b5f816d26d41911590ff07918e48485cd41e355f80fd64843d
-  /// // mined at 2020-11-06T21:22:24.000 with diff 2
+  /// // Block: 2000000 0x9d2e2d20 mined at 2020-11-06T21:22:24.000 with diff 2
+  /// print(block.transaction.first);
+  /// // 0x99598d22288ba2ed229cf965a7e0279a8df3d61d48f779d2ce5e3ab84788c10c
   /// ```
   Future<Block> getBlock(int blockNumber) async =>
       Block._(await call<_BlockImpl>('getBlock', [blockNumber]));
@@ -92,6 +95,18 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   Future<int> getBlockNumber() => call<int>('getBlockNumber');
 
   /// Get the [BlockWithTransaction] at [blockNumber] from the network, where the [BlockWithTransaction.transactions] is an Array of [TransactionResponse].
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final block = await provider!.getBlockWithTransaction(2000000);
+  ///
+  /// print(block);
+  /// // Block: 2000000 0x9d2e2d20 mined at 2020-11-06T21:22:24.000 with diff 2
+  /// print(block.transaction.first);
+  /// // Transaction: 0x99598d22 from 0xC5D2A96c with value 39090000000000000000 and data 0x7ff36ab500000...
+  /// print(block.transactions.first is TransactionResponse); // true
+  /// ```
   Future<BlockWithTransaction> getBlockWithTransaction(int blockNumber) async =>
       BlockWithTransaction._(
         await call<_BlockWithTransactionImpl>(
@@ -115,6 +130,26 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   /// Returns the List of [Log] matching the [filter].
   ///
   /// Keep in mind that many backends will discard old events, and that requests which are too broad may get dropped as they require too many resources to execute the query.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// // Create new BUSD BEP20 Token filter for specific topics
+  /// final filter = Filter(
+  ///   address: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+  ///   topics: [
+  ///     '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
+  ///     '0x0000000000000000000000002caa4694cb7daf7d49a198dc1103c06d4991ae52',
+  ///   ],
+  /// );
+  ///
+  /// // Query logs for specified filter
+  /// final logs = await provider!.getLogs(filter);
+  ///
+  /// print(logs.length); // 8
+  /// print(logs.first); // Log: 3 topics from 0x2ad2e409
+  /// print(logs.first is Log); // true
+  /// ```
   Future<List<Log>> getLogs(EventFilter filter) async =>
       (await call<List>('getLogs', [filter.impl]))
           .cast<_LogImpl>()
@@ -130,6 +165,17 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   /// If a transaction has not been mined, this method will search the transaction pool.
   ///
   /// Various backends may have more restrictive transaction pool access (e.g. if the gas price is too low or the transaction was only recently sent and not yet indexed) in which case this method may also return `null`.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final transaction = await provider!.getTransaction(
+  ///     '0x4e04def628cfd0c7786febaef8fbe832fc30eae54a4fba25bf46022c439ab39d');
+  ///
+  /// print(transaction); // Transaction: 0x4e04def6 from 0x1dFCD06a with value 0 and data 0x876cb21700000...
+  /// print(transaction != null); // true
+  /// print(transaction is TransactionResponse); // true
+  /// ```
   Future<TransactionResponse?> getTransaction(String hash) async {
     final response =
         await call<_TransactionResponseImpl?>('getTransaction', [hash]);
@@ -145,9 +191,20 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
         blockTag != null ? [address, blockTag] : [address],
       );
 
-  /// Returns the [TransactionReceipt] for [hash] or null if the transaction has not been mined.
+  /// Returns the [TransactionReceipt] for [hash] or `null` if the transaction has not been mined.
   ///
   /// To stall until the transaction has been mined, consider the [waitForTransaction] method.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final transaction = await provider!.getTransactionReceipt(
+  ///     '0x4e04def628cfd0c7786febaef8fbe832fc30eae54a4fba25bf46022c439ab39d');
+  ///
+  /// print(transaction); // TransactionReceipt: 0x4e04def6 from 0x1dFCD06a with 618 confirmations and 8 logs
+  /// print(transaction != null); // true
+  /// print(transaction is TransactionReceipt); // true
+  /// ```
   Future<TransactionReceipt?> getTransactionReceipt(String hash) async {
     final receipt =
         await call<_TransactionReceiptImpl?>('getTransactionReceipt', [hash]);
@@ -207,7 +264,7 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   /// The transaction must be signed, and be valid (i.e. the nonce is correct and the account has sufficient balance to pay for the transaction).
   ///
   /// ```dart
-  /// await provider.sendTransaction("0xf86e808502540be400825208948ba1f109551bd432803012645ac136ddd64dba72880de0b6b3a764000080820a96a0f0c5bcb11e5a16ab116c60a0e5837ae98ec36e7f217740076572e8183002edd2a01ed1b4411c2840b9793e8be5415a554507f1ea320069be6dcecabd7b9097dbd4");
+  /// await provider!.sendTransaction("0xf86e808502540be400825208948ba1f109551bd432803012645ac136ddd64dba72880de0b6b3a764000080820a96a0f0c5bcb11e5a16ab116c60a0e5837ae98ec36e7f217740076572e8183002edd2a01ed1b4411c2840b9793e8be5415a554507f1ea320069be6dcecabd7b9097dbd4");
   /// ```
   Future<TransactionResponse> sendTransaction(String data) async =>
       TransactionResponse._(
@@ -218,6 +275,15 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   /// If confirms is 0, this method is non-blocking and if the transaction has not been mined returns null.
   ///
   /// Otherwise, this method will block until the transaction has confirms blocks mined on top of the block in which is was mined.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final transaction = await provider!.waitForTransaction('0x4e04def628cfd0c7786febaef8fbe832fc30eae54a4fba25bf46022c439ab39d');
+  ///
+  /// print(transaction); // TransactionReceipt: 0x4e04def6 from 0x1dFCD06a with 618 confirmations and 8 logs
+  /// print(transaction is TransactionReceipt); // true
+  /// ```
   Future<TransactionReceipt> waitForTransaction(
     String transactionHash, [
     int confirms = 1,
