@@ -37,5 +37,6 @@ class Log extends Interop<_LogImpl> {
   int get transactionLogIndex => impl.transactionLogIndex;
 
   @override
-  String toString() => 'Log: ${topics.length} topics from $transactionHash';
+  String toString() =>
+      'Log: ${topics.length} topics from ${transactionHash.substring(0, 10)}';
 }

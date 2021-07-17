@@ -38,7 +38,7 @@ class _RawBlock<T extends _RawBlockImpl> extends Interop<T> {
 
   @override
   String toString() =>
-      'Block: $number $hash mined at ${timestamp.toIso8601String()} with diff $difficulty';
+      'Block: $number ${hash.substring(0, 10)} mined at ${timestamp.toIso8601String()} with diff $difficulty';
 }
 
 /// An object consist of basic information about block.

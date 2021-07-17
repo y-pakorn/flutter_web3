@@ -148,7 +148,8 @@ class Transaction<T extends _TransactionImpl> extends Interop<T> {
   BigInt get value => impl.value.toBigInt;
 
   @override
-  String toString() => 'Transaction: $hash from $from with data $data';
+  String toString() =>
+      'Transaction: ${hash.substring(0, 10)} from ${from.substring(0, 10)} with value $value and data ${data.substring(0, 15)}...';
 }
 
 class TransactionReceipt extends Interop<_TransactionReceiptImpl> {
@@ -218,8 +219,8 @@ class TransactionReceipt extends Interop<_TransactionReceiptImpl> {
 
   @override
   String toString() => status
-      ? 'TransactionReceipt: mined $transactionHash with $confirmations confirmations and ${logs.length} logs'
-      : 'TransactionReceipt: reverted $transactionHash';
+      ? 'TransactionReceipt: ${transactionHash.substring(0, 10)} from ${from.substring(0, 10)} with $confirmations confirmations and ${logs.length} logs'
+      : 'TransactionReceipt: ${transactionHash.substring(0, 10)} reverted ';
 }
 
 /// A TransactionResponse includes all properties of a [Transaction] as well as several properties that are useful once it has been mined.
