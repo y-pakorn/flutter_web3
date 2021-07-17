@@ -4,25 +4,34 @@ part of ethers;
 ///
 /// A Contract may be sent transactions, which will trigger its code to be run with the input of the transaction data.
 class Contract extends Interop<_ContractImpl> {
-  /// Contruct Contract object for invoking smart contract method.
+  /// Instantiate Contract object for invoking smart contract method.
   ///
   /// Use [Provider] in [providerOrSigner] for read-only contract calls, or use [Signer] for read-write contract calls.
   factory Contract(String address, dynamic abi, dynamic providerOrSigner) {
     assert(
-      providerOrSigner is Interop &&
-          (providerOrSigner is Provider || providerOrSigner is Signer),
+      //providerOrSigner is Interop &&
+      (providerOrSigner is Provider || providerOrSigner is Signer),
       'providerOrSigner must be Provider or Signer',
     );
     return Contract._(
         _ContractImpl(address, abi, (providerOrSigner as Interop).impl));
   }
 
+  /// Instantiate [Contract] from [provider] for read-only contract calls.
+  factory Contract.fromProvider(
+          String address, dynamic abi, Provider provider) =>
+      Contract._(_ContractImpl(address, abi, provider.impl));
+
+  /// Instantiate [Contract] from [provider] for read-write contract calls.
+  factory Contract.fromSigner(String address, dynamic abi, Signer signer) =>
+      Contract._(_ContractImpl(address, abi, signer.impl));
+
   const Contract._(_ContractImpl impl) : super.internal(impl);
 
   /// This is the address (or ENS name) the contract was constructed with.
   String get address => impl.address;
 
-  /// If the [Contract] object is the result of a ContractFactory deployment, this is the transaction which was used to deploy the contract.
+  /// If the [Contract] object is the result of a `ContractFactory` deployment, this is the transaction which was used to deploy the contract.
   Future<TransactionResponse> get deployTransaction =>
       _get<TransactionResponse>('deployTransaction');
 
@@ -35,15 +44,15 @@ class Contract extends Interop<_ContractImpl> {
   /// If a [Provider] was provided to the constructor, this is that provider. If a [Signer] was provided that had a [Provider], this is that provider.
   Provider get provider => Provider._(impl.provider);
 
-  /// This is a promise that will resolve to the address the [Contract] object is attached to.
+  /// This is a Future that will resolve to the address [this] is attached to.
   ///
-  /// If an Address was provided to the constructor, it will be equal to this; if an ENS name was provided, this will be the resolved address.
+  /// If an Address was provided to the constructor, it will be equal to [this]. If an ENS name was provided, this will be the resolved address.
   Future<String> get resolvedAddress => _get<String>('resolvedAddress');
 
   /// If a [Signer] was provided to the constructor, this is that signer.
   Signer? get signer => impl.signer != null ? Signer._(impl.signer!) : null;
 
-  /// Call read-only constant method on the Contract.
+  /// Call read-only constant [method] with [args].
   ///
   /// A constant method is read-only and evaluates a small amount of EVM code against the current blockchain state and can be computed by asking a single node, which can return a result.
   ///
@@ -64,7 +73,7 @@ class Contract extends Interop<_ContractImpl> {
     return Contract._(impl.connect(providerOrSigner));
   }
 
-  /// Return a filter for [eventName], optionally filtering by additional constraints.
+  /// Return a filter for [eventName], optionally filtering by additional [args] constraints.
   ///
   /// Only indexed event parameters may be filtered. If a parameter is null (or not provided) then any value in that field matches.
   Filter getFilter(String eventName, [List<dynamic> args = const []]) =>
@@ -76,7 +85,7 @@ class Contract extends Interop<_ContractImpl> {
   /// Returns the list of Listeners for the [eventName] events.
   List listeners(String eventName) => impl.listeners(eventName);
 
-  /// Multicall read-only constant method on the Contract. `May not` be at the same block.
+  /// Multicall read-only constant [method] with [args]. `May not` be at the same block.
   ///
   /// If [eagerError] is `true`, returns the error immediately on the first error found.
   Future<List<T>> multicall<T>(String method, List<List<dynamic>> args,
@@ -86,19 +95,6 @@ class Contract extends Interop<_ContractImpl> {
             (e) => _call<T>(method, args[e]),
           ),
           eagerError: eagerError);
-
-  /// Multicall method and args on the Contract, this lose ability to annotate type.
-  Future<List<dynamic>> multicallMethod(
-    List<String> method,
-    List<List<dynamic>> args,
-  ) {
-    assert(method.isNotEmpty);
-    assert(args.isNotEmpty);
-    assert(method.length == args.length);
-
-    return Future.wait(Iterable<int>.generate(method.length)
-        .map((e) => call(method[e], args[e])));
-  }
 
   /// Remove a [listener] for the [eventName] event. If no [listener] is provided, all listeners for [eventName] are removed.
   off(String eventName, [Function? listener]) => callMethod(impl, 'off',
@@ -112,7 +108,7 @@ class Contract extends Interop<_ContractImpl> {
   once(String eventName, Function listener) =>
       callMethod(impl, 'once', [eventName, allowInterop(listener)]);
 
-  /// Return a List of [Log] that have been emitted by the Contract by the [filter].
+  /// Return a List of [Log] that have been emitted by the Contract by the [filter]. Optinally constraint from [startBlock] to [endBlock].
   Future<List<Log>> queryFilter(EventFilter filter,
           [dynamic startBlock, dynamic endBlock]) async =>
       (await _call<List>(
@@ -130,7 +126,7 @@ class Contract extends Interop<_ContractImpl> {
   /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
   removeAllListeners([String? eventName]) => impl.removeAllListeners(eventName);
 
-  /// Send write method to the Contract.
+  /// Send write [method] with [args], [override] may be include to send the Ether or adjust transaction options.
   ///
   /// This required the Contract object to be initalized with [Signer].
   ///

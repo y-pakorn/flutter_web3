@@ -41,7 +41,7 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   Future<Network> get ready async =>
       Network._(await call<_NetworkImpl>('ready'));
 
-  /// Direct Ethers provider call to access Blockchain data.
+  /// Direct Ethers provider [method] call with [args] to access Blockchain data.
   Future<T> call<T>(String method, [List<dynamic> args = const []]) async {
     switch (T) {
       case BigInt:
@@ -51,8 +51,8 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
     }
   }
 
-  /// Returns the balance of [address] as of the [blockTag] block height.
-  Future<BigInt> getBalance(String address, [String? blockTag]) => call<BigInt>(
+  /// Returns the balance of [address] as of the [blockTag].
+  Future<BigInt> getBalance(String address, [dynamic blockTag]) => call<BigInt>(
         'getBalance',
         blockTag != null ? [address, blockTag] : [address],
       );
@@ -64,7 +64,7 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   /// Returns the block number (or height) of the most recently mined block.
   Future<int> getBlockNumber() => call<int>('getBlockNumber');
 
-  /// Get the block from the network, where the [BlockWithTransaction.transactions] is an Array of [TransactionResponse].
+  /// Get the [BlockWithTransaction] at [blockNumber] from the network, where the [BlockWithTransaction.transactions] is an Array of [TransactionResponse].
   Future<BlockWithTransaction> getBlockWithTransaction(int blockNumber) async =>
       BlockWithTransaction._(
         await call<_BlockWithTransactionImpl>(
@@ -85,7 +85,7 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
       BlockWithTransaction._(await call<_BlockWithTransactionImpl>(
           'getBlockWithTransactions', []));
 
-  /// Returns the List of [Log] matching the filter.
+  /// Returns the List of [Log] matching the [filter].
   ///
   /// Keep in mind that many backends will discard old events, and that requests which are too broad may get dropped as they require too many resources to execute the query.
   Future<List<Log>> getLogs(EventFilter filter) async =>
@@ -94,15 +94,15 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
           .map((e) => Log._(e))
           .toList();
 
-  /// Returns the Network this Provider is connected to.
+  /// Returns the [Network] that [this] is connected to.
   Future<Network> getNetwork() async =>
       Network._(await call<_NetworkImpl>('getNetwork'));
 
-  /// Returns the [TransactionResponse] with [hash] or null if the transaction is unknown.
+  /// Returns the [TransactionResponse] with [hash] or `null` if the transaction is unknown.
   ///
   /// If a transaction has not been mined, this method will search the transaction pool.
   ///
-  /// Various backends may have more restrictive transaction pool access (e.g. if the gas price is too low or the transaction was only recently sent and not yet indexed) in which case this method may also return null.
+  /// Various backends may have more restrictive transaction pool access (e.g. if the gas price is too low or the transaction was only recently sent and not yet indexed) in which case this method may also return `null`.
   Future<TransactionResponse?> getTransaction(String hash) async {
     final response =
         await call<_TransactionResponseImpl?>('getTransaction', [hash]);
@@ -112,7 +112,7 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   /// Returns the number of transactions [address] has ever sent, as of [blockTag].
   ///
   /// This value is required to be the nonce for the next transaction from address sent to the network.
-  Future<int> getTransactionCount(String address, [String? blockTag]) =>
+  Future<int> getTransactionCount(String address, [dynamic blockTag]) =>
       call<int>(
         'getTransactionCount',
         blockTag != null ? [address, blockTag] : [address],
@@ -166,7 +166,7 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   /// Returns the result of executing the transaction, using call.
   ///
   /// A call does not require any ether, but cannot change any state. This is useful for calling getters on Contracts.
-  Future<T> rawCall<T>(String to, String data, [String? blockTag]) =>
+  Future<T> rawCall<T>(String to, String data, [dynamic blockTag]) =>
       promiseToFuture<T>(callMethod(
         this,
         'call',
@@ -175,7 +175,7 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
             : [_RawTxParamsImpl(to: to, data: data)],
       ));
 
-  /// Submits transaction to the network to be mined.
+  /// Submits transaction [data] to the network to be mined.
   ///
   /// The transaction must be signed, and be valid (i.e. the nonce is correct and the account has sufficient balance to pay for the transaction).
   ///
@@ -210,7 +210,7 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
 ///
 /// This may also be used to wrap a standard [EIP-1193 Provider](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1193.md).
 class Web3Provider extends Provider<_Web3ProviderImpl> {
-  /// Create new [Web3Provider] instance from provider instance.
+  /// Create new [Web3Provider] instance from [provider] instance.
   factory Web3Provider(dynamic provider) {
     assert(provider != null, 'Provider must not be null.');
     assert(
@@ -222,17 +222,17 @@ class Web3Provider extends Provider<_Web3ProviderImpl> {
     );
   }
 
-  /// Create new [Web3Provider] instance from [Ethereum] instance.
+  /// Create new [Web3Provider] instance from [ethereum] instance.
   factory Web3Provider.fromEthereum(Ethereum ethereum) =>
       Web3Provider._(_Web3ProviderImpl(ethereum.impl));
 
-  /// Create new [Web3Provider] instance from [WalletConnectProvider] instance.
+  /// Create new [Web3Provider] instance from [walletConnect] instance.
   factory Web3Provider.fromWalletConnect(WalletConnectProvider walletConnect) =>
       Web3Provider._(_Web3ProviderImpl(walletConnect.impl));
 
   const Web3Provider._(_Web3ProviderImpl impl) : super._(impl);
 
-  /// Connect this to create new [Signer] object.
+  /// Connect [this] to create [Signer] object.
   Signer getSigner() => Signer._(impl.getSigner());
 
   @override

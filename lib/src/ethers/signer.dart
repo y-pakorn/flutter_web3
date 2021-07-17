@@ -25,7 +25,7 @@ class Signer extends Interop<_SignerImpl> {
   Future<String> getAddress() => _call<String>('getAddress');
 
   /// Returns the balance of this wallet at [blockTag].
-  Future<BigInt> getBalance([String? blockTag]) async => _call<BigInt>(
+  Future<BigInt> getBalance([dynamic blockTag]) async => _call<BigInt>(
         'getBalance',
         blockTag != null ? [blockTag] : [],
       );
@@ -36,10 +36,10 @@ class Signer extends Interop<_SignerImpl> {
   /// Returns the current gas price.
   Future<BigInt> getGasPrice() async => _call<BigInt>('getGasPrice');
 
-  /// Returns the number of transactions this account has ever sent.
+  /// Returns the number of transactions this account has ever sent at [blockTag].
   ///
   /// This is the value required to be included in transactions as the nonce.
-  Future<int> getTransactionCount([String? blockTag]) =>
+  Future<int> getTransactionCount([dynamic blockTag]) =>
       _call<int>('getTransactionCount', blockTag != null ? [blockTag] : []);
 
   /// Submits transaction to the network to be mined.
@@ -50,19 +50,19 @@ class Signer extends Interop<_SignerImpl> {
       TransactionResponse._(await _call<_TransactionResponseImpl>(
           'sendTransaction', [request.impl]));
 
-  /// Returns the result of calling using the [TransactionRequest], with this account address being used as the from field.
+  /// Returns the result of calling using the [request], with this account address being used as the from field.
   Future<String> call(TransactionRequest request) =>
       _call<String>('call', [request.impl]);
 
-  /// Returns the result of estimating the cost to send the [TransactionRequest], with this account address being used as the from field.
+  /// Returns the result of estimating the cost to send the [request], with this account address being used as the from field.
   Future<BigInt> estimateGas(TransactionRequest request) =>
       _call<BigInt>('estimateGas', [request.impl]);
 
-  /// Returns a Future which resolves to the signed transaction of the transactionRequest. This method does not populate any missing fields.
+  /// Returns a Future which resolves to the signed transaction of the [request]. This method does not populate any missing fields.
   Future<String> signTransaction(TransactionRequest request) =>
       _call<String>('signTransaction', [request.impl]);
 
-  /// Returns a Future which resolves to the Raw Signature of message.
+  /// Returns a Future which resolves to the Raw Signature of [message].
   Future<String> signMessage(String message) =>
       _call<String>('signMessage', [message]);
 }
