@@ -15,9 +15,21 @@ part 'interop.dart';
 /// Function to convert Dart rpc map into JS rpc map.
 dynamic _convertRpc(Map<int, String> rpcMap) => jsify(rpcMap);
 
-/// Web3 Provider for Wallet Connect connection, typically used in mobile phone connection.
+/// Provider for Wallet Connect connection, typically used in mobile phone connection.
 class WalletConnectProvider extends Interop<_WalletConnectProviderImpl> {
   /// Instantiate [WalletConnectProvider] using [infuraId].
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final wc = WalletConnectProvider.fromInfura('https://foo.infura.io/v3/barbaz');
+  ///
+  /// await wc.connect();
+  ///
+  /// print(wc); // WalletConnectProvider: connected to https://foo.infura.io/v3/barbaz with [0xfooBar]
+  /// print(wc.connected); // true
+  /// print(wc.walletMeta); // WalletMeta: Trust Wallet on https://trustwallet.com
+  /// ```
   factory WalletConnectProvider.fromInfura(
     String infuraId, {
     String? network,
@@ -44,6 +56,22 @@ class WalletConnectProvider extends Interop<_WalletConnectProviderImpl> {
       );
 
   /// Instantiate [WalletConnectProvider] using [rpc].
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final wc = WalletConnectProvider.fromRpc(
+  ///   {56: 'https://bsc-dataseed.binance.org/'},
+  ///   chainId: 56,
+  ///   network: 'binance',
+  /// );
+  ///
+  /// await wc.connect();
+  ///
+  /// print(wc); // WalletConnectProvider: connected to https://bsc-dataseed.binance.org/ (56) with [0xfooBar]
+  /// print(wc.connected); // true
+  /// print(wc.walletMeta); // WalletMeta: Trust Wallet on https://trustwallet.com
+  /// ```
   factory WalletConnectProvider.fromRpc(
     Map<int, String> rpc, {
     String? network,
@@ -161,7 +189,7 @@ class WalletConnectProvider extends Interop<_WalletConnectProviderImpl> {
 
   @override
   String toString() => connected
-      ? 'WalletConnectProvider: connected to $rpcUrl($chainId) with $accounts'
+      ? 'WalletConnectProvider: connected to $rpcUrl ($chainId) with $accounts'
       : 'WalletConnectProvider: not connected to $rpcUrl($chainId)';
 
   /// Instantiate [WalletConnectProvider] object with `Binance Mainnet` rpc and QR code enabled, ready to connect.
