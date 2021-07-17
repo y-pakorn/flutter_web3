@@ -7,6 +7,16 @@ class JsonRpcProvider extends Provider<_JsonRpcProviderImpl> {
   /// Create new [JsonRpcProvider] from [rpcUrl].
   ///
   /// If [rpcUrl] is `null`, [JsonRpcProvider] will instantiate with default rpc, i.e. `http:/\/localhost:8545`.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final localRpcProvider = JsonRpcProvider();
+  /// print(localRpcProvider); // JsonRpcProvider: http://localhost:8545/
+  ///
+  /// final binanceRpcProvider = JsonRpcProvider('https://bsc-dataseed.binance.org/');
+  /// print(binanceRpcProvider); // JsonRpcProvider: https://bsc-dataseed.binance.org/
+  /// ```
   factory JsonRpcProvider([String? rpcUrl]) {
     if (rpcUrl != null) {
       assert(rpcUrl.isNotEmpty, 'Rpc url must not be empty');
@@ -52,12 +62,29 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   }
 
   /// Returns the balance of [address] as of the [blockTag].
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final balance = await getBalance('0xfooBar');
+  /// print(balance); // 10000000000000
+  /// print(balance is BigInt); // true
+  /// ```
   Future<BigInt> getBalance(String address, [dynamic blockTag]) => call<BigInt>(
         'getBalance',
         blockTag != null ? [address, blockTag] : [address],
       );
 
   /// Get the [Block] from the network by [blockNumber], where the [Block.transactions] is a list of transaction hashes.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final block = await provider!.getBlock(2000000);
+  /// print(block);
+  /// // Block: 2000000 0x9d2e2d20a07108b5f816d26d41911590ff07918e48485cd41e355f80fd64843d
+  /// // mined at 2020-11-06T21:22:24.000 with diff 2
+  /// ```
   Future<Block> getBlock(int blockNumber) async =>
       Block._(await call<_BlockImpl>('getBlock', [blockNumber]));
 
@@ -211,6 +238,13 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
 /// This may also be used to wrap a standard [EIP-1193 Provider](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1193.md).
 class Web3Provider extends Provider<_Web3ProviderImpl> {
   /// Create new [Web3Provider] instance from [provider] instance.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final web3provider = Web3Provider(ethereum!);
+  /// print(web3provider); // Web3Provider:
+  /// ```
   factory Web3Provider(dynamic provider) {
     assert(provider != null, 'Provider must not be null.');
     assert(
@@ -223,10 +257,30 @@ class Web3Provider extends Provider<_Web3ProviderImpl> {
   }
 
   /// Create new [Web3Provider] instance from [ethereum] instance.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final web3provider = Web3Provider.fromEthereum(ethereum!);
+  /// print(web3provider); // Web3Provider:
+  /// ```
   factory Web3Provider.fromEthereum(Ethereum ethereum) =>
       Web3Provider._(_Web3ProviderImpl(ethereum.impl));
 
   /// Create new [Web3Provider] instance from [walletConnect] instance.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// Web3Provider? web3provider;
+  ///
+  /// final wc = WalletConnectProvider.binance();
+  /// await wc.connect();
+  ///
+  /// if (wc.connected) web3provider = Web3Provider.fromWalletConnect(wc);
+  ///
+  /// print(web3provider); // Web3Provider:
+  /// ```
   factory Web3Provider.fromWalletConnect(WalletConnectProvider walletConnect) =>
       Web3Provider._(_Web3ProviderImpl(walletConnect.impl));
 

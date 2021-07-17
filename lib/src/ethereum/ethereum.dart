@@ -97,6 +97,24 @@ class Ethereum extends Interop<_EthereumImpl> {
           .toList();
 
   /// Returns chain id in [int]
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// String? currentAddress;
+  /// int? currentChain;
+  ///
+  /// connectProvider() async {
+  ///   if (ethereum != null) {
+  ///     final accs = await ethereum!.requestAccount();
+  ///
+  ///     if (accs.isNotEmpty) {
+  ///       currentAddress = accs.first;
+  ///       currentChain = await ethereum!.getChainId();
+  ///     }
+  ///   }
+  /// }
+  /// ```
   Future<int> getChainId() async =>
       int.parse((await request('eth_chainId')).toString());
 
@@ -180,6 +198,24 @@ class Ethereum extends Interop<_EthereumImpl> {
   /// This method will only work if you’re using the injected provider from a application like Metamask, Status or TrustWallet.
   ///
   /// It doesn’t work if you’re connected to a node with a default Web3.js provider (WebsocketProvider, HttpProvidder and IpcProvider).
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// String? currentAddress;
+  /// int? currentChain;
+  ///
+  /// connectProvider() async {
+  ///   if (ethereum != null) {
+  ///     final accs = await ethereum!.requestAccount();
+  ///
+  ///     if (accs.isNotEmpty) {
+  ///       currentAddress = accs.first;
+  ///       currentChain = await ethereum!.getChainId();
+  ///     }
+  ///   }
+  /// }
+  /// ```
   Future<List<String>> requestAccount() async {
     try {
       return (await request<List<dynamic>>('eth_requestAccounts'))
