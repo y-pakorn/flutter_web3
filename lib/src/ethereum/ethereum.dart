@@ -28,6 +28,7 @@ class CurrencyParams extends Interop<_CurrencyParamsImpl> {
   /// ---
   ///
   /// ```dart
+  /// // Instantiate new `CurrencyParams` object.
   /// final currency = CurrencyParams(
   ///   name: 'Binance Coin',
   ///   symbol: 'BNB',
@@ -123,6 +124,16 @@ class Ethereum extends Interop<_EthereumImpl> {
   /// Note that this method has nothing to do with the user's accounts.
   ///
   /// You may often encounter the word `connected` in reference to whether a web3 site can access the user's accounts. In the provider interface, however, `connected` and `disconnected` refer to whether the provider can make RPC requests to the current chain.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// // To check if provider is connected to current chain
+  /// ethereum!.isConnected() // true
+  ///
+  /// // To check if provider is connected to current chain and connected to user accounts i.e. ready to use
+  /// ethereum!.isConnected() && (await getAccounts()).isNotEmpty; // true
+  /// ```
   bool isConnected() => impl.isConnected();
 
   /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
@@ -184,12 +195,22 @@ class Ethereum extends Interop<_EthereumImpl> {
   /// Use request to submit RPC requests with [method] and optionally [params] to Ethereum via MetaMask or provider that is currently using.
   ///
   /// Returns a Future of generic type that resolves to the result of the RPC method call.
-  Future<T> request<T>(String method, [dynamic params]) =>
-      promiseToFuture<T>(callMethod(impl, 'request', [
+  Future<T> request<T>(String method, [dynamic params]) {
+    try {
+      return promiseToFuture<T>(callMethod(impl, 'request', [
         params != null
             ? _RequestArgumentsImpl(method: method, params: params)
-            : _RequestArgumentsImpl(method: method)
+            : _RequestArgumentsImpl(method: method),
       ]));
+    } catch (error) {
+      switch (convertToDart(error)['code']) {
+        case 4001:
+          throw EthereumUserRejected();
+        default:
+          rethrow;
+      }
+    }
+  }
 
   /// Request/Enable the accounts from the current environment.
   ///
@@ -205,6 +226,7 @@ class Ethereum extends Interop<_EthereumImpl> {
   /// String? currentAddress;
   /// int? currentChain;
   ///
+  /// // Handle `requestAccount` and store accounts and chain information
   /// connectProvider() async {
   ///   if (ethereum != null) {
   ///     final accs = await ethereum!.requestAccount();
@@ -216,19 +238,8 @@ class Ethereum extends Interop<_EthereumImpl> {
   ///   }
   /// }
   /// ```
-  Future<List<String>> requestAccount() async {
-    try {
-      return (await request<List<dynamic>>('eth_requestAccounts'))
-          .cast<String>();
-    } catch (error) {
-      switch (convertToDart(error)['code']) {
-        case 4001:
-          throw EthereumUserRejected();
-        default:
-          rethrow;
-      }
-    }
-  }
+  Future<List<String>> requestAccount() async =>
+      (await request<List<dynamic>>('eth_requestAccounts')).cast<String>();
 
   @override
   String toString() => isSupported
@@ -246,6 +257,7 @@ class Ethereum extends Interop<_EthereumImpl> {
   /// ---
   ///
   /// ```dart
+  /// // Add chain 97
   /// await ethereum!.walletAddChain(
   ///   chainId: 97,
   ///   chainName: 'Binance Testnet',
@@ -259,9 +271,8 @@ class Ethereum extends Interop<_EthereumImpl> {
     required CurrencyParams nativeCurrency,
     required List<String> rpcUrls,
     List<String>? blockExplorerUrls,
-  }) async {
-    try {
-      await request('wallet_addEthereumChain', [
+  }) =>
+      request('wallet_addEthereumChain', [
         _ChainParamsImpl(
           chainId: '0x' + chainId.toRadixString(16),
           chainName: chainName,
@@ -270,15 +281,6 @@ class Ethereum extends Interop<_EthereumImpl> {
           blockExplorerUrls: blockExplorerUrls,
         )
       ]);
-    } catch (error) {
-      switch (convertToDart(error)['code']) {
-        case 4001:
-          throw EthereumUserRejected();
-        default:
-          rethrow;
-      }
-    }
-  }
 
   /// Creates a confirmation asking the user to switch to the chain with the specified [chainId].
   ///
@@ -293,6 +295,7 @@ class Ethereum extends Interop<_EthereumImpl> {
   ///
   /// ---
   ///
+  /// // Switch to chain 97 and add the chain when unrecognized
   /// ```dart
   /// await ethereum!.walletSwitchChain(97, () async {
   ///   await ethereum!.walletAddChain(
@@ -303,6 +306,19 @@ class Ethereum extends Interop<_EthereumImpl> {
   ///     rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
   ///   );
   /// });
+  ///
+  /// // Or catch `EthereumUnrecognizedChainException`
+  /// try {
+  ///   await ethereum!.walletSwitchChain(97);
+  /// } on EthereumUnrecognizedChainException {
+  ///   await ethereum!.walletAddChain(
+  ///     chainId: 97,
+  ///     chainName: 'Binance Testnet',
+  ///     nativeCurrency:
+  ///         CurrencyParams(name: 'BNB', symbol: 'BNB', decimals: 18),
+  ///     rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
+  ///   );
+  /// }
   /// ```
   Future<void> walletSwitchChain(int chainId,
       [void Function()? unrecognizedChainHandler]) async {
@@ -313,8 +329,6 @@ class Ethereum extends Interop<_EthereumImpl> {
       ]);
     } catch (error) {
       switch (convertToDart(error)['code']) {
-        case 4001:
-          throw EthereumUserRejected();
         case 4902:
           unrecognizedChainHandler != null
               ? unrecognizedChainHandler.call()
@@ -333,15 +347,25 @@ class Ethereum extends Interop<_EthereumImpl> {
   /// Ethereum protocal only support [type] that is `ERC20` for now.
   ///
   /// Most Ethereum wallets support some set of tokens, usually from a centrally curated registry of tokens. `wallet_watchAsset` enables web3 application developers to ask their users to track tokens in their wallets, at runtime. Once added, the token is indistinguishable from those added via legacy methods, such as a centralized registry.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// // Watch BUSD Token
+  /// await ethereum!.walletWatchAssets(
+  ///   address: '0xed24fc36d5ee211ea25a80239fb8c4cfd80f12ee',
+  ///   symbol: 'BUSD',
+  ///   decimals: 18,
+  /// );
+  /// ```
   Future<bool> walletWatchAssets({
     required String address,
     required String symbol,
     required int decimals,
     String? image,
     String type = 'ERC20',
-  }) async {
-    try {
-      return await request<bool>(
+  }) =>
+      request<bool>(
         'wallet_watchAsset',
         _WatchAssetParamsImpl(
           type: type,
@@ -353,15 +377,6 @@ class Ethereum extends Interop<_EthereumImpl> {
           ),
         ),
       );
-    } catch (error) {
-      switch (convertToDart(error)['code']) {
-        case 4001:
-          throw EthereumUserRejected();
-        default:
-          rethrow;
-      }
-    }
-  }
 }
 
 /// Interface for provier message used by [Ethereum] method.

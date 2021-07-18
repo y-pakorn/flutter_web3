@@ -125,6 +125,14 @@ class WalletConnectProvider extends Interop<_WalletConnectProviderImpl> {
   WalletMeta get walletMeta => WalletMeta._(impl.walletMeta);
 
   /// Enable session and try to connect to provider. (triggers QR Code modal)
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// await wc.connect();
+  ///
+  /// print(wc.connected); // true
+  /// ```
   Future<void> connect() => promiseToFuture(callMethod(impl, 'enable', []));
 
   /// Close provider session.
