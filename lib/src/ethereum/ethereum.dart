@@ -195,13 +195,23 @@ class Ethereum extends Interop<_EthereumImpl> {
   /// Use request to submit RPC requests with [method] and optionally [params] to Ethereum via MetaMask or provider that is currently using.
   ///
   /// Returns a Future of generic type that resolves to the result of the RPC method call.
-  Future<T> request<T>(String method, [dynamic params]) {
+  Future<T> request<T>(String method, [dynamic params]) async {
     try {
-      return promiseToFuture<T>(callMethod(impl, 'request', [
-        params != null
-            ? _RequestArgumentsImpl(method: method, params: params)
-            : _RequestArgumentsImpl(method: method),
-      ]));
+      switch (T) {
+        case BigInt:
+          return BigInt.parse(await request<String>(method, params)) as T;
+        default:
+          return promiseToFuture<T>(
+            callMethod(
+              impl,
+              'request',
+              [
+                _RequestArgumentsImpl(
+                    method: method, params: params != null ? params : [])
+              ],
+            ),
+          );
+      }
     } catch (error) {
       switch (convertToDart(error)['code']) {
         case 4001:
