@@ -1,5 +1,21 @@
 part of ethers;
 
+@JS('utils.FormatTypes')
+class _FormatTypesImpl {
+  external static dynamic json;
+
+  external static dynamic full;
+
+  external static dynamic minimal;
+}
+
+@JS("utils.Interface")
+class _InterfaceImpl {
+  external _InterfaceImpl(dynamic abi);
+
+  external dynamic format([dynamic types]);
+}
+
 @JS()
 @anonymous
 class _TransactionOverrideImpl {

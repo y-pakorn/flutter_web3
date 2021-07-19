@@ -9,12 +9,23 @@ class Contract extends Interop<_ContractImpl> {
   /// Use [Provider] in [providerOrSigner] for read-only contract calls, or use [Signer] for read-write contract calls.
   factory Contract(String address, dynamic abi, dynamic providerOrSigner) {
     assert(
-      //providerOrSigner is Interop &&
-      (providerOrSigner is Provider || providerOrSigner is Signer),
+      providerOrSigner is Web3Provider ||
+          providerOrSigner is JsonRpcProvider ||
+          providerOrSigner is Provider ||
+          providerOrSigner is Signer,
       'providerOrSigner must be Provider or Signer',
     );
+    assert(
+      abi is String || abi is List<String> || abi is Interface,
+      'abi must be valid type',
+    );
     return Contract._(
-        _ContractImpl(address, abi, (providerOrSigner as Interop).impl));
+      _ContractImpl(
+        address,
+        abi is Interface ? abi.impl : abi,
+        (providerOrSigner as Interop).impl,
+      ),
+    );
   }
 
   /// Instantiate [Contract] from [provider] for read-only contract calls.

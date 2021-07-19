@@ -12,6 +12,7 @@ part 'access_list.dart';
 part 'block.dart';
 part 'contract.dart';
 part 'filter.dart';
+part 'interface.dart';
 part 'interop.dart';
 part 'log.dart';
 part 'network.dart';
@@ -216,51 +217,6 @@ class EthUtils {
       List<String> types, List<dynamic> values);
 
   external static String verifyMessage(String hash, String sig);
-}
-
-/// Format types of Interface
-@JS('utils.FormatTypes')
-class FormatTypes {
-  /// ```dart
-  /// [{"type":"function","name":"balanceOf","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"address"}],"outputs":[{"type":"uint256"}]}]
-  /// ```
-  external static dynamic json;
-
-  /// ```dart
-  /// [
-  /// 'function balanceOf(address owner) view returns (uint256)',
-  /// ]
-  /// ```dart
-  external static dynamic full;
-
-  /// ```dart
-  /// [
-  /// 'function balanceOf(address) view returns (uint256)',
-  /// ]
-  /// ```
-  external static dynamic minimal;
-}
-
-/// The Interface Class abstracts the encoding and decoding required to interact with contracts on the Ethereum network.
-///
-/// Many of the standards organically evolved along side the Solidity language, which other languages have adopted to remain compatible with existing deployed contracts.
-///
-/// The EVM itself does not understand what the ABI is. It is simply an agreed upon set of formats to encode various types of data which each contract can expect so they can interoperate with each other.
-@JS("utils.Interface")
-class Interface {
-  /// Create a new Interface from a JSON string or object representing abi.
-  ///
-  /// The abi may be a JSON string or the parsed Object (using JSON.parse) which is emitted by the Solidity compiler (or compatible languages).
-  ///
-  /// The abi may also be a Human-Readable Abi, which is a format the Ethers created to simplify manually typing the ABI into the source and so that a Contract ABI can also be referenced easily within the same source file.
-  external Interface(dynamic abi);
-
-  /// Return the formatted [Interface].
-  ///
-  /// [types] must be from [FormatTypes] variable.
-  ///
-  /// If the format type is json a single string is returned, otherwise an Array of the human-readable strings is returned.
-  external dynamic format([dynamic types]);
 }
 
 /// [BigInt] extension for converting between Dart and JS class.
