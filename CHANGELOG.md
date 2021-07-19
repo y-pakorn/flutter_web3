@@ -1,3 +1,15 @@
+## 2.0.0-pre.6
+
+- Add Getting Started section to README.method
+- Add Event adn event listener handling
+- Add Ethers exception handling
+- Add Ethers ABI Interface
+- Fix TransactionRequest/Ovverride constructor
+- Fix Ethereum request type annotation
+- Add Example package
+- Add more code example
+- Fix toString override too long
+
 ## 2.0.0-pre.5
 
 - Bugs fix
