@@ -144,7 +144,7 @@ class Contract extends Interop<_ContractImpl> {
           .map((e) => Event._(e))
           .toList();
 
-  /// Remove all the listeners for the [event]. If no [eventName] is provided, all events are removed.
+  /// Remove all the listeners for the [event]. If no [event] is provided, all events are removed.
   removeAllListeners([dynamic event]) =>
       impl.removeAllListeners(event is EventFilter ? event.impl : event);
 
