@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import '../ethereum/utils.dart';
 import 'ethers.dart';
 
 /// Dart Class for ERC20 Contract, A standard API for tokens within smart contracts.
