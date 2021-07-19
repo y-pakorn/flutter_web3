@@ -6,17 +6,21 @@ class TransactionOverride extends Interop<_TransactionOverrideImpl> {
   final BigInt? _value;
   final int? _nonce;
 
-  TransactionOverride(
-    this._gasLimit,
-    this._gasPrice,
-    this._value,
-    this._nonce,
-  ) : super.internal(
+  TransactionOverride({
+    BigInt? gasLimit,
+    BigInt? gasPrice,
+    BigInt? value,
+    int? nonce,
+  })  : _gasLimit = gasLimit,
+        _gasPrice = gasPrice,
+        _value = value,
+        _nonce = nonce,
+        super.internal(
           _TransactionOverrideImpl(
-            value: _value.toString(),
-            nonce: _nonce,
-            gasLimit: _gasLimit.toString(),
-            gasPrice: _gasPrice.toString(),
+            value: value.toString(),
+            nonce: nonce,
+            gasLimit: gasLimit.toString(),
+            gasPrice: gasPrice.toString(),
           ),
         );
 
@@ -48,21 +52,27 @@ class TransactionRequest extends Interop<_TransactionRequestImpl> {
   final String? _to;
   final BigInt? _value;
 
-  TransactionRequest(
-    this._data,
-    this._gasLimit,
-    this._gasPrice,
-    this._nounce,
-    this._to,
-    this._value,
-  ) : super.internal(
+  TransactionRequest({
+    String? to,
+    BigInt? value,
+    BigInt? gasLimit,
+    BigInt? gasPrice,
+    int? nounce,
+    String? data,
+  })  : _data = data,
+        _gasLimit = gasLimit,
+        _gasPrice = gasPrice,
+        _nounce = nounce,
+        _to = to,
+        _value = value,
+        super.internal(
           _TransactionRequestImpl(
-            to: _to,
-            data: _data,
-            value: _value.toString(),
-            nonce: _nounce,
-            gasLimit: _gasLimit.toString(),
-            gasPrice: _gasPrice.toString(),
+            to: to,
+            data: data,
+            value: value.toString(),
+            nonce: nounce,
+            gasLimit: gasLimit.toString(),
+            gasPrice: gasPrice.toString(),
           ),
         );
 
