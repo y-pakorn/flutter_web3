@@ -4,13 +4,16 @@ library ethers;
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 
+import './exception.dart';
 import '../ethereum/ethereum.dart';
+import '../ethereum/utils.dart';
 import '../interop_wrapper.dart';
 import '../wallet_connect/wallet_connect.dart';
 
 part 'access_list.dart';
 part 'block.dart';
 part 'contract.dart';
+part 'event.dart';
 part 'filter.dart';
 part 'interface.dart';
 part 'interop.dart';

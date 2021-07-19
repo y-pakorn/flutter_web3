@@ -88,7 +88,7 @@ class ContractERC20 {
       contract.call<BigInt>('allowance', [owner, spender]);
 
   /// [Log] of `Approval` events.
-  Future<List<Log>> approvalLogs(
+  Future<List<Event>> approvalEvents(
           [List<dynamic>? args, dynamic startBlock, dynamic endBlock]) =>
       contract.queryFilter(
           contract.getFilter('Approval', args ?? []), startBlock, endBlock);
@@ -134,7 +134,7 @@ class ContractERC20 {
       String owner,
       String spender,
       BigInt value,
-      dynamic data,
+      Event event,
     )
         callback,
   ) =>
@@ -145,7 +145,7 @@ class ContractERC20 {
           owner,
           spender,
           value.toBigInt,
-          convertToDart(data),
+          Event.fromJS(data),
         ),
       );
 
@@ -157,7 +157,7 @@ class ContractERC20 {
       String from,
       String to,
       BigInt amount,
-      dynamic data,
+      Event event,
     )
         callback,
   ) =>
@@ -167,7 +167,7 @@ class ContractERC20 {
           from,
           to,
           amount.toBigInt,
-          convertToDart(data),
+          Event.fromJS(data),
         ),
       );
 
@@ -175,14 +175,14 @@ class ContractERC20 {
   Future<TransactionResponse> transfer(String recipient, BigInt amount) =>
       contract.send('transfer', [recipient, amount.toString()]);
 
+  /// [Log] of `Transfer` events.
+  Future<List<Event>> transferEvents(
+          [List<dynamic>? args, dynamic startBlock, dynamic endBlock]) =>
+      contract.queryFilter(
+          contract.getFilter('Transfer', args ?? []), startBlock, endBlock);
+
   /// Transfer token from [sender] to [recipient] in [amount]. Emits `Transfer` events when called.
   Future<TransactionResponse> transferFrom(
           String sender, String recipient, BigInt amount) =>
       contract.send('transfer', [sender, recipient, amount.toString()]);
-
-  /// [Log] of `Transfer` events.
-  Future<List<Log>> transferLogs(
-          [List<dynamic>? args, dynamic startBlock, dynamic endBlock]) =>
-      contract.queryFilter(
-          contract.getFilter('Transfer', args ?? []), startBlock, endBlock);
 }

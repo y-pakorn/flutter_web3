@@ -1,61 +1,5 @@
 part of ethers;
 
-@JS('utils.FormatTypes')
-class _FormatTypesImpl {
-  external static dynamic json;
-
-  external static dynamic full;
-
-  external static dynamic minimal;
-}
-
-@JS("utils.Interface")
-class _InterfaceImpl {
-  external _InterfaceImpl(dynamic abi);
-
-  external dynamic format([dynamic types]);
-}
-
-@JS()
-@anonymous
-class _TransactionOverrideImpl {
-  external factory _TransactionOverrideImpl({
-    String? value,
-    String? gasLimit,
-    String? gasPrice,
-    int? nonce,
-  });
-
-  external dynamic get gasLimit;
-
-  external dynamic get gasPrice;
-
-  external int? get nonce;
-
-  external dynamic get value;
-}
-
-@JS("Contract")
-class _ContractImpl {
-  external _ContractImpl(String address, dynamic abi, dynamic providerOrSigner);
-
-  external String get address;
-
-  external Interface get interface;
-
-  external _ProviderImpl get provider;
-
-  external _SignerImpl? get signer;
-
-  external _ContractImpl connect(dynamic providerOrSigner);
-
-  external int listenerCount([String? eventName]);
-
-  external List<dynamic> listeners(String eventName);
-
-  external removeAllListeners([String? eventName]);
-}
-
 @JS()
 @anonymous
 class _AccessListImpl {
@@ -73,6 +17,27 @@ class _BlockImpl extends _RawBlockImpl {
 @anonymous
 class _BlockWithTransactionImpl extends _RawBlockImpl {
   external List<dynamic> get transactions;
+}
+
+@JS("Contract")
+class _ContractImpl {
+  external _ContractImpl(String address, dynamic abi, dynamic providerOrSigner);
+
+  external String get address;
+
+  external Interface get interface;
+
+  external _ProviderImpl get provider;
+
+  external _SignerImpl? get signer;
+
+  external _ContractImpl connect(dynamic providerOrSigner);
+
+  external int listenerCount([dynamic eventName]);
+
+  external List<dynamic> listeners(dynamic eventName);
+
+  external removeAllListeners([dynamic eventName]);
 }
 
 @JS()
@@ -94,6 +59,16 @@ class _EventFilterImpl {
 
 @JS()
 @anonymous
+class _EventImpl extends _LogImpl {
+  external String event;
+
+  external String eventSignature;
+
+  external List<dynamic> args;
+}
+
+@JS()
+@anonymous
 class _FilterImpl extends _EventFilterImpl {
   external factory _FilterImpl({
     String? address,
@@ -109,6 +84,22 @@ class _FilterImpl extends _EventFilterImpl {
   external dynamic get toBlock;
 
   external set toBlock(dynamic blockTag);
+}
+
+@JS('utils.FormatTypes')
+class _FormatTypesImpl {
+  external static dynamic json;
+
+  external static dynamic full;
+
+  external static dynamic minimal;
+}
+
+@JS("utils.Interface")
+class _InterfaceImpl {
+  external _InterfaceImpl(dynamic abi);
+
+  external dynamic format([dynamic types]);
 }
 
 @JS("providers.JsonRpcProvider")
@@ -221,6 +212,25 @@ class _TransactionImpl {
   external int get v;
 
   external BigNumber get value;
+}
+
+@JS()
+@anonymous
+class _TransactionOverrideImpl {
+  external factory _TransactionOverrideImpl({
+    String? value,
+    String? gasLimit,
+    String? gasPrice,
+    int? nonce,
+  });
+
+  external dynamic get gasLimit;
+
+  external dynamic get gasPrice;
+
+  external int? get nonce;
+
+  external dynamic get value;
 }
 
 @JS()

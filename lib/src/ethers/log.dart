@@ -1,8 +1,8 @@
 part of ethers;
 
 /// Information log of specific transaction.
-class Log extends Interop<_LogImpl> {
-  const Log._(_LogImpl impl) : super.internal(impl);
+class Log<T extends _LogImpl> extends Interop<T> {
+  const Log._(_LogImpl impl) : super.internal(impl as T);
 
   /// The address of the contract that generated this log.
   String get address => impl.address;

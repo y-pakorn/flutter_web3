@@ -90,11 +90,13 @@ class Contract extends Interop<_ContractImpl> {
   Filter getFilter(String eventName, [List<dynamic> args = const []]) =>
       Filter._(callMethod(getProperty(impl, 'filters'), eventName, args));
 
-  /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
-  int listenerCount([String? eventName]) => impl.listenerCount(eventName);
+  /// Returns the number of listeners for the [event]. If no [event] is provided, the total number of listeners is returned.
+  int listenerCount([dynamic event]) =>
+      impl.listenerCount(event is EventFilter ? event.impl : event);
 
-  /// Returns the list of Listeners for the [eventName] events.
-  List listeners(String eventName) => impl.listeners(eventName);
+  /// Returns the list of Listeners for the [event].
+  List listeners(Object event) =>
+      impl.listeners(event is EventFilter ? event.impl : event);
 
   /// Multicall read-only constant [method] with [args]. `May not` be at the same block.
   ///
@@ -107,20 +109,28 @@ class Contract extends Interop<_ContractImpl> {
           ),
           eagerError: eagerError);
 
-  /// Remove a [listener] for the [eventName] event. If no [listener] is provided, all listeners for [eventName] are removed.
-  off(String eventName, [Function? listener]) => callMethod(impl, 'off',
-      listener != null ? [eventName, allowInterop(listener)] : [eventName]);
+  /// Remove a [listener] for the [event]. If no [listener] is provided, all listeners for [event] are removed.
+  off(dynamic event, [Function? listener]) => callMethod(
+        impl,
+        'off',
+        listener != null
+            ? [
+                event is EventFilter ? event.impl : event,
+                allowInterop(listener)
+              ]
+            : [event is EventFilter ? event.impl : event],
+      );
 
-  /// Add a [listener] to be triggered for each [eventName] event.
-  on(String eventName, Function listener) =>
-      callMethod(impl, 'on', [eventName, allowInterop(listener)]);
+  /// Add a [listener] to be triggered for each [event].
+  on(dynamic event, Function listener) => callMethod(impl, 'on',
+      [event is EventFilter ? event.impl : event, allowInterop(listener)]);
 
-  /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
-  once(String eventName, Function listener) =>
-      callMethod(impl, 'once', [eventName, allowInterop(listener)]);
+  /// Add a [listener] to be triggered for only the next [event], at which time it will be removed.
+  once(dynamic event, Function listener) => callMethod(impl, 'once',
+      [event is EventFilter ? event.impl : event, allowInterop(listener)]);
 
   /// Return a List of [Log] that have been emitted by the Contract by the [filter]. Optinally constraint from [startBlock] to [endBlock].
-  Future<List<Log>> queryFilter(EventFilter filter,
+  Future<List<Event>> queryFilter(EventFilter filter,
           [dynamic startBlock, dynamic endBlock]) async =>
       (await _call<List>(
         'queryFilter',
@@ -130,12 +140,13 @@ class Contract extends Interop<_ContractImpl> {
           endBlock,
         ]..removeWhere((e) => e == null),
       ))
-          .cast<_LogImpl>()
-          .map((e) => Log._(e))
+          .cast<_EventImpl>()
+          .map((e) => Event._(e))
           .toList();
 
-  /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
-  removeAllListeners([String? eventName]) => impl.removeAllListeners(eventName);
+  /// Remove all the listeners for the [event]. If no [eventName] is provided, all events are removed.
+  removeAllListeners([dynamic event]) =>
+      impl.removeAllListeners(event is EventFilter ? event.impl : event);
 
   /// Send write [method] with [args], [override] may be include to send the Ether or adjust transaction options.
   ///
@@ -156,11 +167,19 @@ class Contract extends Interop<_ContractImpl> {
       'Contract: $address connected to ${isReadOnly ? 'provider' : 'signer'}';
 
   Future<T> _call<T>(String method, [List<dynamic> args = const []]) async {
-    switch (T) {
-      case BigInt:
-        return (await call<BigNumber>(method, args)).toBigInt as T;
-      default:
-        return promiseToFuture<T>(callMethod(impl, method, args));
+    try {
+      switch (T) {
+        case BigInt:
+          return (await call<BigNumber>(method, args)).toBigInt as T;
+        default:
+          return promiseToFuture<T>(callMethod(impl, method, args));
+      }
+    } catch (error) {
+      if (dartify(error)?['data'] != null)
+        throw EthersException(dartify(error)?['data']?['code'],
+            dartify(error)?['data']?['message']);
+      else
+        rethrow;
     }
   }
 
