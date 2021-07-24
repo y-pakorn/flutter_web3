@@ -4,71 +4,226 @@ library wallet_connect_provider;
 import 'dart:core';
 
 import 'package:js/js.dart';
+import 'package:js/js_util.dart';
 
-import '../../objects.dart';
 import '../ethereum/ethereum.dart';
-import 'wallet_connect_wrapper.dart';
+import '../ethereum/utils.dart';
+import '../interop_wrapper.dart';
 
-@JS()
-@anonymous
-class QrcodeModalOptions {
-  external factory QrcodeModalOptions({List<String> mobileLinks});
+part 'interop.dart';
 
-  external List<String> get mobileLinks;
-}
+/// Function to convert Dart rpc map into JS rpc map.
+dynamic _convertRpc(Map<int, String> rpcMap) => jsify(rpcMap);
 
-@JS("default")
-class WalletConnectProvider extends EthereumBase {
-  ///  Create WalletConnect Provider object.
-  external WalletConnectProvider(WalletConnectProviderOptions options);
-
-  external List<String> get accounts;
-
-  external bool get connected;
-
-  external bool get isConnecting;
-
-  external String get rpcUrl;
-
-  external WalletMeta get walletMeta;
-}
-
-/// Option for creating [WalletConnectProvider].
-@JS()
-@anonymous
-class WalletConnectProviderOptions {
-  /// Required one of [infuraId] or [rpc] to be not null.
+/// Provider for Wallet Connect connection, typically used in mobile phone connection.
+class WalletConnectProvider extends Interop<_WalletConnectProviderImpl> {
+  /// Instantiate [WalletConnectProvider] using [infuraId].
   ///
-  /// [rpc] must be js object type, thus can be instantiate with [convertRpc] function or wrap [Map] with [jsify].
-  external factory WalletConnectProviderOptions({
-    String? infuraId,
-    dynamic rpc,
+  /// ---
+  ///
+  /// ```dart
+  /// final wc = WalletConnectProvider.fromInfura('https://foo.infura.io/v3/barbaz');
+  ///
+  /// await wc.connect();
+  ///
+  /// print(wc); // WalletConnectProvider: connected to https://foo.infura.io/v3/barbaz with [0xfooBar]
+  /// print(wc.connected); // true
+  /// print(wc.walletMeta); // WalletMeta: Trust Wallet on https://trustwallet.com
+  /// ```
+  factory WalletConnectProvider.fromInfura(
+    String infuraId, {
+    String? network,
     String? bridge,
     bool? qrCode,
-    String? network,
     int? chainId,
     int? networkId,
-    QrcodeModalOptions? qrcodeModalOptions,
-  });
+    List<String>? mobileLinks,
+  }) =>
+      WalletConnectProvider._(
+        _WalletConnectProviderImpl(
+          _WalletConnectProviderOptionsImpl(
+            infuraId: infuraId,
+            network: network,
+            bridge: bridge,
+            qrCode: qrCode,
+            chainId: chainId,
+            networkId: networkId,
+            qrcodeModalOptions: mobileLinks != null
+                ? _QrcodeModalOptionsImpl(mobileLinks: mobileLinks)
+                : null,
+          ),
+        ),
+      );
 
-  external String? get bridge;
+  /// Instantiate [WalletConnectProvider] using [rpc].
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final wc = WalletConnectProvider.fromRpc(
+  ///   {56: 'https://bsc-dataseed.binance.org/'},
+  ///   chainId: 56,
+  ///   network: 'binance',
+  /// );
+  ///
+  /// await wc.connect();
+  ///
+  /// print(wc); // WalletConnectProvider: connected to https://bsc-dataseed.binance.org/ (56) with [0xfooBar]
+  /// print(wc.connected); // true
+  /// print(wc.walletMeta); // WalletMeta: Trust Wallet on https://trustwallet.com
+  /// ```
+  factory WalletConnectProvider.fromRpc(
+    Map<int, String> rpc, {
+    String? network,
+    String? bridge,
+    bool? qrCode,
+    required int chainId,
+    int? networkId,
+    List<String>? mobileLinks,
+  }) {
+    assert(rpc.containsKey(chainId), 'Chain id must be in rpc map.');
+    return WalletConnectProvider._(
+      _WalletConnectProviderImpl(
+        _WalletConnectProviderOptionsImpl(
+          rpc: _convertRpc(rpc),
+          network: network,
+          bridge: bridge,
+          qrCode: qrCode,
+          chainId: chainId,
+          networkId: networkId,
+          qrcodeModalOptions: mobileLinks != null
+              ? _QrcodeModalOptionsImpl(mobileLinks: mobileLinks)
+              : null,
+        ),
+      ),
+    );
+  }
+
+  const WalletConnectProvider._(_WalletConnectProviderImpl impl)
+      : super.internal(impl);
+
+  /// Accounts which is at provider disposal.
+  List<String> get accounts => impl.accounts;
 
   /// Main network chain id.
-  external int? get chainId;
+  String get chainId => impl.chainId;
 
-  /// The infuraId will support the following chainId's: Mainnet (1), Ropsten (3), Rinkeby(4), Goerli (5) and Kovan (42).
-  external String? get infuraId;
+  /// `true` if [this] is connected successfully to rpc provider.
+  bool get connected => impl.connected;
 
-  /// Main network name.
-  external String? get network;
+  /// `true` if [this] is connecting successfully to rpc provider.
+  bool get isConnecting => impl.isConnecting;
 
-  /// Whether to enable QR Code modal
-  external bool? get qrCode;
+  /// Chain id and rpc url map.
+  Map<int, String> get rpc => (convertToDart(getProperty(impl, 'rpc')) as Map)
+      .map((key, value) => MapEntry(int.parse(key), value.toString()));
 
-  external QrcodeModalOptions? get qrcodeModalOptions;
+  /// Main network rpc url.
+  String get rpcUrl => impl.rpcUrl;
 
-  /// The RPC URL mapping should be indexed by chainId and it requires at least one value.
+  /// Connected wallet metadata, contains serveral information about connected provider.
+  WalletMeta get walletMeta => WalletMeta._(impl.walletMeta);
+
+  /// Enable session and try to connect to provider. (triggers QR Code modal)
   ///
-  /// [rpc] must be js object type, thus can be instantiate with [convertRpc] function.
-  external dynamic get rpc;
+  /// ---
+  ///
+  /// ```dart
+  /// await wc.connect();
+  ///
+  /// print(wc.connected); // true
+  /// ```
+  Future<void> connect() => promiseToFuture(callMethod(impl, 'enable', []));
+
+  /// Close provider session.
+  Future<void> disconnect() =>
+      promiseToFuture(callMethod(impl, 'disconnect', []));
+
+  /// Returns the number of listeners for the [eventName] events. If no [eventName] is provided, the total number of listeners is returned.
+  int listenerCount([String? eventName]) => impl.listenerCount(eventName);
+
+  /// Returns the list of Listeners for the [eventName] events.
+  List listeners(String eventName) => impl.listeners(eventName);
+
+  /// Remove a [listener] for the [eventName] event. If no [listener] is provided, all listeners for [eventName] are removed.
+  off(String eventName, [Function? listener]) => callMethod(impl, 'off',
+      listener != null ? [eventName, allowInterop(listener)] : [eventName]);
+
+  /// Add a [listener] to be triggered for each [eventName] event.
+  on(String eventName, Function listener) =>
+      callMethod(impl, 'on', [eventName, allowInterop(listener)]);
+
+  /// Add a [listener] to be triggered for each accountsChanged event.
+  onAccountsChanged(void Function(List<String> accounts) listener) => on(
+      'accountsChanged',
+      (List<dynamic> accs) => listener(accs.map((e) => e.toString()).toList()));
+
+  /// Add a [listener] to be triggered for only the next [eventName] event, at which time it will be removed.
+  once(String eventName, Function listener) =>
+      callMethod(impl, 'once', [eventName, allowInterop(listener)]);
+
+  /// Add a [listener] to be triggered for each chainChanged event.
+  onChainChanged(void Function(int chainId) listener) =>
+      on('chainChanged', (dynamic cId) => listener(int.parse(cId.toString())));
+
+  /// Add a [listener] to be triggered for each connect event.
+  ///
+  /// This event is emitted when it first becomes able to submit RPC requests to a chain.
+  ///
+  /// We recommend using a connect event handler and the [Ethereum.isConnected] method in order to determine when/if the provider is connected.
+  onConnect(void Function(ConnectInfo connectInfo) listener) =>
+      on('connect', listener);
+
+  /// Add a [listener] to be triggered for each disconnect event.
+  ///
+  /// This event is emitted if it becomes unable to submit RPC requests to any chain. In general, this will only happen due to network connectivity issues or some unforeseen error.
+  ///
+  /// Once disconnect has been emitted, the provider will not accept any new requests until the connection to the chain has been re-restablished, which requires reloading the page. You can also use the [Ethereum.isConnected] method to determine if the provider is disconnected.
+  onDisconnect(void Function(ProviderRpcError error) listener) =>
+      on('disconnect', (ProviderRpcError error) => listener(error));
+
+  /// Add a [listener] to be triggered for each message event [type].
+  ///
+  /// The MetaMask provider emits this event when it receives some message that the consumer should be notified of. The kind of message is identified by the type string.
+  ///
+  /// RPC subscription updates are a common use case for the message event. For example, if you create a subscription using `eth_subscribe`, each subscription update will be emitted as a message event with a type of `eth_subscription`.
+  onMessage(void Function(String type, dynamic data) listener) => on(
+      'message',
+      (ProviderMessage message) =>
+          listener(message.type, convertToDart(message.data)));
+
+  /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
+  removeAllListeners([String? eventName]) => impl.removeAllListeners(eventName);
+
+  @override
+  String toString() => connected
+      ? 'WalletConnectProvider: connected to $rpcUrl ($chainId) with $accounts'
+      : 'WalletConnectProvider: not connected to $rpcUrl($chainId)';
+
+  /// Instantiate [WalletConnectProvider] object with `Binance Mainnet` rpc and QR code enabled, ready to connect.
+  static WalletConnectProvider binance() => WalletConnectProvider.fromRpc(
+        {56: 'https://bsc-dataseed.binance.org/'},
+        chainId: 56,
+        network: 'binance',
+      );
+}
+
+/// Metadata information of specific wallet provider.
+class WalletMeta extends Interop<_WalletMetaImpl> {
+  const WalletMeta._(_WalletMetaImpl impl) : super.internal(impl);
+
+  /// Description of wallet.
+  String get description => impl.description;
+
+  /// List wallet's icons.
+  List<String> get icons => impl.icons.cast<String>();
+
+  /// Full name of wallet.
+  String get name => impl.name;
+
+  /// Url of wallet.
+  String get url => impl.url;
+
+  @override
+  String toString() => 'WalletMeta: $name on $url';
 }

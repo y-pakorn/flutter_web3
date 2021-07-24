@@ -1,20 +1,6 @@
 import 'dart:async';
 
-import '../ethereum/ethereum_utils.dart';
-import '../objects/objects.dart';
 import 'ethers.dart';
-import 'ethers_wrapper.dart';
-
-/// Get default [AbiCoder].
-AbiCoder get abiCoder => EthUtils.defaultAbiCoder;
-
-/// Convert JS [BigNumber] to Dart [BigInt].
-BigInt bigNumberToBigInt(BigNumber bigNumber) =>
-    BigInt.parse(bigNumber.toString());
-
-/// Construct [Contract] with [Signer] from default [Provider].
-Contract defaultContractWithSigner(String address, List<String> abi) =>
-    Contract(address, abi, provider!.getSigner());
 
 /// Dart Class for ERC20 Contract, A standard API for tokens within smart contracts.
 ///
@@ -70,8 +56,8 @@ class ContractERC20 {
     return _decimals;
   }
 
-  /// True if [Signer] is attached to [contract].
-  bool get isReadOnly => contract.signer == null;
+  /// `true` if connected to [Provider], `false` if connected to [Signer].
+  bool get isReadOnly => contract.isReadOnly;
 
   /// Returns the name of the token. If token doesn't have name, return empty string.
   FutureOr<String> get name async {
@@ -101,7 +87,7 @@ class ContractERC20 {
       contract.call<BigInt>('allowance', [owner, spender]);
 
   /// [Log] of `Approval` events.
-  Future<List<Log>> approvalLogs(
+  Future<List<Event>> approvalEvents(
           [List<dynamic>? args, dynamic startBlock, dynamic endBlock]) =>
       contract.queryFilter(
           contract.getFilter('Approval', args ?? []), startBlock, endBlock);
@@ -143,42 +129,59 @@ class ContractERC20 {
   ///
   /// `value` is the new allowance.
   void onApproval(
-          void Function(
-                  String owner, String spender, BigInt value, dynamic data)
-              callback) =>
+    void Function(
+      String owner,
+      String spender,
+      BigInt value,
+      Event event,
+    )
+        callback,
+  ) =>
       contract.on(
-          'Approval',
-          (String owner, String spender, BigNumber value, dynamic data) =>
-              callback(owner, spender, value.toBigInt, convertToDart(data)));
+        'Approval',
+        (String owner, String spender, BigNumber value, dynamic data) =>
+            callback(
+          owner,
+          spender,
+          value.toBigInt,
+          Event.fromJS(data),
+        ),
+      );
 
   /// Emitted when `amount` tokens are moved from one account (`from`) to another (`to`).
   ///
   /// Note that `amount` may be zero.
   void onTransfer(
-          void Function(String from, String to, BigInt amount, dynamic data)
-              callback) =>
+    void Function(
+      String from,
+      String to,
+      BigInt amount,
+      Event event,
+    )
+        callback,
+  ) =>
       contract.on(
-          'Transfer',
-          (String from, String to, BigNumber amount, dynamic data) =>
-              callback(from, to, amount.toBigInt, convertToDart(data)));
+        'Transfer',
+        (String from, String to, BigNumber amount, dynamic data) => callback(
+          from,
+          to,
+          amount.toBigInt,
+          Event.fromJS(data),
+        ),
+      );
 
   /// Transfer token from `msg.sender` to [recipient] in [amount]. Emits `Transfer` events when called.
   Future<TransactionResponse> transfer(String recipient, BigInt amount) =>
       contract.send('transfer', [recipient, amount.toString()]);
 
+  /// [Log] of `Transfer` events.
+  Future<List<Event>> transferEvents(
+          [List<dynamic>? args, dynamic startBlock, dynamic endBlock]) =>
+      contract.queryFilter(
+          contract.getFilter('Transfer', args ?? []), startBlock, endBlock);
+
   /// Transfer token from [sender] to [recipient] in [amount]. Emits `Transfer` events when called.
   Future<TransactionResponse> transferFrom(
           String sender, String recipient, BigInt amount) =>
       contract.send('transfer', [sender, recipient, amount.toString()]);
-
-  /// [Log] of `Transfer` events.
-  Future<List<Log>> transferLogs(
-          [List<dynamic>? args, dynamic startBlock, dynamic endBlock]) =>
-      contract.queryFilter(
-          contract.getFilter('Transfer', args ?? []), startBlock, endBlock);
-}
-
-extension BigIntExtension on BigInt {
-  /// Convert Dart [BigInt] to JS [BigNumber].
-  BigNumber get toBigNumber => BigNumber.from(this.toString());
 }
