@@ -29,24 +29,9 @@
 
 #### This package is made especially for developing Dapp on cross(multiple) chain in Flutter Web
 
-## Using V2 Package
-
-Pre-release is available at [pub.dev](https://pub.dev/packages/flutter_web3/versions).
-
-Or add ref pointer to Git v2 branch in pubspec.yaml file of your Flutter project.
-
-```yaml
-flutter_web3:
-  git:
-    url: git://github.com/y-pakorn/flutter_web3.git
-    ref: v2
-```
-
 ## V2 Changes
 
 Version 2.0 of this package will introduce full dart wrapper instead of js interop class. Including toString override for easier debugging and more simple class instantiation.
-
-Track V2 progress by navigating to [this Github issue](https://github.com/y-pakorn/flutter_web3/pull/2)
 
 ### Breaking Changes
 
