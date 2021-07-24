@@ -1,40 +1,22 @@
-## 2.0.0-pre.6
+## 2.0.0
 
+- Implement Dart class for Ethereum, Ethers, and WalletConnect
 - Add Getting Started section to README.method
-- Add Event adn event listener handling
+- Add Event and event listener handling
 - Add Ethers exception handling
 - Add Ethers ABI Interface
 - Fix TransactionRequest/Ovverride constructor
 - Fix Ethereum request type annotation
 - Add Example package
 - Add more code example
-- Fix toString override too long
-
-## 2.0.0-pre.5
-
-- Bugs fix
 - Dartdoc unresolved docs fix
 - Add custom exception throwing and handling
 - Add more method to Ethers and Ethereum
-
-## 2.0.0-pre.4
-
 - Generalize interop class implementation
 - Remove redundant export and hide
-
-## 2.0.0-pre.3
-
 - Remove isEthereumSupported
 - Add class name to toString override for easier debugging
 - Add assertion to Provider constructor
-
-## 2.0.0-pre.2
-
-- Assertion bug fixes
-
-## 2.0.0-pre.1
-
-- v2 Prerelease
 
 ## 1.0.20
 
