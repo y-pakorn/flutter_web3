@@ -218,19 +218,19 @@ class _TransactionImpl {
 @anonymous
 class _TransactionOverrideImpl {
   external factory _TransactionOverrideImpl({
-    String? value,
-    String? gasLimit,
-    String? gasPrice,
+    BigNumber? value,
+    BigNumber? gasLimit,
+    BigNumber? gasPrice,
     int? nonce,
   });
 
-  external dynamic get gasLimit;
+  external BigNumber? get gasLimit;
 
-  external dynamic get gasPrice;
+  external BigNumber? get gasPrice;
 
   external int? get nonce;
 
-  external dynamic get value;
+  external BigNumber? get value;
 }
 
 @JS()
@@ -272,26 +272,29 @@ class _TransactionReceiptImpl {
 class _TransactionRequestImpl {
   external factory _TransactionRequestImpl({
     String? to,
-    String? value,
-    String? gasLimit,
-    String? gasPrice,
+    String? from,
+    BigNumber? value,
+    BigNumber? gasLimit,
+    BigNumber? gasPrice,
     int? nonce,
     String? data,
   });
 
   external String? get data;
 
-  external dynamic get gasLimit;
+  external String? get from;
 
-  external dynamic get gasPrice;
+  external BigNumber? get gasLimit;
+
+  external BigNumber? get gasPrice;
 
   external String? get method;
 
-  external dynamic get nonce;
+  external int? get nonce;
 
   external String? get to;
 
-  external dynamic get value;
+  external BigNumber? get value;
 }
 
 @JS()

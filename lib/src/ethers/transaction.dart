@@ -1,106 +1,5 @@
 part of ethers;
 
-class TransactionOverride extends Interop<_TransactionOverrideImpl> {
-  final BigInt? _gasLimit;
-  final BigInt? _gasPrice;
-  final BigInt? _value;
-  final int? _nonce;
-
-  TransactionOverride({
-    BigInt? gasLimit,
-    BigInt? gasPrice,
-    BigInt? value,
-    int? nonce,
-  })  : _gasLimit = gasLimit,
-        _gasPrice = gasPrice,
-        _value = value,
-        _nonce = nonce,
-        super.internal(
-          _TransactionOverrideImpl(
-            value: value.toString(),
-            nonce: nonce,
-            gasLimit: gasLimit.toString(),
-            gasPrice: gasPrice.toString(),
-          ),
-        );
-
-  /// The maximum amount of gas this transaction is permitted to use.
-  BigInt? get gasLimit => _gasLimit;
-
-  /// The price (in wei) per unit of gas this transaction will pay.
-  BigInt? get gasPrice => _gasPrice;
-
-  /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
-  int? get nonce => _nonce;
-
-  /// The amount (in wei) this transaction is sending.
-  BigInt? get value => _value;
-
-  @override
-  String toString() =>
-      'TransactionOverride: value $value with gas limit $gasLimit and gas price $gasPrice';
-}
-
-/// A transaction request describes a transaction that is to be sent to the network or otherwise processed.
-///
-/// All fields are optional and may be a promise which resolves to the required type.
-class TransactionRequest extends Interop<_TransactionRequestImpl> {
-  final String? _data;
-  final BigInt? _gasLimit;
-  final BigInt? _gasPrice;
-  final int? _nounce;
-  final String? _to;
-  final BigInt? _value;
-
-  TransactionRequest({
-    String? to,
-    BigInt? value,
-    BigInt? gasLimit,
-    BigInt? gasPrice,
-    int? nounce,
-    String? data,
-  })  : _data = data,
-        _gasLimit = gasLimit,
-        _gasPrice = gasPrice,
-        _nounce = nounce,
-        _to = to,
-        _value = value,
-        super.internal(
-          _TransactionRequestImpl(
-            to: to,
-            data: data,
-            value: value.toString(),
-            nonce: nounce,
-            gasLimit: gasLimit.toString(),
-            gasPrice: gasPrice.toString(),
-          ),
-        );
-
-  @override
-  String toString() =>
-      'TransactionRequest: to $to with value $value and data $data';
-
-  /// The transaction data.
-  String? get data => _data;
-
-  /// The maximum amount of gas this transaction is permitted to use.
-  BigInt? get gasLimit => _gasLimit;
-
-  /// The price (in wei) per unit of gas this transaction will pay.
-  BigInt? get gasPrice => _gasPrice;
-
-  String? get method => impl.method;
-
-  /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
-  int? get nonce => _nounce;
-
-  /// The address (or ENS name) this transaction it to.
-  String? get to => _to;
-
-  /// The amount (in wei) this transaction is sending.
-  BigInt? get value => _value;
-}
-
 /// A generic object to represent a transaction.
 class Transaction<T extends _TransactionImpl> extends Interop<T> {
   const Transaction._(T impl) : super.internal(impl);
@@ -162,12 +61,45 @@ class Transaction<T extends _TransactionImpl> extends Interop<T> {
       'Transaction: ${hash.substring(0, 10)} from ${from.substring(0, 10)} with value $value and data ${data.substring(0, 15)}...';
 }
 
+class TransactionOverride extends Interop<_TransactionOverrideImpl> {
+  TransactionOverride._(_TransactionOverrideImpl impl) : super.internal(impl);
+
+  factory TransactionOverride({
+    BigInt? gasLimit,
+    BigInt? gasPrice,
+    BigInt? value,
+    int? nonce,
+  }) {
+    return TransactionOverride._(
+      _TransactionOverrideImpl(
+        value: value?.toBigNumber,
+        nonce: nonce,
+        gasLimit: gasLimit?.toBigNumber,
+        gasPrice: gasPrice?.toBigNumber,
+      ),
+    );
+  }
+
+  /// The maximum amount of gas this transaction is permitted to use.
+  BigInt? get gasLimit => impl.gasLimit?.toBigInt;
+
+  /// The price (in wei) per unit of gas this transaction will pay.
+  BigInt? get gasPrice => impl.gasPrice?.toBigInt;
+
+  /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
+  int? get nonce => impl.nonce;
+
+  /// The amount (in wei) this transaction is sending.
+  BigInt? get value => impl.value?.toBigInt;
+
+  @override
+  String toString() =>
+      'TransactionOverride: value $value with gas limit $gasLimit and gas price $gasPrice';
+}
+
 class TransactionReceipt extends Interop<_TransactionReceiptImpl> {
   const TransactionReceipt._(_TransactionReceiptImpl impl)
       : super.internal(impl);
-
-  /// `true` if this transaction is a creating contract transaction.
-  bool get isCreatingContract => to == null;
 
   /// The block hash of the block that this transaction was included in.
   String get blockHash => impl.blockHash;
@@ -196,6 +128,9 @@ class TransactionReceipt extends Interop<_TransactionReceiptImpl> {
 
   /// The amount of gas actually used by this transaction.
   BigInt get gasUsed => impl.gasUsed.toBigInt;
+
+  /// `true` if this transaction is a creating contract transaction.
+  bool get isCreatingContract => to == null;
 
   /// All the logs emitted by this transaction.
   List<Log> get logs =>
@@ -231,6 +166,62 @@ class TransactionReceipt extends Interop<_TransactionReceiptImpl> {
   String toString() => status
       ? 'TransactionReceipt: ${transactionHash.substring(0, 10)} from ${from.substring(0, 10)} with $confirmations confirmations and ${logs.length} logs'
       : 'TransactionReceipt: ${transactionHash.substring(0, 10)} reverted ';
+}
+
+/// A transaction request describes a transaction that is to be sent to the network or otherwise processed.
+///
+/// All fields are optional and may be a promise which resolves to the required type.
+class TransactionRequest extends Interop<_TransactionRequestImpl> {
+  TransactionRequest._(_TransactionRequestImpl impl) : super.internal(impl);
+
+  factory TransactionRequest({
+    String? to,
+    String? from,
+    BigInt? value,
+    BigInt? gasLimit,
+    BigInt? gasPrice,
+    int? nounce,
+    String? data,
+  }) {
+    return TransactionRequest._(
+      _TransactionRequestImpl(
+        to: to,
+        from: from,
+        data: data,
+        value: value?.toBigNumber,
+        nonce: nounce,
+        gasLimit: gasLimit?.toBigNumber,
+        gasPrice: gasPrice?.toBigNumber,
+      ),
+    );
+  }
+
+  /// The transaction data.
+  String? get data => impl.data;
+
+  /// The address (or ENS name) this transaction it from.
+  String? get from => impl.from;
+
+  /// The maximum amount of gas this transaction is permitted to use.
+  BigInt? get gasLimit => impl.gasLimit?.toBigInt;
+
+  /// The price (in wei) per unit of gas this transaction will pay.
+  BigInt? get gasPrice => impl.gasLimit?.toBigInt;
+
+  String? get method => impl.method;
+
+  /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
+  int? get nonce => impl.nonce;
+
+  /// The address (or ENS name) this transaction it to.
+  String? get to => impl.to;
+
+  /// The amount (in wei) this transaction is sending.
+  BigInt? get value => impl.value?.toBigInt;
+
+  @override
+  String toString() =>
+      'TransactionRequest: to $to with value $value and data $data';
 }
 
 /// A TransactionResponse includes all properties of a [Transaction] as well as several properties that are useful once it has been mined.
