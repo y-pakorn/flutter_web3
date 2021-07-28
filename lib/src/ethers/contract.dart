@@ -175,11 +175,19 @@ class Contract extends Interop<_ContractImpl> {
           return promiseToFuture<T>(callMethod(impl, method, args));
       }
     } catch (error) {
-      if (dartify(error)?['data'] != null)
-        throw EthersException(dartify(error)?['data']?['code'],
-            dartify(error)?['data']?['message']);
-      else
-        rethrow;
+      final err = dartify(error);
+      switch (err['code']) {
+        case 4001:
+          throw EthereumUserRejected();
+        default:
+          if (err['data'] != null)
+            throw EthersException(
+              err?['data']?['code'],
+              err?['data']?['message'],
+            );
+          else
+            rethrow;
+      }
     }
   }
 

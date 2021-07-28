@@ -6,6 +6,7 @@ import 'package:js/js_util.dart';
 
 import './exception.dart';
 import '../ethereum/ethereum.dart';
+import '../ethereum/exception.dart';
 import '../ethereum/utils.dart';
 import '../interop_wrapper.dart';
 import '../wallet_connect/wallet_connect.dart';

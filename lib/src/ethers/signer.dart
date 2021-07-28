@@ -49,9 +49,26 @@ class Signer extends Interop<_SignerImpl> {
   ///
   /// The transaction must be valid (i.e. the nonce is correct and the account has sufficient balance to pay for the transaction).
   Future<TransactionResponse> sendTransaction(
-          TransactionRequest request) async =>
-      TransactionResponse._(await _call<_TransactionResponseImpl>(
+      TransactionRequest request) async {
+    try {
+      return TransactionResponse._(await _call<_TransactionResponseImpl>(
           'sendTransaction', [request.impl]));
+    } catch (error) {
+      final err = dartify(error);
+      switch (err['code']) {
+        case 4001:
+          throw EthereumUserRejected();
+        default:
+          if (err['data'] != null)
+            throw EthersException(
+              err?['data']?['code'],
+              err?['data']?['message'],
+            );
+          else
+            rethrow;
+      }
+    }
+  }
 
   /// Returns the result of calling using the [request], with this account address being used as the from field.
   Future<String> call(TransactionRequest request) =>
