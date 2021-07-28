@@ -1,3 +1,8 @@
+## 2.0.1
+
+- Add exception handling to Signer and Contract
+- Fix Ethers send transaction bugs
+
 ## 2.0.0
 
 - Implement Dart class for Ethereum, Ethers, and WalletConnect
