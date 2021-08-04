@@ -43,8 +43,9 @@ class Contract extends Interop<_ContractImpl> {
   String get address => impl.address;
 
   /// If the [Contract] object is the result of a `ContractFactory` deployment, this is the transaction which was used to deploy the contract.
-  Future<TransactionResponse> get deployTransaction =>
-      _get<TransactionResponse>('deployTransaction');
+  Future<TransactionResponse> get deployTransaction async =>
+      TransactionResponse._(
+          await _get<_TransactionResponseImpl>('deployTransaction'));
 
   /// This is the ABI as an [Interface].
   Interface get interface => impl.interface;
@@ -158,9 +159,10 @@ class Contract extends Interop<_ContractImpl> {
   ///
   /// It cannot return a result. If a result is required, it should be logged using a Solidity event (or EVM log), which can then be queried from the transaction receipt.
   Future<TransactionResponse> send(String method,
-          [List<dynamic> args = const [], TransactionOverride? override]) =>
-      _call<TransactionResponse>(
-          method, override != null ? [...args, override.impl] : args);
+          [List<dynamic> args = const [],
+          TransactionOverride? override]) async =>
+      TransactionResponse._(await _call<_TransactionResponseImpl>(
+          method, override != null ? [...args, override.impl] : args));
 
   @override
   String toString() =>
