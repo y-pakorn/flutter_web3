@@ -256,7 +256,7 @@ class TransactionResponse extends Transaction<_TransactionResponseImpl> {
   Future<TransactionReceipt> wait([int? confirms]) async {
     return TransactionReceipt._(
       await promiseToFuture<_TransactionReceiptImpl>(callMethod(
-        this,
+        this.impl,
         'wait',
         confirms != null ? [confirms] : [],
       )),
