@@ -1,3 +1,7 @@
+## 2.0.2
+
+- Fix TransactionResponse bug
+
 ## 2.0.1
 
 - Add exception handling to Signer and Contract
