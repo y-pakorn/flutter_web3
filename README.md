@@ -62,13 +62,6 @@ To use Flutter Web3 package, use
  flutter pub add flutter_web3
 ```
 
-Or add this line into `pubspec.yaml`
-
-```yaml
-dependencies:
-  flutter_web3: ^1.0.20
-```
-
 #### Ethers JS and Wallet Connect Provider
 
 To use Ethers JS and Wallet Connect Provider, we need to include script to JS package in `web/index.html`
