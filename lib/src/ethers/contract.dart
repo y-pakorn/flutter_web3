@@ -85,6 +85,18 @@ class Contract extends Interop<_ContractImpl> {
     return Contract._(impl.connect(providerOrSigner));
   }
 
+  /// Returns the estimate units of gas that would be required to execute the `method` with `args` and `override`.
+  ///
+  /// The `override` are identical to the overrides above for read-only or write methods, depending on the type of call of `method`.
+  Future<BigInt> estimateGas(String method,
+          [List<dynamic> args = const [],
+          TransactionOverride? override]) async =>
+      (await promiseToFuture<BigNumber>(callMethod(
+              getProperty(impl, 'estimateGas'),
+              method,
+              override != null ? [...args, override.impl] : args)))
+          .toBigInt;
+
   /// Return a filter for [eventName], optionally filtering by additional [args] constraints.
   ///
   /// Only indexed event parameters may be filtered. If a parameter is null (or not provided) then any value in that field matches.
