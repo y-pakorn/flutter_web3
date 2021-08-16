@@ -1,3 +1,8 @@
+## 2.0.4
+
+- Fix EtherException uncaught error
+- Add estimateGas method to Ethers Contract
+
 ## 2.0.3
 
 - Fix TransactionResponse bug
