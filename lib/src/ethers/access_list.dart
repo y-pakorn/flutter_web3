@@ -6,6 +6,9 @@ part of ethers;
 class AccessList extends Interop<_AccessListImpl> {
   const AccessList._(_AccessListImpl impl) : super.internal(impl);
 
+  factory AccessList(String address, List<String> storageKey) =>
+      AccessList._(_AccessListImpl(address, storageKey));
+
   String get address => impl.address;
 
   List<String> get storageKey => impl.storageKey.cast<String>();
