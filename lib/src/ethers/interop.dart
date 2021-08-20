@@ -284,6 +284,8 @@ class _TransactionRequestImpl {
     int? nonce,
     String? data,
     _AccessListImpl? accessList,
+    BigNumber? maxFeePerGas,
+    BigNumber? maxPriorityFeePerGas,
   });
 
   external _AccessListImpl? get accessList;
@@ -295,6 +297,10 @@ class _TransactionRequestImpl {
   external BigNumber? get gasLimit;
 
   external BigNumber? get gasPrice;
+
+  external BigNumber? get maxFeePerGas;
+
+  external BigNumber? get maxPriorityFeePerGas;
 
   external String? get method;
 
