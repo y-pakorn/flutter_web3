@@ -3,11 +3,11 @@ part of ethers;
 @JS()
 @anonymous
 class _AccessListImpl {
-  external _AccessListImpl(String address, List<String> storageKey);
+  external _AccessListImpl(String address, List<String> storageKeys);
 
   external String get address;
 
-  external List<dynamic> get storageKey;
+  external List<dynamic> get storageKeys;
 }
 
 @JS()
