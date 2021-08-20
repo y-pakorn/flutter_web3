@@ -150,6 +150,8 @@ class _ProviderImpl {}
 @JS()
 @anonymous
 class _RawBlockImpl {
+  external BigNumber? get baseFee;
+
   external num get difficulty;
 
   external String get extraData;
@@ -281,7 +283,10 @@ class _TransactionRequestImpl {
     BigNumber? gasPrice,
     int? nonce,
     String? data,
+    _AccessListImpl? accessList,
   });
+
+  external _AccessListImpl? get accessList;
 
   external String? get data;
 
@@ -311,7 +316,7 @@ class _TransactionResponseImpl extends _TransactionImpl {
 
   external int get confirmations;
 
-  external String get raw;
+  external String? get raw;
 
   external int? get timestamp;
 
