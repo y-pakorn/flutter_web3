@@ -18,7 +18,7 @@ class AccessList extends Interop<_AccessListImpl> {
   ///   ],
   /// );
   factory AccessList(String address, List<String> storageKeys) =>
-      AccessList._(_AccessListImpl(address, storageKeys));
+      AccessList._(_AccessListImpl(address: address, storageKeys: storageKeys));
 
   String get address => impl.address;
 
