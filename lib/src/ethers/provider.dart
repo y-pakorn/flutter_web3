@@ -61,6 +61,9 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
     }
   }
 
+  Future<FeeData> getFeeData() async =>
+      FeeData._(await call<_FeeDataImpl>('getFeeData'));
+
   /// Returns the balance of [address] as of the [blockTag].
   ///
   /// ---
