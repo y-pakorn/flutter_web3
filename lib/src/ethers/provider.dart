@@ -115,6 +115,10 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
         ),
       );
 
+  /// Returns the contract code of [address] as of the [blockTag] block height. If there is no contract currently deployed, the result is `0x`.
+  Future<String> getCode(String address, [dynamic blockTag]) => call<String>(
+      'getCode', blockTag == null ? [address] : [address, blockTag]);
+
   /// Returns the current gas price.
   Future<BigInt> getGasPrice() => call<BigInt>('getGasPrice');
 
@@ -159,6 +163,11 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   /// Returns the [Network] that [this] is connected to.
   Future<Network> getNetwork() async =>
       Network._(await call<_NetworkImpl>('getNetwork'));
+
+  /// Returns the `Bytes32` value of the position [pos] at [address], as of the [blockTag].
+  Future<String> getStorageAt(String address, int pos, [dynamic blockTag]) =>
+      call<String>('getStorageAt',
+          blockTag == null ? [address, pos] : [address, pos, blockTag]);
 
   /// Returns the [TransactionResponse] with [hash] or `null` if the transaction is unknown.
   ///
