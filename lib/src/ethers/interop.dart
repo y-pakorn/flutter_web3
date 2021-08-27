@@ -2,6 +2,16 @@ part of ethers;
 
 @JS()
 @anonymous
+class _FeeDataImpl {
+  external BigNumber get gasPrice;
+
+  external BigNumber get maxFeePerGas;
+
+  external BigNumber get maxPriorityFeePerGas;
+}
+
+@JS()
+@anonymous
 class _AccessListImpl {
   external factory _AccessListImpl({String address, List<String> storageKeys});
 
