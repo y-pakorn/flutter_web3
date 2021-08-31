@@ -186,7 +186,17 @@ class Contract extends Interop<_ContractImpl> {
         case BigInt:
           return (await call<BigNumber>(method, args)).toBigInt as T;
         default:
-          return promiseToFuture<T>(callMethod(impl, method, args));
+          return promiseToFuture<T>(callMethod(
+              impl,
+              method,
+              args.map((e) {
+                switch (e) {
+                  case BigInt:
+                    return e.toString();
+                  default:
+                    return e;
+                }
+              }).toList()));
       }
     } catch (error) {
       final err = dartify(error);
