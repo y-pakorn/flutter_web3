@@ -206,6 +206,27 @@ class WalletConnectProvider extends Interop<_WalletConnectProviderImpl> {
         chainId: 56,
         network: 'binance',
       );
+
+  /// Instantiate [WalletConnectProvider] object with `Polygon Mainnet` rpc and QR code enabled, ready to connect.
+  static WalletConnectProvider polygon() => WalletConnectProvider.fromRpc(
+        {137: 'https://polygon-rpc.com/'},
+        chainId: 137,
+        network: 'polygon',
+      );
+
+  /// Instantiate [WalletConnectProvider] object with `Harmony Mainnet` rpc and QR code enabled, ready to connect.
+  static WalletConnectProvider harmony() => WalletConnectProvider.fromRpc(
+        {1666600000: 'https://api.harmony.one'},
+        chainId: 1666600000,
+        network: 'harmony',
+      );
+
+  /// Instantiate [WalletConnectProvider] object with `xDai` rpc and QR code enabled, ready to connect.
+  static WalletConnectProvider xDai() => WalletConnectProvider.fromRpc(
+        {100: 'https://rpc.xdaichain.com/'},
+        chainId: 100,
+        network: 'xdai',
+      );
 }
 
 /// Metadata information of specific wallet provider.
