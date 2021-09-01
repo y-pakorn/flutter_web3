@@ -8,6 +8,19 @@ class _QrcodeModalOptionsImpl {
   external List<String> get mobileLinks;
 }
 
+@JS()
+@anonymous
+class _RequestArgumentsImpl {
+  external factory _RequestArgumentsImpl({
+    required String method,
+    dynamic params,
+  });
+
+  external String get method;
+
+  external dynamic get params;
+}
+
 @JS("default")
 class _WalletConnectProviderImpl {
   external _WalletConnectProviderImpl(

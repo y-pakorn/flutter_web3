@@ -194,6 +194,27 @@ class WalletConnectProvider extends Interop<_WalletConnectProviderImpl> {
   /// Remove all the listeners for the [eventName] events. If no [eventName] is provided, all events are removed.
   removeAllListeners([String? eventName]) => impl.removeAllListeners(eventName);
 
+  /// Use request to submit RPC requests with [method] and optionally [params] to Ethereum via Wallet Connect.
+  ///
+  /// Returns a Future of generic type that resolves to the result of the RPC method call.
+  Future<T> request<T>(String method, [dynamic params]) async {
+    switch (T) {
+      case BigInt:
+        return BigInt.parse(await request<String>(method, params)) as T;
+      default:
+        return promiseToFuture<T>(
+          callMethod(
+            impl,
+            'request',
+            [
+              _RequestArgumentsImpl(
+                  method: method, params: params != null ? params : [])
+            ],
+          ),
+        );
+    }
+  }
+
   @override
   String toString() => connected
       ? 'WalletConnectProvider: connected to $rpcUrl ($chainId) with $accounts'
@@ -206,18 +227,18 @@ class WalletConnectProvider extends Interop<_WalletConnectProviderImpl> {
         network: 'binance',
       );
 
-  /// Instantiate [WalletConnectProvider] object with `Polygon Mainnet` rpc and QR code enabled, ready to connect.
-  static WalletConnectProvider polygon() => WalletConnectProvider.fromRpc(
-        {137: 'https://polygon-rpc.com/'},
-        chainId: 137,
-        network: 'polygon',
-      );
-
   /// Instantiate [WalletConnectProvider] object with `Harmony Mainnet` rpc and QR code enabled, ready to connect.
   static WalletConnectProvider harmony() => WalletConnectProvider.fromRpc(
         {1666600000: 'https://api.harmony.one'},
         chainId: 1666600000,
         network: 'harmony',
+      );
+
+  /// Instantiate [WalletConnectProvider] object with `Polygon Mainnet` rpc and QR code enabled, ready to connect.
+  static WalletConnectProvider polygon() => WalletConnectProvider.fromRpc(
+        {137: 'https://polygon-rpc.com/'},
+        chainId: 137,
+        network: 'polygon',
       );
 
   /// Instantiate [WalletConnectProvider] object with `xDai` rpc and QR code enabled, ready to connect.
