@@ -1,3 +1,12 @@
+## 2.0.5
+
+- Fix js interop object not passed to connect method (#8)
+- Add request method for json-rpc api call on WalletConnect
+- Fix WalletConnectProvider event emitter argument
+- Add Polygon, Harmony, and xDai chain to WalletConnectProvider
+- Add support for BigInt in Contract call/send method
+- Add getCode and getStorageAt to Provider
+
 ## 2.0.4
 
 - Fix EtherException uncaught error
