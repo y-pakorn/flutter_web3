@@ -70,7 +70,7 @@ To use Ethers JS and Wallet Connect Provider, we need to include script to JS pa
   <!--Ethers-->
   <script src="https://cdn.ethers.io/lib/ethers-5.4.umd.min.js" type="application/javascript"></script>
   <!--Wallet Connect-->
-  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.5.0-rc.2/dist/umd/index.min.js" type="application/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.6.5/dist/umd/index.min.js" type="application/javascript"></script>
 ```
 
 ---
@@ -208,6 +208,8 @@ receipt is TransactionReceipt; // true
 #### Contract
 
 Define ABI object, All ABI formats can be view [here](https://docs.ethers.io/v5/api/utils/abi/formats/).
+
+Note that you must be precise with the function argument and return types, this will yield different data types. For example, `uint256` will yield `BigNumber` but `uint16` will simply yield `int`. **There might be error if you manually type this by hand.**
 
 ```dart
 final humanReadableAbi = [
@@ -384,8 +386,10 @@ final wc = WalletConnectProvider.fromRpc(
 // From Infura
 final infuraWc = WalletConnectProvider.fromInfura('https://foo.infura.io/v3/barbaz');
 
-// Static BSC RPC
+// Static RPC
 final binaceWc = WalletConnectProvider.binance();
+final polygonWc = WalletConnectProvider.polygon();
+...
 ```
 
 Enable the session, toggle QRCode Modal.
@@ -403,4 +407,3 @@ await web3provider.getGasPrice(); // 5000000000
 ```
 
 ---
-
