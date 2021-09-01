@@ -79,10 +79,14 @@ class Contract extends Interop<_ContractImpl> {
   ///By passing in a [Signer]. this will return a Contract which will act on behalf of that signer.
   Contract connect(dynamic providerOrSigner) {
     assert(
-      providerOrSigner is Provider || providerOrSigner is Signer,
+      providerOrSigner is Web3Provider ||
+          providerOrSigner is JsonRpcProvider ||
+          providerOrSigner is Provider ||
+          providerOrSigner is Signer,
       'providerOrSigner must be Provider or Signer',
     );
-    return Contract._(impl.connect(providerOrSigner));
+
+    return Contract._(impl.connect((providerOrSigner as Interop).impl));
   }
 
   /// Returns the estimate units of gas that would be required to execute the `method` with `args` and `override`.
