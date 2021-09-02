@@ -283,7 +283,7 @@ class _TransactionReceiptImpl {
 
   external String? get root;
 
-  external int get status;
+  external int? get status;
 
   external String? get to;
 
