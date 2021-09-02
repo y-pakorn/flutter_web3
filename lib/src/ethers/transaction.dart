@@ -171,7 +171,7 @@ class TransactionReceipt extends Interop<_TransactionReceiptImpl> {
   /// The status of a transaction is `true` is successful or `false` if it was reverted.
   ///
   /// Only transactions included in blocks post-Byzantium Hard Fork have this property.
-  bool get status => impl.status == null || impl.status == 1;
+  bool get status => impl.status != null && impl.status == 1;
 
   /// The address this transaction is to.
   ///
