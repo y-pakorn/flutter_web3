@@ -25,10 +25,22 @@ class Transaction<T extends _TransactionImpl> extends Interop<T> {
   BigInt get gasLimit => impl.gasLimit.toBigInt;
 
   /// The price (in wei) per unit of gas for transaction.
-  BigInt get gasPrice => impl.gasPrice.toBigInt;
+  ///
+  /// For `EIP-1559` transactions, this will be `null`.
+  BigInt? get gasPrice => impl.gasPrice?.toBigInt;
 
   /// The transaction hash, which can be used as an identifier for transaction. This is the keccak256 of the serialized RLP encoded representation of transaction.
   String get hash => impl.hash;
+
+  /// The maximum price (in wei) per unit of gas for transaction.
+  ///
+  /// For transactions that are not `EIP-1559` transactions, this will be `null`.
+  BigInt? get maxFeePerGas => impl.maxFeePerGas?.toBigInt;
+
+  /// The priority fee price (in wei) per unit of gas for transaction.
+  ///
+  /// For transactions that are not `EIP-1559` transactions, this will be `null`.
+  BigInt? get maxPriorityFeePerGas => impl.maxPriorityFeePerGas?.toBigInt;
 
   /// The nonce for transaction.
   ///
@@ -66,6 +78,8 @@ class TransactionOverride extends Interop<_TransactionOverrideImpl> {
     BigInt? gasLimit,
     BigInt? gasPrice,
     BigInt? value,
+    BigInt? maxFeePerGas,
+    BigInt? maxPriorityFeePerGas,
     int? nonce,
   }) {
     return TransactionOverride._(
@@ -74,6 +88,8 @@ class TransactionOverride extends Interop<_TransactionOverrideImpl> {
         nonce: nonce,
         gasLimit: gasLimit?.toBigNumber,
         gasPrice: gasPrice?.toBigNumber,
+        maxFeePerGas: maxFeePerGas?.toBigNumber,
+        maxPriorityFeePerGas: maxPriorityFeePerGas?.toBigNumber,
       ),
     );
   }
@@ -85,6 +101,12 @@ class TransactionOverride extends Interop<_TransactionOverrideImpl> {
 
   /// The price (in wei) per unit of gas this transaction will pay.
   BigInt? get gasPrice => impl.gasPrice?.toBigInt;
+
+  /// The maximum price (in wei) per unit of gas for transaction.
+  BigInt? get maxFeePerGas => impl.maxFeePerGas?.toBigInt;
+
+  /// The priority fee price (in wei) per unit of gas for transaction.
+  BigInt? get maxPriorityFeePerGas => impl.maxPriorityFeePerGas?.toBigInt;
 
   /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
   int? get nonce => impl.nonce;
@@ -216,6 +238,8 @@ class TransactionRequest extends Interop<_TransactionRequestImpl> {
   BigInt? get gasLimit => impl.gasLimit?.toBigInt;
 
   /// The price (in wei) per unit of gas this transaction will pay.
+  ///
+  /// This may not be specified for transactions with type set to `1` or `2`, or if [maxFeePerGas] or [maxPriorityFeePerGas] is given.
   BigInt? get gasPrice => impl.gasLimit?.toBigInt;
 
   /// The maximum price (in wei) per unit of gas this transaction will pay for the `EIP-1559` base fee.

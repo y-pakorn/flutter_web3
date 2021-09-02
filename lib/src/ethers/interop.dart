@@ -2,16 +2,6 @@ part of ethers;
 
 @JS()
 @anonymous
-class _FeeDataImpl {
-  external BigNumber get gasPrice;
-
-  external BigNumber get maxFeePerGas;
-
-  external BigNumber get maxPriorityFeePerGas;
-}
-
-@JS()
-@anonymous
 class _AccessListImpl {
   external factory _AccessListImpl({String address, List<String> storageKeys});
 
@@ -78,6 +68,16 @@ class _EventImpl extends _LogImpl {
   external String eventSignature;
 
   external List<dynamic> args;
+}
+
+@JS()
+@anonymous
+class _FeeDataImpl {
+  external BigNumber? get gasPrice;
+
+  external BigNumber? get maxFeePerGas;
+
+  external BigNumber? get maxPriorityFeePerGas;
 }
 
 @JS()
@@ -212,9 +212,13 @@ class _TransactionImpl {
 
   external BigNumber get gasLimit;
 
-  external BigNumber get gasPrice;
+  external BigNumber? get gasPrice;
 
   external String get hash;
+
+  external BigNumber? get maxFeePerGas;
+
+  external BigNumber? get maxPriorityFeePerGas;
 
   external int get nounce;
 
@@ -236,12 +240,18 @@ class _TransactionOverrideImpl {
     BigNumber? value,
     BigNumber? gasLimit,
     BigNumber? gasPrice,
+    BigNumber? maxFeePerGas,
+    BigNumber? maxPriorityFeePerGas,
     int? nonce,
   });
 
   external BigNumber? get gasLimit;
 
   external BigNumber? get gasPrice;
+
+  external BigNumber? get maxFeePerGas;
+
+  external BigNumber? get maxPriorityFeePerGas;
 
   external int? get nonce;
 
