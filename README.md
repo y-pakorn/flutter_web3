@@ -29,6 +29,18 @@
 
 #### This package is made especially for developing Dapp on cross(multiple) chain in Flutter Web
 
+## V2.1 Changes
+
+Version 2.1 introduce EIP-1559 properties for various object.
+
+- `gasPrice` property on many(all) class is now nullable.
+	- will be `null` on mainnet but not `null` on fork or chain that not yet implement EIP-1559.
+- Added `maxFeePerGas` and `maxPriorityFeePerGas` properties to `Transaction`, `TransactionRequest`, and `TransactionOverride`.
+- Added `getFeeData` method to `Provider`.
+- Added `baseFee` property to `Block`.
+
+Pull requests for missing features/properties are always welcomed.
+
 ## V2 Changes
 
 Version 2.0 of this package will introduce full dart wrapper instead of js interop class. Including toString override for easier debugging and more simple class instantiation.
