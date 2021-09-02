@@ -1,3 +1,9 @@
+## 2.1.0
+
+- Implement EIP-15559 properties (#7)
+- Add specific format method and more functionality
+- Add code documentation for verifyMessage
+
 ## 2.0.5
 
 - Fix js interop object not passed to connect method (#8)
