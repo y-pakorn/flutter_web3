@@ -221,7 +221,11 @@ class EthUtils {
   external static String soliditySha256(
       List<String> types, List<dynamic> values);
 
-  external static String verifyMessage(String hash, String sig);
+  /// Returns the address that signed [message] producing [signature].
+  ///
+  /// The signature may have a non-canonical v (i.e. does not need to be 27 or 28), in which case it will be normalized to compute the `recoveryParam` which will then be used to compute the address;
+  /// This allows systems which use the v to encode additional data (such as EIP-155) to be used since the v parameter is still completely non-ambiguous.
+  external static String verifyMessage(String message, String signature);
 }
 
 /// [BigInt] extension for converting between Dart and JS class.
