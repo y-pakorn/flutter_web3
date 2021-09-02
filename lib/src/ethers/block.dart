@@ -1,7 +1,32 @@
 part of ethers;
 
+/// An object consist of basic information about block.
+///
+/// Often only the hashes of the transactions included in a block are needed, so by default a block only contains this information, as it is substantially less data.
+class Block extends _RawBlock<_BlockImpl> {
+  const Block._(_BlockImpl impl) : super._(impl);
+
+  /// A list of the transactions hashes for each transaction this block includes.
+  List<String> get transactions => impl.transactions.cast<String>();
+}
+
+/// An object consist of basic information about block.
+///
+/// If all transactions for a block are needed, this object instead includes the full details on each transaction.
+class BlockWithTransaction extends _RawBlock<_BlockWithTransactionImpl> {
+  const BlockWithTransaction._(_BlockWithTransactionImpl impl) : super._(impl);
+
+  /// A list of the transactions this block includes.
+  List<TransactionResponse> get transactions => impl.transactions
+      .cast<_TransactionResponseImpl>()
+      .map((e) => TransactionResponse._(e))
+      .toList();
+}
+
 class _RawBlock<T extends _RawBlockImpl> extends Interop<T> {
   const _RawBlock._(T impl) : super.internal(impl);
+
+  BigInt? get baseFee => impl.baseFee?.toBigInt;
 
   /// The difficulty target required to be met by the miner of the block.
   num get difficulty => impl.difficulty;
@@ -39,27 +64,4 @@ class _RawBlock<T extends _RawBlockImpl> extends Interop<T> {
   @override
   String toString() =>
       'Block: $number ${hash.substring(0, 10)} mined at ${timestamp.toIso8601String()} with diff $difficulty';
-}
-
-/// An object consist of basic information about block.
-///
-/// Often only the hashes of the transactions included in a block are needed, so by default a block only contains this information, as it is substantially less data.
-class Block extends _RawBlock<_BlockImpl> {
-  const Block._(_BlockImpl impl) : super._(impl);
-
-  /// A list of the transactions hashes for each transaction this block includes.
-  List<String> get transactions => impl.transactions.cast<String>();
-}
-
-/// An object consist of basic information about block.
-///
-/// If all transactions for a block are needed, this object instead includes the full details on each transaction.
-class BlockWithTransaction extends _RawBlock<_BlockWithTransactionImpl> {
-  const BlockWithTransaction._(_BlockWithTransactionImpl impl) : super._(impl);
-
-  /// A list of the transactions this block includes.
-  List<TransactionResponse> get transactions => impl.transactions
-      .cast<_TransactionResponseImpl>()
-      .map((e) => TransactionResponse._(e))
-      .toList();
 }

@@ -25,10 +25,22 @@ class Transaction<T extends _TransactionImpl> extends Interop<T> {
   BigInt get gasLimit => impl.gasLimit.toBigInt;
 
   /// The price (in wei) per unit of gas for transaction.
-  BigInt get gasPrice => impl.gasPrice.toBigInt;
+  ///
+  /// For `EIP-1559` transactions, this will be `null`.
+  BigInt? get gasPrice => impl.gasPrice?.toBigInt;
 
   /// The transaction hash, which can be used as an identifier for transaction. This is the keccak256 of the serialized RLP encoded representation of transaction.
   String get hash => impl.hash;
+
+  /// The maximum price (in wei) per unit of gas for transaction.
+  ///
+  /// For transactions that are not `EIP-1559` transactions, this will be `null`.
+  BigInt? get maxFeePerGas => impl.maxFeePerGas?.toBigInt;
+
+  /// The priority fee price (in wei) per unit of gas for transaction.
+  ///
+  /// For transactions that are not `EIP-1559` transactions, this will be `null`.
+  BigInt? get maxPriorityFeePerGas => impl.maxPriorityFeePerGas?.toBigInt;
 
   /// The nonce for transaction.
   ///
@@ -62,12 +74,12 @@ class Transaction<T extends _TransactionImpl> extends Interop<T> {
 }
 
 class TransactionOverride extends Interop<_TransactionOverrideImpl> {
-  TransactionOverride._(_TransactionOverrideImpl impl) : super.internal(impl);
-
   factory TransactionOverride({
     BigInt? gasLimit,
     BigInt? gasPrice,
     BigInt? value,
+    BigInt? maxFeePerGas,
+    BigInt? maxPriorityFeePerGas,
     int? nonce,
   }) {
     return TransactionOverride._(
@@ -76,15 +88,25 @@ class TransactionOverride extends Interop<_TransactionOverrideImpl> {
         nonce: nonce,
         gasLimit: gasLimit?.toBigNumber,
         gasPrice: gasPrice?.toBigNumber,
+        maxFeePerGas: maxFeePerGas?.toBigNumber,
+        maxPriorityFeePerGas: maxPriorityFeePerGas?.toBigNumber,
       ),
     );
   }
+
+  TransactionOverride._(_TransactionOverrideImpl impl) : super.internal(impl);
 
   /// The maximum amount of gas this transaction is permitted to use.
   BigInt? get gasLimit => impl.gasLimit?.toBigInt;
 
   /// The price (in wei) per unit of gas this transaction will pay.
   BigInt? get gasPrice => impl.gasPrice?.toBigInt;
+
+  /// The maximum price (in wei) per unit of gas for transaction.
+  BigInt? get maxFeePerGas => impl.maxFeePerGas?.toBigInt;
+
+  /// The priority fee price (in wei) per unit of gas for transaction.
+  BigInt? get maxPriorityFeePerGas => impl.maxPriorityFeePerGas?.toBigInt;
 
   /// The nonce for this transaction. This should be set to the number of transactions ever sent from this address.
   int? get nonce => impl.nonce;
@@ -149,7 +171,7 @@ class TransactionReceipt extends Interop<_TransactionReceiptImpl> {
   /// The status of a transaction is `true` is successful or `false` if it was reverted.
   ///
   /// Only transactions included in blocks post-Byzantium Hard Fork have this property.
-  bool get status => impl.status == 1;
+  bool get status => impl.status == null || impl.status == 1;
 
   /// The address this transaction is to.
   ///
@@ -172,8 +194,6 @@ class TransactionReceipt extends Interop<_TransactionReceiptImpl> {
 ///
 /// All fields are optional and may be a promise which resolves to the required type.
 class TransactionRequest extends Interop<_TransactionRequestImpl> {
-  TransactionRequest._(_TransactionRequestImpl impl) : super.internal(impl);
-
   factory TransactionRequest({
     String? to,
     String? from,
@@ -182,6 +202,9 @@ class TransactionRequest extends Interop<_TransactionRequestImpl> {
     BigInt? gasPrice,
     int? nounce,
     String? data,
+    BigInt? maxFeePerGas,
+    BigInt? maxPriorityFeePerGas,
+    AccessList? accessList,
   }) {
     return TransactionRequest._(
       _TransactionRequestImpl(
@@ -192,9 +215,18 @@ class TransactionRequest extends Interop<_TransactionRequestImpl> {
         nonce: nounce,
         gasLimit: gasLimit?.toBigNumber,
         gasPrice: gasPrice?.toBigNumber,
+        accessList: accessList?.impl,
+        maxFeePerGas: maxFeePerGas?.toBigNumber,
+        maxPriorityFeePerGas: maxPriorityFeePerGas?.toBigNumber,
       ),
     );
   }
+
+  TransactionRequest._(_TransactionRequestImpl impl) : super.internal(impl);
+
+  /// The [AccessList] included in an EIP-2930 or EIP-1559 transaction.
+  AccessList? get accessList =>
+      impl.accessList == null ? null : AccessList._(impl.accessList!);
 
   /// The transaction data.
   String? get data => impl.data;
@@ -206,7 +238,23 @@ class TransactionRequest extends Interop<_TransactionRequestImpl> {
   BigInt? get gasLimit => impl.gasLimit?.toBigInt;
 
   /// The price (in wei) per unit of gas this transaction will pay.
+  ///
+  /// This may not be specified for transactions with type set to `1` or `2`, or if [maxFeePerGas] or [maxPriorityFeePerGas] is given.
   BigInt? get gasPrice => impl.gasLimit?.toBigInt;
+
+  /// The maximum price (in wei) per unit of gas this transaction will pay for the `EIP-1559` base fee.
+  ///
+  /// Most developers should leave this unspecified and use the default value that ethers determines from the network.
+  ///
+  /// This may not be specified for transactions with type set to `0` or if [gasPrice] is specified.
+  BigInt? get maxFeePerGas => impl.maxFeePerGas?.toBigInt;
+
+  /// The price (in wei) per unit of gas this transaction will pay for the `EIP-1559` priority fee. This is included in the [maxFeePerGas], so this will not affect the total maximum cost set with [maxFeePerGas].
+  ///
+  /// Most developers should leave this unspecified and use the default value that ethers determines from the network.
+  ///
+  /// This may not be specified for transactions with type set to `0` or if [gasPrice] is specified.
+  BigInt? get maxPriorityFeePerGas => impl.maxPriorityFeePerGas?.toBigInt;
 
   String? get method => impl.method;
 
@@ -228,7 +276,7 @@ class TransactionRequest extends Interop<_TransactionRequestImpl> {
 class TransactionResponse extends Transaction<_TransactionResponseImpl> {
   const TransactionResponse._(_TransactionResponseImpl impl) : super._(impl);
 
-  /// The [AccessList] included in an EIP-2930 transaction, which will also have its type equal to 1.
+  /// The [AccessList] included in an EIP-2930 or EIP-1559 transaction.
   AccessList? get accessList =>
       impl.accessList != null ? AccessList._(impl.accessList!) : null;
 
@@ -242,7 +290,7 @@ class TransactionResponse extends Transaction<_TransactionResponseImpl> {
   int get confirmations => impl.confirmations;
 
   /// The serialized transaction.
-  String get raw => impl.raw;
+  String? get raw => impl.raw;
 
   /// The timestamp of the block this transaction was mined in. If the block has not been mined, this is null.
   DateTime? get timestamp => impl.timestamp != null

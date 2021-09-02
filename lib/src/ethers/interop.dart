@@ -3,8 +3,11 @@ part of ethers;
 @JS()
 @anonymous
 class _AccessListImpl {
+  external factory _AccessListImpl({String address, List<String> storageKeys});
+
   external String get address;
-  external List<dynamic> get storageKey;
+
+  external List<dynamic> get storageKeys;
 }
 
 @JS()
@@ -65,6 +68,16 @@ class _EventImpl extends _LogImpl {
   external String eventSignature;
 
   external List<dynamic> args;
+}
+
+@JS()
+@anonymous
+class _FeeDataImpl {
+  external BigNumber? get gasPrice;
+
+  external BigNumber? get maxFeePerGas;
+
+  external BigNumber? get maxPriorityFeePerGas;
 }
 
 @JS()
@@ -147,6 +160,8 @@ class _ProviderImpl {}
 @JS()
 @anonymous
 class _RawBlockImpl {
+  external BigNumber? get baseFee;
+
   external num get difficulty;
 
   external String get extraData;
@@ -197,9 +212,13 @@ class _TransactionImpl {
 
   external BigNumber get gasLimit;
 
-  external BigNumber get gasPrice;
+  external BigNumber? get gasPrice;
 
   external String get hash;
+
+  external BigNumber? get maxFeePerGas;
+
+  external BigNumber? get maxPriorityFeePerGas;
 
   external int get nounce;
 
@@ -221,12 +240,18 @@ class _TransactionOverrideImpl {
     BigNumber? value,
     BigNumber? gasLimit,
     BigNumber? gasPrice,
+    BigNumber? maxFeePerGas,
+    BigNumber? maxPriorityFeePerGas,
     int? nonce,
   });
 
   external BigNumber? get gasLimit;
 
   external BigNumber? get gasPrice;
+
+  external BigNumber? get maxFeePerGas;
+
+  external BigNumber? get maxPriorityFeePerGas;
 
   external int? get nonce;
 
@@ -258,7 +283,7 @@ class _TransactionReceiptImpl {
 
   external String? get root;
 
-  external int get status;
+  external int? get status;
 
   external String? get to;
 
@@ -278,7 +303,12 @@ class _TransactionRequestImpl {
     BigNumber? gasPrice,
     int? nonce,
     String? data,
+    _AccessListImpl? accessList,
+    BigNumber? maxFeePerGas,
+    BigNumber? maxPriorityFeePerGas,
   });
+
+  external _AccessListImpl? get accessList;
 
   external String? get data;
 
@@ -287,6 +317,10 @@ class _TransactionRequestImpl {
   external BigNumber? get gasLimit;
 
   external BigNumber? get gasPrice;
+
+  external BigNumber? get maxFeePerGas;
+
+  external BigNumber? get maxPriorityFeePerGas;
 
   external String? get method;
 
@@ -308,7 +342,7 @@ class _TransactionResponseImpl extends _TransactionImpl {
 
   external int get confirmations;
 
-  external String get raw;
+  external String? get raw;
 
   external int? get timestamp;
 
