@@ -113,6 +113,10 @@ class _InterfaceImpl {
   external _InterfaceImpl(dynamic abi);
 
   external dynamic format([dynamic types]);
+
+  external String getSighash(String function);
+
+  external String getEventTopic(String event);
 }
 
 @JS("providers.JsonRpcProvider")
