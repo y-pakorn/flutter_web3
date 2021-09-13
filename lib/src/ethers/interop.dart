@@ -106,17 +106,34 @@ class _FormatTypesImpl {
   external static dynamic full;
 
   external static dynamic minimal;
+
+  external static dynamic sighash;
+}
+
+@JS('utils.Fragment')
+class _FragmentImpl {
+  external List<_ParamTypeImpl> get inputs;
+
+  external String? get name;
+
+  external String get type;
+
+  external String format([dynamic types]);
+
+  external static _FragmentImpl from(String source);
 }
 
 @JS("utils.Interface")
 class _InterfaceImpl {
   external _InterfaceImpl(dynamic abi);
 
+  external List<_FragmentImpl> get fragments;
+
   external dynamic format([dynamic types]);
 
-  external String getSighash(String function);
-
   external String getEventTopic(String event);
+
+  external String getSighash(dynamic function);
 }
 
 @JS("providers.JsonRpcProvider")
@@ -156,6 +173,27 @@ class _NetworkImpl {
   external String? get ensAddress;
 
   external String get name;
+}
+
+@JS('utils.ParamType')
+class _ParamTypeImpl {
+  external _ParamTypeImpl? get arrayChildren;
+
+  external int? get arrayLength;
+
+  external String get baseType;
+
+  external List<_ParamTypeImpl>? get components;
+
+  external bool get indexed;
+
+  external String? get name;
+
+  external String? get type;
+
+  external String format([dynamic types]);
+
+  external static _ParamTypeImpl from(String source);
 }
 
 @JS("providers")

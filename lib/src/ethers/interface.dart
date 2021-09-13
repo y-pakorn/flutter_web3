@@ -35,6 +35,37 @@ enum FormatTypes {
   /// ]
   /// ```
   full,
+
+  /// '0x70a08231'
+  sighash,
+}
+
+/// An ABI is a collection of Fragments.
+class Fragment extends Interop<_FragmentImpl> {
+  factory Fragment.from(String source) =>
+      Fragment._(_FragmentImpl.from(source));
+
+  const Fragment._(_FragmentImpl impl) : super.internal(impl);
+
+  /// This is the name of the Event or Function. This will be `null` for a `ConstructorFragment`.
+  String? get name => impl.name;
+
+  /// This is an array of each [ParamType] for the input parameters to the Constructor, Event of Function.
+  List<ParamType> get paramType =>
+      impl.inputs.cast<_ParamTypeImpl>().map((e) => ParamType._(e)).toList();
+
+  /// This is a [String] which indicates the type of the [Fragment]. This will be one of:
+  /// - constructor
+  /// - event
+  /// - function
+  String get type => impl.type;
+
+  /// Creates a [String] representation of the [Fragment] using the available [type] formats.
+  String format([FormatTypes? type]) =>
+      type != null ? impl.format(type.impl) : impl.format();
+
+  @override
+  String toString() => 'Fragment: ${format()}';
 }
 
 /// The Interface Class abstracts the encoding and decoding required to interact with contracts on the Ethereum network.
@@ -53,15 +84,19 @@ class Interface extends Interop<_InterfaceImpl> {
     return Interface._(_InterfaceImpl(abi));
   }
 
-  Interface._(_InterfaceImpl impl) : super.internal(impl);
+  const Interface._(_InterfaceImpl impl) : super.internal(impl);
+
+  /// All the [Fragment] in the interface.
+  List<Fragment> get fragments =>
+      impl.fragments.cast<_FragmentImpl>().map((e) => Fragment._(e)).toList();
 
   /// Return the formatted [Interface].
   ///
   /// [types] must be from [FormatTypes] variable.
   ///
   /// If the format type is json a single string is returned, otherwise an Array of the human-readable strings is returned.
-  dynamic format([FormatTypes? types]) =>
-      types != null ? impl.format(types.impl) : impl.format();
+  dynamic format([FormatTypes? type]) =>
+      type != null ? impl.format(type.impl) : impl.format();
 
   /// Format into [FormatTypes.full].
   ///
@@ -135,8 +170,59 @@ class Interface extends Interop<_InterfaceImpl> {
   /// ```
   String getSighash(String function) => impl.getSighash(function);
 
+  /// Return the sighash (or Function Selector) for [fragment].
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// iface.getSighash(iface.fragments.first);
+  /// // '0x70a08231'
+  /// ```
+  String getSighashByFragment(Fragment fragment) =>
+      impl.getSighash(fragment.impl);
+
   @override
   String toString() => 'Interface: ${format(FormatTypes.minimal)}';
+}
+
+/// A representation of a solidity parameter.
+class ParamType extends Interop<_ParamTypeImpl> {
+  factory ParamType.from(String source) =>
+      ParamType._(_ParamTypeImpl.from(source));
+
+  const ParamType._(_ParamTypeImpl impl) : super.internal(impl);
+
+  /// The type of children of the array. This is `null` for any parameter which is not an array.
+  ParamType? get arrayChildren =>
+      impl.arrayChildren == null ? null : ParamType._(impl.arrayChildren!);
+
+  /// The length of the array, or -1 for dynamic-length arrays. This is `null` for parameters which are not arrays.
+  int? get arrayLength => impl.arrayLength;
+
+  /// The base type of the parameter. For primitive types (e.g. `address`, `uint256`, etc) this is equal to type. For arrays, it will be the string array and for a tuple, it will be the string tuple.
+  String get baseType => impl.baseType;
+
+  ///The components of a tuple. This is `null` for non-tuple parameters.
+  List<ParamType>? get components => impl.components
+      ?.cast<_ParamTypeImpl>()
+      .map((e) => ParamType._(e))
+      .toList();
+
+  /// Whether the parameter has been marked as indexed. This only applies to parameters which are part of an EventFragment.
+  bool get indexed => impl.indexed;
+
+  /// The local parameter name. This may be null for unnamed parameters. For example, the parameter definition `string foobar` would be `foobar`.
+  String? get name => impl.name;
+
+  /// The full type of the parameter, including tuple and array symbols. This may be `null` for unnamed parameters. For the above example, this would be `foobar`.
+  String? get type => impl.type;
+
+  /// Creates a [String] representation of the [Fragment] using the available [type] formats.
+  String format([FormatTypes? type]) =>
+      type != null ? impl.format(type.impl) : impl.format();
+
+  @override
+  String toString() => 'ParamType: ${format()}';
 }
 
 extension _FormatTypesExtImpl on FormatTypes {
@@ -148,6 +234,8 @@ extension _FormatTypesExtImpl on FormatTypes {
         return _FormatTypesImpl.minimal;
       case FormatTypes.full:
         return _FormatTypesImpl.full;
+      case FormatTypes.sighash:
+        return _FormatTypesImpl.sighash;
     }
   }
 }
