@@ -134,6 +134,12 @@ class _InterfaceImpl {
   external String getEventTopic(String event);
 
   external String getSighash(dynamic function);
+
+  external List encodeFilterTopics(dynamic fragment, List values);
+
+  external String encodeFunctionData(dynamic fragment, [List? values]);
+
+  external List decodeFunctionResult(dynamic fragment, String data);
 }
 
 @JS("providers.JsonRpcProvider")

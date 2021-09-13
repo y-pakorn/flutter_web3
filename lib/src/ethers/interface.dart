@@ -6,15 +6,15 @@ enum FormatTypes {
   /// '''
   /// [
   ///   {
-  ///     "type": "function",
-  ///     "name": "balanceOf",
-  ///     "constant":true,
-  ///     "stateMutability": "view",
-  ///     "payable":false, "inputs": [
-  ///       { "type": "address", "name": "owner"}
+  ///     'type': 'function',
+  ///     'name': 'balanceOf',
+  ///     'constant':true,
+  ///     'stateMutability': 'view',
+  ///     'payable':false, 'inputs': [
+  ///       { 'type': 'address', 'name': 'owner'}
   ///     ],
-  ///     "outputs": [
-  ///       { "type": "uint256", "name": "balance"}
+  ///     'outputs': [
+  ///       { 'type': 'uint256', 'name': 'balance'}
   ///     ]
   ///   },
   /// ]
@@ -90,6 +90,118 @@ class Interface extends Interop<_InterfaceImpl> {
   List<Fragment> get fragments =>
       impl.fragments.cast<_FragmentImpl>().map((e) => Fragment._(e)).toList();
 
+  /// Returns the decoded values from the result of a call for [function] (see Specifying Fragments) for the given [data].
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// // Decoding result data (e.g. from an eth_call)
+  /// resultData = '0x0000000000000000000000000000000000000000000000000de0b6b3a7640000';
+  /// iface.decodeFunctionResult('balanceOf', resultData);
+  /// // [1000000000000000000]
+  /// ```
+  List<dynamic> decodeFunctionResult(String function, String data) =>
+      impl.decodeFunctionResult(function, data);
+
+  /// Returns the decoded values from the result of a call for [function] (see Specifying Fragments) for the given [data].
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// // Decoding result data (e.g. from an eth_call)
+  /// resultData = '0x0000000000000000000000000000000000000000000000000de0b6b3a7640000';
+  /// iface.decodeFunctionResult(iface.fragments.first, resultData);
+  /// // [1000000000000000000]
+  /// ```
+  List<dynamic> decodeFunctionResultFromFragment(
+          Fragment function, String data) =>
+      impl.decodeFunctionResult(function.impl, data);
+
+  /// Returns the encoded [topic] filter, which can be passed to getLogs for fragment (see Specifying Fragments) for the given [values].
+  ///
+  /// Each topic is a 32 byte (64 nibble) `DataHexString`.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// // Filter that matches all Transfer events
+  /// iface.encodeFilterTopics('Transfer', []);
+  /// // [
+  /// //   '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+  /// // ]
+  ///
+  /// // Filter that matches the sender
+  /// iface.encodeFilterTopics('Transfer', [
+  ///   '0x8ba1f109551bD432803012645Ac136ddd64DBA72'
+  /// ]);
+  /// // [
+  /// //   '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
+  /// //   '0x0000000000000000000000008ba1f109551bd432803012645ac136ddd64dba72'
+  /// // ]
+  /// ```
+  List<dynamic> encodeFilterTopics(String topic,
+          [List<dynamic> values = const []]) =>
+      impl.encodeFilterTopics(topic, values);
+
+  /// Returns the encoded [topic] filter, which can be passed to getLogs for fragment (see Specifying Fragments) for the given [values].
+  ///
+  /// Each topic is a 32 byte (64 nibble) `DataHexString`.
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// // Filter that matches all Transfer events
+  /// iface.encodeFilterTopics(iface.fragments.first, []);
+  /// // [
+  /// //   '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+  /// // ]
+  ///
+  /// // Filter that matches the sender
+  /// iface.encodeFilterTopics(iface.fragments.first, [
+  ///   '0x8ba1f109551bD432803012645Ac136ddd64DBA72'
+  /// ]);
+  /// // [
+  /// //   '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
+  /// //   '0x0000000000000000000000008ba1f109551bd432803012645ac136ddd64dba72'
+  /// // ]
+  /// ```
+  List<dynamic> encodeFilterTopicsFromFragment(Fragment topic,
+          [List<dynamic> values = const []]) =>
+      impl.encodeFilterTopics(topic.impl, values);
+
+  /// Returns the encoded data, which can be used as the data for a transaction for [function] (see Specifying Fragments) for the given [values].
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// // Encoding data for the tx.data of a call or transaction
+  /// iface.encodeFunctionData('transferFrom', [
+  ///   '0x8ba1f109551bD432803012645Ac136ddd64DBA72',
+  ///   '0xaB7C8803962c0f2F5BBBe3FA8bf41cd82AA1923C',
+  ///   '1'
+  /// ]);
+  /// // '0x23b872dd0000000000000000000000008ba1f109551bd432803012645ac136ddd64dba72000000000000000000000000ab7c8803962c0f2f5bbbe3fa8bf41cd82aa1923c0000000000000000000000000000000000000000000000000de0b6b3a7640000'
+  /// ```
+  String encodeFunctionData(String function, [List<dynamic>? values]) =>
+      impl.encodeFunctionData(function, values);
+
+  /// Returns the encoded data, which can be used as the data for a transaction for [function] (see Specifying Fragments) for the given [values].
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// // Encoding data for the tx.data of a call or transaction
+  /// iface.encodeFunctionData(iface.fragments.first, [
+  ///   '0x8ba1f109551bD432803012645Ac136ddd64DBA72',
+  ///   '0xaB7C8803962c0f2F5BBBe3FA8bf41cd82AA1923C',
+  ///   '1'
+  /// ]);
+  /// // '0x23b872dd0000000000000000000000008ba1f109551bd432803012645ac136ddd64dba72000000000000000000000000ab7c8803962c0f2f5bbbe3fa8bf41cd82aa1923c0000000000000000000000000000000000000000000000000de0b6b3a7640000'
+  /// ```
+  String encodeFunctionDataFromFragment(Fragment function,
+          [List<dynamic>? values]) =>
+      impl.encodeFunctionData(function.impl, values);
+
   /// Return the formatted [Interface].
   ///
   /// [types] must be from [FormatTypes] variable.
@@ -117,15 +229,15 @@ class Interface extends Interop<_InterfaceImpl> {
   /// '''
   /// [
   ///   {
-  ///     "type": "function",
-  ///     "name": "balanceOf",
-  ///     "constant":true,
-  ///     "stateMutability": "view",
-  ///     "payable":false, "inputs": [
-  ///       { "type": "address", "name": "owner"}
+  ///     'type': 'function',
+  ///     'name': 'balanceOf',
+  ///     'constant':true,
+  ///     'stateMutability': 'view',
+  ///     'payable':false, 'inputs': [
+  ///       { 'type': 'address', 'name': 'owner'}
   ///     ],
-  ///     "outputs": [
-  ///       { "type": "uint256"}
+  ///     'outputs': [
+  ///       { 'type': 'uint256'}
   ///     ]
   ///   },
   /// ]
@@ -149,10 +261,10 @@ class Interface extends Interop<_InterfaceImpl> {
   /// ---
   ///
   /// ```dart
-  /// iface.getEventTopic("Transfer");
+  /// iface.getEventTopic('Transfer');
   /// // '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
   ///
-  /// iface.getEventTopic("Transfer(address, address, uint)");
+  /// iface.getEventTopic('Transfer(address, address, uint)');
   /// // '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
   /// ```
   String getEventTopic(String event) => impl.getEventTopic(event);
@@ -162,10 +274,10 @@ class Interface extends Interop<_InterfaceImpl> {
   /// ---
   ///
   /// ```dart
-  /// iface.getSighash("balanceOf");
+  /// iface.getSighash('balanceOf');
   /// // '0x70a08231'
   ///
-  /// iface.getSighash("balanceOf(address)");
+  /// iface.getSighash('balanceOf(address)');
   /// // '0x70a08231'
   /// ```
   String getSighash(String function) => impl.getSighash(function);
