@@ -38,6 +38,21 @@ class MulticallPayload {
 
   const MulticallPayload(this.address, this.data);
 
+  factory MulticallPayload.fromFunctionAbi(String address, String functionAbi,
+      [List<dynamic>? args]) {
+    final interface = Interface([functionAbi]);
+    final data = interface.encodeFunctionDataFromFragment(
+        interface.fragments.first, args);
+    return MulticallPayload(address, data);
+  }
+
+  factory MulticallPayload.fromInterfaceFunction(
+      String address, Interface interface, String function,
+      [List<dynamic>? args]) {
+    final data = interface.encodeFunctionData(function, args);
+    return MulticallPayload(address, data);
+  }
+
   List<String> serialize() => [address, data];
 
   @override
