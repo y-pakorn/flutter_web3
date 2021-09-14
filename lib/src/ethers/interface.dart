@@ -204,7 +204,7 @@ class Interface extends Interop<_InterfaceImpl> {
 
   /// Return the formatted [Interface].
   ///
-  /// [types] must be from [FormatTypes] variable.
+  /// [type] must be from [FormatTypes] variable.
   ///
   /// If the format type is json a single string is returned, otherwise an Array of the human-readable strings is returned.
   dynamic format([FormatTypes? type]) =>
