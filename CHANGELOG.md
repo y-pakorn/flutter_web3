@@ -1,3 +1,7 @@
+## 2.2.0-pre.1
+
+- Pre-release for utils
+
 ## 2.1.0
 
 - Implement EIP-15559 properties (#7)
