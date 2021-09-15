@@ -9,6 +9,7 @@ import '../ethereum/ethereum.dart';
 import '../ethereum/exception.dart';
 import '../ethereum/utils.dart';
 import '../interop_wrapper.dart';
+import '../utils/multicall.dart';
 import '../wallet_connect/wallet_connect.dart';
 
 part 'access_list.dart';

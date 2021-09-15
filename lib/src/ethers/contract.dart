@@ -72,6 +72,15 @@ class Contract extends Interop<_ContractImpl> {
   Future<T> call<T>(String method, [List<dynamic> args = const []]) =>
       _call<T>(method, args);
 
+  /// Returns a new instance of the [Contract] attached to [addressOrName].
+  ///
+  /// This is useful if there are multiple similar or identical copies of a Contract on the network and you wish to interact with each of them.
+  Contract attach(String addressOrName) {
+    assert(EthUtils.isAddress(addressOrName), 'addressOrName must be valid');
+
+    return Contract._(impl.attach(addressOrName));
+  }
+
   ///Returns a new instance of the [Contract], but connected to [Provider] or [Signer].
   ///
   ///By passing in a [Provider], this will return a downgraded Contract which only has read-only access (i.e. constant calls).
@@ -115,16 +124,45 @@ class Contract extends Interop<_ContractImpl> {
   List listeners(Object event) =>
       impl.listeners(event is EventFilter ? event.impl : event);
 
-  /// Multicall read-only constant [method] with [args]. `May not` be at the same block.
+  /// Multicall read-only constant [method] with [args]. Will use multiple https call unless [multicall] is provided.
   ///
   /// If [eagerError] is `true`, returns the error immediately on the first error found.
-  Future<List<T>> multicall<T>(String method, List<List<dynamic>> args,
-          [bool eagerError = false]) =>
-      Future.wait(
-          Iterable<int>.generate(args.length).map(
-            (e) => _call<T>(method, args[e]),
-          ),
-          eagerError: eagerError);
+  Future<List<T>> multicall<T>(
+    String method,
+    List<List<dynamic>> args, [
+    Multicall? multicall,
+    bool eagerError = false,
+  ]) async {
+    if (multicall != null) {
+      final res = await multicall.aggregate(
+        args
+            .map(
+              (e) => MulticallPayload.fromInterfaceFunction(
+                  address, interface, method, e),
+            )
+            .toList(),
+      );
+      final decoded = res.returnData
+          .map((e) => interface.decodeFunctionResult(method, e))
+          .toList();
+      switch (T) {
+        case List:
+          return decoded as List<T>;
+        case BigInt:
+          return decoded.map((e) => BigInt.parse(e[0].toString())).toList()
+              as List<T>;
+        default:
+          return decoded.map((e) => e[0]).toList() as List<T>;
+      }
+    } else {
+      return Future.wait(
+        Iterable<int>.generate(args.length).map(
+          (e) => _call<T>(method, args[e]),
+        ),
+        eagerError: eagerError,
+      );
+    }
+  }
 
   /// Remove a [listener] for the [event]. If no [listener] is provided, all listeners for [event] are removed.
   off(dynamic event, [Function? listener]) => callMethod(

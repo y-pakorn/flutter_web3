@@ -36,6 +36,8 @@ class _ContractImpl {
 
   external _ContractImpl connect(dynamic providerOrSigner);
 
+  external _ContractImpl attach(String addressOrName);
+
   external int listenerCount([dynamic eventName]);
 
   external List<dynamic> listeners(dynamic eventName);
