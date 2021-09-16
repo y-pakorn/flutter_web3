@@ -18,6 +18,7 @@ part 'contract.dart';
 part 'event.dart';
 part 'fee_data.dart';
 part 'filter.dart';
+part 'fragment.dart';
 part 'interface.dart';
 part 'interop.dart';
 part 'log.dart';

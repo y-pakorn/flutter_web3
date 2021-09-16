@@ -22,6 +22,17 @@ class _BlockWithTransactionImpl extends _RawBlockImpl {
   external List<dynamic> get transactions;
 }
 
+@JS('utils.ConstructorFragment')
+class _ConstructorFragmentImpl extends _FragmentImpl {
+  external BigNumber? get gas;
+
+  external bool get payable;
+
+  external String get stateMutability;
+
+  external static _ConstructorFragmentImpl from(String source);
+}
+
 @JS("Contract")
 class _ContractImpl {
   external _ContractImpl(String address, dynamic abi, dynamic providerOrSigner);
@@ -34,9 +45,9 @@ class _ContractImpl {
 
   external _SignerImpl? get signer;
 
-  external _ContractImpl connect(dynamic providerOrSigner);
-
   external _ContractImpl attach(String addressOrName);
+
+  external _ContractImpl connect(dynamic providerOrSigner);
 
   external int listenerCount([dynamic eventName]);
 
@@ -60,6 +71,13 @@ class _EventFilterImpl {
   external List<dynamic>? get topics;
 
   external set topics(List<dynamic>? topics);
+}
+
+@JS('utils.EventFragment')
+class _EventFragmentImpl extends _FragmentImpl {
+  external bool get anonymous;
+
+  external static _EventFragmentImpl from(String source);
 }
 
 @JS()
@@ -125,23 +143,34 @@ class _FragmentImpl {
   external static _FragmentImpl from(String source);
 }
 
+@JS('utils.FunctionFragment')
+class _FunctionFragmentImpl extends _ConstructorFragmentImpl {
+  external bool get constant;
+
+  external List<_ParamTypeImpl> get outputs;
+
+  external String get stateMutability;
+
+  external static _FunctionFragmentImpl from(String source);
+}
+
 @JS("utils.Interface")
 class _InterfaceImpl {
   external _InterfaceImpl(dynamic abi);
 
   external List<_FragmentImpl> get fragments;
 
-  external dynamic format([dynamic types]);
-
-  external String getEventTopic(String event);
-
-  external String getSighash(dynamic function);
+  external List decodeFunctionResult(dynamic fragment, String data);
 
   external List encodeFilterTopics(dynamic fragment, List values);
 
   external String encodeFunctionData(dynamic fragment, [List? values]);
 
-  external List decodeFunctionResult(dynamic fragment, String data);
+  external dynamic format([dynamic types]);
+
+  external String getEventTopic(String event);
+
+  external String getSighash(dynamic function);
 }
 
 @JS("providers.JsonRpcProvider")
