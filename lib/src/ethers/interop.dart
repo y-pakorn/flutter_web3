@@ -158,7 +158,13 @@ class _FunctionFragmentImpl extends _ConstructorFragmentImpl {
 class _InterfaceImpl {
   external _InterfaceImpl(dynamic abi);
 
+  external _ConstructorFragmentImpl get deploy;
+
+  external List<_EventFragmentImpl> get events;
+
   external List<_FragmentImpl> get fragments;
+
+  external List<_FunctionFragmentImpl> get functions;
 
   external List decodeFunctionResult(dynamic fragment, String data);
 
@@ -168,7 +174,11 @@ class _InterfaceImpl {
 
   external dynamic format([dynamic types]);
 
+  external _EventFragmentImpl getEvent(dynamic fragment);
+
   external String getEventTopic(String event);
+
+  external _FunctionFragmentImpl getFunction(dynamic fragment);
 
   external String getSighash(dynamic function);
 }

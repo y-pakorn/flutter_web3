@@ -58,9 +58,24 @@ class Interface extends Interop<_InterfaceImpl> {
 
   const Interface._(_InterfaceImpl impl) : super.internal(impl);
 
+  /// The [ConstructorFragment] for the interface.
+  ConstructorFragment get deploy => ConstructorFragment._(impl.deploy);
+
+  /// All the [EventFragment] in the interface.
+  List<EventFragment> get events => impl.events
+      .cast<_EventFragmentImpl>()
+      .map((e) => EventFragment._(e))
+      .toList();
+
   /// All the [Fragment] in the interface.
   List<Fragment> get fragments =>
       impl.fragments.cast<_FragmentImpl>().map((e) => Fragment._(e)).toList();
+
+  /// All the [FunctionFragment] in the interface.
+  List<FunctionFragment> get functions => impl.functions
+      .cast<_FunctionFragmentImpl>()
+      .map((e) => FunctionFragment._(e))
+      .toList();
 
   /// Returns the decoded values from the result of a call for [function] (see Specifying Fragments) for the given [data].
   ///
@@ -228,6 +243,13 @@ class Interface extends Interop<_InterfaceImpl> {
   /// ```
   List<String> formatMinimal() => (format(FormatTypes.minimal) as List).cast();
 
+  /// Returns the [FunctionFragment] for [event].
+  EventFragment getEvent(String event) => EventFragment._(impl.getEvent(event));
+
+  /// Returns the [FunctionFragment] for [event] fragment.
+  EventFragment getEventFromFragment(Fragment event) =>
+      EventFragment._(impl.getEvent(event.impl));
+
   /// Return the topic hash for [event].
   ///
   /// ---
@@ -240,6 +262,14 @@ class Interface extends Interop<_InterfaceImpl> {
   /// // '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
   /// ```
   String getEventTopic(String event) => impl.getEventTopic(event);
+
+  /// Returns the [FunctionFragment] for [function].
+  FunctionFragment getFunction(String function) =>
+      FunctionFragment._(impl.getFunction(function));
+
+  /// Returns the [FunctionFragment] for [function] fragment.
+  FunctionFragment getFunctionFromFragment(Fragment function) =>
+      FunctionFragment._(impl.getFunction(function.impl));
 
   /// Return the sighash (or Function Selector) for [function].
   ///
