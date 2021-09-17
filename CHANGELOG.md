@@ -1,6 +1,11 @@
-## 2.2.0-pre.1
+## 2.2.0-pre.2
 
 - Pre-release for utils
+- Fix BigInt not parsed properly on contract call
+
+## 2.1.1
+
+- Fix BigInt not parsed properly on contract call
 
 ## 2.1.0
 
