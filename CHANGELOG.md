@@ -1,3 +1,7 @@
+## 2.1.1
+
+- Fix BigInt not parsed properly on contract call
+
 ## 2.1.0
 
 - Implement EIP-15559 properties (#7)
