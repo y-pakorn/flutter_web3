@@ -194,12 +194,10 @@ class Contract extends Interop<_ContractImpl> {
               impl,
               method,
               args.map((e) {
-                switch (e) {
-                  case BigInt:
-                    return e.toString();
-                  default:
-                    return e;
+                if (e is BigInt) {
+                  return e.toString();
                 }
+                return e;
               }).toList()));
       }
     } catch (error) {
