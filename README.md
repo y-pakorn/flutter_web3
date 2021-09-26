@@ -311,6 +311,23 @@ await busd.call<BigInt>(
 ); // 2886780594123782414119
 ```
 
+Use List to notate Tuple type.
+
+```dart
+final abi = "function see(tuple(address, uint8, bytes)[], uint256) view returns (uint256)";
+
+final contract = Contract('0xrandomContract', abi, provider!);
+
+await contract.call<BigInt>('see', [
+  [
+    '0x0000000000000000000000000000000000000000',
+    0,
+    '0x',
+  ],
+  1000,
+]); // 1248842
+```
+
 Write/State-changing method.
 
 ```dart
@@ -321,6 +338,23 @@ tx.hash; // 0xbar
 final receipt = tx.wait(); // Wait until transaction complete
 receipt.from; // 0xthud
 receipt.to; // 0xe9e7cea3dedca5984780bafc599bd69add087d56 (BUSD Address)
+```
+
+Send Ether along with payable method.
+
+```dart
+final abi = "function throw() payable";
+
+final contract = Contract('0xrandomContract', abi, provider!);
+
+// Send 100 wei of ether along
+final tx = await contract.send(
+  'throw',
+  [],
+  TransactionOverride(value: BigInt.from(100)),
+);
+
+tx.hash; // 0xfoo
 ```
 
 Listening to Events.
