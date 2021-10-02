@@ -1,9 +1,10 @@
-class EthersException {
-  final int? code;
-  final String? message;
+class EthersException implements Exception {
+  final String code;
+  final String reason;
+  final Map<String, dynamic> rawError;
 
-  EthersException(this.code, this.message);
+  EthersException(this.code, this.reason, this.rawError);
 
   @override
-  String toString() => 'EthersException: $code $message';
+  String toString() => 'EthersException: $code $reason';
 }
