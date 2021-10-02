@@ -1,3 +1,8 @@
+## 2.1.2
+
+- Fix error not thrown properly on contract/ethers method call
+- Correct property of EtherException
+
 ## 2.1.1
 
 - Fix BigInt not parsed properly on contract call
