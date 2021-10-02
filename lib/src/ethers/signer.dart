@@ -59,10 +59,16 @@ class Signer extends Interop<_SignerImpl> {
         case 4001:
           throw EthereumUserRejected();
         default:
-          if (err['data'] != null)
+          if (err['message'] != null)
+            throw EthereumException(
+              err['code'],
+              err['message'],
+            );
+          else if (err['reason'] != null)
             throw EthersException(
-              err?['data']?['code'],
-              err?['data']?['message'],
+              err['code'],
+              err['reason'],
+              err as Map<String, dynamic>,
             );
           else
             rethrow;

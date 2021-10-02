@@ -228,7 +228,7 @@ class Contract extends Interop<_ContractImpl> {
         case BigInt:
           return (await call<BigNumber>(method, args)).toBigInt as T;
         default:
-          return promiseToFuture<T>(callMethod(
+          return await promiseToFuture<T>(callMethod(
               impl,
               method,
               args.map((e) {
@@ -244,10 +244,16 @@ class Contract extends Interop<_ContractImpl> {
         case 4001:
           throw EthereumUserRejected();
         default:
-          if (err['data'] != null)
+          if (err['message'] != null)
+            throw EthereumException(
+              err['code'],
+              err['message'],
+            );
+          else if (err['reason'] != null)
             throw EthersException(
-              err?['data']?['code'],
-              err?['data']?['message'],
+              err['code'],
+              err['reason'],
+              err as Map<String, dynamic>,
             );
           else
             rethrow;

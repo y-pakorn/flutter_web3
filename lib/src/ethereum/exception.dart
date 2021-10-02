@@ -12,3 +12,13 @@ class EthereumUserRejected implements Exception {
   @override
   String toString() => 'EthereumUserRejected: User rejected the request';
 }
+
+class EthereumException implements Exception {
+  final int code;
+  final String message;
+
+  EthereumException(this.code, this.message);
+
+  @override
+  String toString() => 'EthereumException: $code $message';
+}
