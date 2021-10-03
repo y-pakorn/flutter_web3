@@ -30,6 +30,53 @@ class Multicall {
     return MulticallResult(
         int.parse(res[0].toString()), (res[1] as List).cast());
   }
+
+  Future<List<BigInt>> multipleERC20Balances(
+    List<String> tokens,
+    List<String> addresses,
+  ) async {
+    assert(addresses.isNotEmpty && tokens.isNotEmpty,
+        'addresses and tokens should not be empty');
+    assert(addresses.length == tokens.length,
+        'addresses and tokens length should be equal');
+
+    final payload = new Iterable<int>.generate(tokens.length)
+        .map(
+          (e) => MulticallPayload.fromFunctionAbi(
+            tokens[e],
+            'function balanceOf(address) view returns (uint)',
+            [addresses[e]],
+          ),
+        )
+        .toList();
+
+    final res = await aggregate(payload);
+
+    return res.returnData.map((e) => BigInt.parse(e)).toList();
+  }
+
+  Future<List<BigInt>> multipleERC20Allowance(
+    List<String> tokens,
+    List<String> owners,
+    List<String> spenders,
+  ) async {
+    assert(tokens.isNotEmpty && owners.isNotEmpty && spenders.isNotEmpty);
+    assert(tokens.length == owners.length && tokens.length == spenders.length);
+
+    final payload = new Iterable<int>.generate(tokens.length)
+        .map(
+          (e) => MulticallPayload.fromFunctionAbi(
+            tokens[e],
+            'function allowance(address owner, address spender) external view returns (uint256)',
+            [owners[e], spenders[e]],
+          ),
+        )
+        .toList();
+
+    final res = await aggregate(payload);
+
+    return res.returnData.map((e) => BigInt.parse(e)).toList();
+  }
 }
 
 class MulticallPayload {
