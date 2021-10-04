@@ -141,6 +141,11 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   Future<String> getCode(String address, [dynamic blockTag]) => call<String>(
       'getCode', blockTag == null ? [address] : [address, blockTag]);
 
+  /// Returns the current recommended [FeeData] to use in a transaction.
+  ///
+  /// For an `EIP-1559` transaction, the [FeeData.maxFeePerGas] and [FeeData.maxPriorityFeePerGas] should be used.
+  ///
+  /// For legacy transactions and networks which do not support `EIP-1559`, the [FeeData.gasPrice] should be used.
   Future<FeeData> getFeeData() async =>
       FeeData._(await call<_FeeDataImpl>('getFeeData'));
 
