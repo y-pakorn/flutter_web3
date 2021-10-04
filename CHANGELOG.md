@@ -1,3 +1,9 @@
+## 2.1.3
+
+- Add provider call error catching 
+- Fix ethereum error not thrown properly
+- Add documentation for getFeeData
+
 ## 2.1.2
 
 - Fix error not thrown properly on contract/ethers method call
