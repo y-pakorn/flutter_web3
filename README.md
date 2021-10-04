@@ -34,33 +34,23 @@
 Version 2.1 introduce EIP-1559 properties for various object.
 
 - `gasPrice` property on many(all) class is now nullable.
-	- will be `null` on mainnet but not `null` on fork or chain that not yet implement EIP-1559.
+  - will be `null` on mainnet but not `null` on fork or chain that not yet implement EIP-1559.
 - Added `maxFeePerGas` and `maxPriorityFeePerGas` properties to `Transaction`, `TransactionRequest`, and `TransactionOverride`.
 - Added `getFeeData` method to `Provider`.
 - Added `baseFee` property to `Block`.
 
 Pull requests for missing features/properties are always welcomed.
 
-## V2 Changes
+---
 
-Version 2.0 of this package will introduce full dart wrapper instead of js interop class. Including toString override for easier debugging and more simple class instantiation.
+## Example Usage And Tutorial
 
-### Breaking Changes
+- Auction
+  - A ERC20 token auction website built by Flutter
+  - <https://github.com/y-pakorn/flutter_web3_auction>
 
-- `Ethereum` class now include static method to access default Ethereum provider.
-  - `Ethereum.provider` is the same as `ethereum`, `ethereum` getter is still available.
-  - `isEthereumSupported` replaced with `Ethereum.isSupported`. Or alternatively `ethereum != null`.
-  - `Ethereum.ethereum` to access exposed Ethereum provider i.e. MetaMask with no undefined check.
-  - `Ethereum.binanceChain` to access exposed Binance Chain Wallet provider with no undefined check.
-  - `Ethereum.web3` to access old web3 provider object, deprecated in many provder.
-- `WalletConnectProvider` class instantiation changed to factory method.
-  - `WalletConnectProvider.fromRpc` to instantiate using rpc map.
-  - `WalletConnectProvider.fromInfura` to instantiate using Infura id.
-  - Static `WalletConnectProvider.binance` to instantiate using Binance mainnet rpc.
-- `Web3Provider` class various constructor has been added.
-  - `Web3Provider` unnamed constructor remain the same.
-  - `Web3Provider.fromEthereum` instantiate using `Ethereum` instance.
-  - `Web3Provider.fromWalletConnect` instantiate using `WalletConnectProvider` instance.
+- Building Modern Web Dapp with Flutter
+  - <https://medium.com/coinmonks/building-modern-web-dapp-with-flutter-91656c71d8b>
 
 ---
 
@@ -453,3 +443,4 @@ await web3provider.getGasPrice(); // 5000000000
 ```
 
 ---
+
