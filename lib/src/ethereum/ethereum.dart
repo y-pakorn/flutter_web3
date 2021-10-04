@@ -201,7 +201,7 @@ class Ethereum extends Interop<_EthereumImpl> {
         case BigInt:
           return BigInt.parse(await request<String>(method, params)) as T;
         default:
-          return promiseToFuture<T>(
+          return await promiseToFuture<T>(
             callMethod(
               impl,
               'request',
@@ -213,11 +213,18 @@ class Ethereum extends Interop<_EthereumImpl> {
           );
       }
     } catch (error) {
-      switch (convertToDart(error)['code']) {
+      final err = convertToDart(error);
+      switch (err['code']) {
         case 4001:
           throw EthereumUserRejected();
         default:
-          rethrow;
+          if (err['message'] != null)
+            throw EthereumException(
+              err['code'],
+              err['message'],
+            );
+          else
+            rethrow;
       }
     }
   }
