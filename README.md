@@ -207,6 +207,44 @@ final receipt = await tx.wait();
 receipt is TransactionReceipt; // true
 ```
 
+#### Wallet
+
+Create a wallet from mnemonic phrase.
+
+```dart
+final mnemonic =
+    "announce room limb pattern dry unit scale effort smooth jazz weasel alcohol";
+final wallet = Wallet.fromMnemonic(mnemonic);
+```
+
+Or directly from private key.
+
+```dart
+final anotherWallet = Wallet(wallet.privateKey);
+```
+
+Then connect the wallet to specific provider.
+
+```dart
+// Connect wallet to network
+final testnetProvider =
+    JsonRpcProvider('https://data-seed-prebsc-1-s2.binance.org:8545/');
+final walletWithProvider = wallet.connect(testnetProvider);
+``` 
+
+After that, the wallet object can be used as normal signer object.
+
+```dart
+final tx = await walletWithProvider.sendTransaction(
+  TransactionRequest(
+    to: '0xbar',
+    value: BigInt.from(100),
+  ),
+); // Send 100 wei to `0xbar`
+
+tx.hash; // 0xbash
+```
+
 #### Contract
 
 Define ABI object, All ABI formats can be view [here](https://docs.ethers.io/v5/api/utils/abi/formats/).
@@ -443,4 +481,3 @@ await web3provider.getGasPrice(); // 5000000000
 ```
 
 ---
-
