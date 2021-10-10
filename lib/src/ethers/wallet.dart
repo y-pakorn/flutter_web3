@@ -75,6 +75,24 @@ class Wallet extends Signer<_WalletImpl> {
   /// The privateKey of this EOA
   String get privateKey => impl.privateKey;
 
+  /// The provider this wallet is connected to, which will be used for any Blockchain Methods methods. This can be `null`.
+  Provider? get provider =>
+      impl.provider != null ? Provider._(impl.provider!) : null;
+
+  /// The uncompressed public key for this Wallet represents.
+  String get publicKey => impl.publicKey;
+
+  /// Encrypt the wallet using [password] returning a Future which resolves to a JSON wallet.
+  Future<String> encrypt(String password,
+          [void Function(double progress)? progressCallback]) =>
+      promiseToFuture<String>(
+        impl.encrypt(
+          password,
+          null,
+          progressCallback != null ? allowInterop(progressCallback) : null,
+        ),
+      );
+
   @override
   Wallet connect(Provider provider) => Wallet._(impl.connect(provider.impl));
 

@@ -385,7 +385,17 @@ class _WalletImpl extends _SignerImpl {
 
   external String get privateKey;
 
+  external _ProviderImpl? get provider;
+
+  external String get publicKey;
+
   external _WalletImpl connect(_ProviderImpl provider);
+
+  external Future<String> encrypt(
+    String password, [
+    Object? options,
+    void Function(double progress)? progressCallback,
+  ]);
 
   external static _WalletImpl createRandom();
 
