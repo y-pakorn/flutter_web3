@@ -5,8 +5,8 @@ part of ethers;
 /// The available operations depend largely on the sub-class used.
 ///
 /// For example, a Signer from MetaMask can send transactions and sign messages but cannot sign a transaction (without broadcasting it).
-class Signer extends Interop<_SignerImpl> {
-  const Signer._(_SignerImpl impl) : super.internal(impl);
+class Signer<T extends _SignerImpl> extends Interop<T> {
+  const Signer._(_SignerImpl impl) : super.internal(impl as T);
 
   /// Returns `true` if an only if object is a [Signer].
   static bool isSigner(Object object) {
@@ -23,6 +23,9 @@ class Signer extends Interop<_SignerImpl> {
         return promiseToFuture<T>(callMethod(impl, method, args));
     }
   }
+
+  /// Connect this [Signer] to new [provider]. May simply throw an error if changing providers is not supported.
+  Signer connect(Provider provider) => Signer._(impl.connect(provider.impl));
 
   /// Returns a Future that resolves to the account address.
   Future<String> getAddress() => _call<String>('getAddress');
