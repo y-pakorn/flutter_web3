@@ -42,8 +42,6 @@ class Mnemonic extends Interop<_MnemonicImpl> {
 
 /// The Wallet class inherits [Signer] and can sign transactions and messages using a private key as a standard Externally Owned Account (EOA).
 class Wallet extends Signer<_WalletImpl> {
-  const Wallet._(_WalletImpl impl) : super._(impl);
-
   /// Create a new Wallet instance for [privateKey] and optionally connected to the [provider].
   factory Wallet(String privateKey, [Provider? provider]) =>
       Wallet._(_WalletImpl(privateKey, provider?.impl));
@@ -53,8 +51,19 @@ class Wallet extends Signer<_WalletImpl> {
   /// Wallets created using this method will have a [mnemonic].
   factory Wallet.createRandom() => Wallet._(_WalletImpl.createRandom());
 
-  @override
-  Wallet connect(Provider provider) => Wallet._(impl.connect(provider.impl));
+  /// Create an instance from an encrypted JSON wallet.
+  ///
+  /// This operation will operate synchronously which will lock up the user interface, possibly for a non-trivial duration. Most applications should use the asynchronous [fromEncryptedJson] instead.
+  factory Wallet.fromEncryptedJsonSync(String json, String password) =>
+      Wallet._(_WalletImpl.fromEncryptedJsonSync(json, password));
+
+  /// Create an instance from a [mnemonic] phrase.
+  ///
+  /// If [path] is not specified, the Ethereum default path is used (i.e. m/44'/60'/0'/0/0).
+  factory Wallet.fromMnemonic(String mnemonic, [String? path]) =>
+      Wallet._(_WalletImpl.fromMnemonic(mnemonic, path));
+
+  const Wallet._(_WalletImpl impl) : super._(impl);
 
   /// The Address of this EOA.
   String get address => impl.address;
@@ -65,4 +74,25 @@ class Wallet extends Signer<_WalletImpl> {
 
   /// The privateKey of this EOA
   String get privateKey => impl.privateKey;
+
+  @override
+  Wallet connect(Provider provider) => Wallet._(impl.connect(provider.impl));
+
+  /// Create an instance from an encrypted [json] wallet with [password].
+  ///
+  /// If [progress] is provided it will be called during decryption with a value between 0 and 1 indicating the progress towards completion.
+  static Future<Wallet> fromEncryptedJson(
+    String json,
+    String password, [
+    void Function(double progress)? progressCallback,
+  ]) async =>
+      Wallet._(
+        await promiseToFuture<_WalletImpl>(
+          _WalletImpl.fromEncryptedJson(
+            json,
+            password,
+            progressCallback != null ? allowInterop(progressCallback) : null,
+          ),
+        ),
+      );
 }

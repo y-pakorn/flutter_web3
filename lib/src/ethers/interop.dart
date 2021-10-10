@@ -388,6 +388,19 @@ class _WalletImpl extends _SignerImpl {
   external _WalletImpl connect(_ProviderImpl provider);
 
   external static _WalletImpl createRandom();
+
+  external static Future<_WalletImpl> fromEncryptedJson(
+    String json,
+    String password, [
+    void Function(double progress)? progressCallback,
+  ]);
+
+  external static _WalletImpl fromEncryptedJsonSync(
+    String json,
+    String password,
+  );
+
+  external static _WalletImpl fromMnemonic(String mnemonic, [String? path]);
 }
 
 @JS("providers.Web3Provider")
