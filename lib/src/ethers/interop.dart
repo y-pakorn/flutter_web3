@@ -72,6 +72,16 @@ class _EventImpl extends _LogImpl {
 
 @JS()
 @anonymous
+class _ExternallyOwnedAccountImpl {
+  external String get address;
+
+  external _MnemonicImpl? get mnemonic;
+
+  external String get privateKey;
+}
+
+@JS()
+@anonymous
 class _FeeDataImpl {
   external BigNumber? get gasPrice;
 
@@ -114,9 +124,9 @@ class _InterfaceImpl {
 
   external dynamic format([dynamic types]);
 
-  external String getSighash(String function);
-
   external String getEventTopic(String event);
+
+  external String getSighash(String function);
 }
 
 @JS("providers.JsonRpcProvider")
@@ -146,6 +156,15 @@ class _LogImpl {
   external String get transactionIndex;
 
   external int get transactionLogIndex;
+}
+
+@JS()
+class _MnemonicImpl {
+  external String get locale;
+
+  external String get path;
+
+  external String get phrase;
 }
 
 @JS()
@@ -202,6 +221,8 @@ class _RawTxParamsImpl {
 
 @JS("Signer")
 class _SignerImpl {
+  external _SignerImpl connect(_ProviderImpl provider);
+
   external static bool isSigner(Object object);
 }
 
@@ -351,6 +372,22 @@ class _TransactionResponseImpl extends _TransactionImpl {
   external int? get timestamp;
 
   external int? get type;
+}
+
+@JS("Wallet")
+class _WalletImpl extends _SignerImpl {
+  // ignore: unused_element
+  external _WalletImpl(String privateKey, [_ProviderImpl? provider]);
+
+  external String get address;
+
+  external _MnemonicImpl? get mnemonic;
+
+  external String get privateKey;
+
+  external _WalletImpl connect(_ProviderImpl provider);
+
+  external static _WalletImpl createRandom();
 }
 
 @JS("providers.Web3Provider")
