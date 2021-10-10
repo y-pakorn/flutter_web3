@@ -24,6 +24,7 @@ part 'network.dart';
 part 'provider.dart';
 part 'signer.dart';
 part 'transaction.dart';
+part 'wallet.dart';
 
 /// Get default [AbiCoder].
 AbiCoder get abiCoder => EthUtils.defaultAbiCoder;
