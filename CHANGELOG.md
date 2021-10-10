@@ -1,3 +1,8 @@
+## 2.1.4
+
+- Add wallet interaction through Ethers
+- Add wallet example
+
 ## 2.1.3
 
 - Add provider call error catching 
