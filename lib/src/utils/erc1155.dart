@@ -23,15 +23,16 @@ class ContractERC1155 {
 
   String _uri = '';
 
-  /// Instantiate ERC1155 Contract using default abi.
+  /// Instantiate ERC1155 Contract using default abi if [abi] is not `null`.
   ///
-  /// [isReadOnly] is determined by whether `providerOrSigner` is [Signer] or not.
-  ContractERC1155(String address, dynamic providerOrSigner)
+  /// [isReadOnly] is determined by whether [providerOrSigner] is [Signer] or not.
+  ContractERC1155(String address, dynamic providerOrSigner, [dynamic abi])
       : assert(providerOrSigner != null, 'providerOrSigner should not be null'),
         assert(address.isNotEmpty, 'address should not be empty'),
         assert(
             EthUtils.isAddress(address), 'address should be in address format'),
-        contract = Contract(address, abi, providerOrSigner);
+        contract =
+            Contract(address, abi ?? ContractERC1155.abi, providerOrSigner);
 
   /// [Log] of `ApprovalForAll` events.
   Future<List<Event>> approvalForAllEvents(
@@ -43,10 +44,24 @@ class ContractERC1155 {
   Future<BigInt> balanceOf(String address, int id) async =>
       contract.call<BigInt>('balanceOf', [address, id]);
 
-  /// Returns the amount of tokens [id] owned by [address]
+  /// Returns the amount of tokens [ids] owned by [addresses]
   Future<List<BigInt>> balanceOfBatch(
-          List<String> address, List<int> id) async =>
-      (await contract.call<List>('balanceOfBatch', [address, id]))
+          List<String> addresses, List<int> ids) async =>
+      (await contract.call<List>('balanceOfBatch', [addresses, ids]))
+          .cast<BigNumber>()
+          .map((e) => e.toBigInt)
+          .toList();
+
+  /// Returns the amount of tokens [ids] owned by [address]
+  Future<List<BigInt>> balanceOfBatchSingleAddress(
+          String address, List<int> ids) async =>
+      (await contract.call<List>(
+        'balanceOfBatch',
+        [
+          List.generate(ids.length, (index) => address),
+          ids,
+        ],
+      ))
           .cast<BigNumber>()
           .map((e) => e.toBigInt)
           .toList();
