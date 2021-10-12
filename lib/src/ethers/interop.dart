@@ -92,6 +92,16 @@ class _EventImpl extends _LogImpl {
 
 @JS()
 @anonymous
+class _ExternallyOwnedAccountImpl {
+  external String get address;
+
+  external _MnemonicImpl? get mnemonic;
+
+  external String get privateKey;
+}
+
+@JS()
+@anonymous
 class _FeeDataImpl {
   external BigNumber? get gasPrice;
 
@@ -213,6 +223,15 @@ class _LogImpl {
 }
 
 @JS()
+class _MnemonicImpl {
+  external String get locale;
+
+  external String get path;
+
+  external String get phrase;
+}
+
+@JS()
 @anonymous
 class _NetworkImpl {
   external int get chainId;
@@ -287,6 +306,8 @@ class _RawTxParamsImpl {
 
 @JS("Signer")
 class _SignerImpl {
+  external _SignerImpl connect(_ProviderImpl provider);
+
   external static bool isSigner(Object object);
 }
 
@@ -436,6 +457,45 @@ class _TransactionResponseImpl extends _TransactionImpl {
   external int? get timestamp;
 
   external int? get type;
+}
+
+@JS("Wallet")
+class _WalletImpl extends _SignerImpl {
+  // ignore: unused_element
+  external _WalletImpl(String privateKey, [_ProviderImpl? provider]);
+
+  external String get address;
+
+  external _MnemonicImpl? get mnemonic;
+
+  external String get privateKey;
+
+  external _ProviderImpl? get provider;
+
+  external String get publicKey;
+
+  external _WalletImpl connect(_ProviderImpl provider);
+
+  external Future<String> encrypt(
+    String password, [
+    Object? options,
+    void Function(double progress)? progressCallback,
+  ]);
+
+  external static _WalletImpl createRandom();
+
+  external static Future<_WalletImpl> fromEncryptedJson(
+    String json,
+    String password, [
+    void Function(double progress)? progressCallback,
+  ]);
+
+  external static _WalletImpl fromEncryptedJsonSync(
+    String json,
+    String password,
+  );
+
+  external static _WalletImpl fromMnemonic(String mnemonic, [String? path]);
 }
 
 @JS("providers.Web3Provider")

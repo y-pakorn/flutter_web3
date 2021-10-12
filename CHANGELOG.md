@@ -1,8 +1,21 @@
-## 2.2.0-pre.3
+## 2.2.0-pre.4
 
 - Pre-release for utils
-- Fix error not thrown properly on contract/ethers method call
-- Correct property of EtherException
+
+## 2.1.5
+
+- Fix list of BigInt as arguments not handled properly
+
+## 2.1.4
+
+- Add wallet interaction through Ethers
+- Add wallet example
+
+## 2.1.3
+
+- Add provider call error catching 
+- Fix ethereum error not thrown properly
+- Add documentation for getFeeData
 
 ## 2.1.2
 

@@ -53,16 +53,35 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
 
   /// Direct Ethers provider [method] call with [args] to access Blockchain data.
   Future<T> call<T>(String method, [List<dynamic> args = const []]) async {
-    switch (T) {
-      case BigInt:
-        return (await call<BigNumber>(method, args)).toBigInt as T;
-      default:
-        return promiseToFuture<T>(callMethod(impl, method, args));
+    try {
+      switch (T) {
+        case BigInt:
+          return (await call<BigNumber>(method, args)).toBigInt as T;
+        default:
+          return await promiseToFuture<T>(callMethod(impl, method, args));
+      }
+    } catch (error) {
+      final err = dartify(error);
+      switch (err['code']) {
+        case 4001:
+          throw EthereumUserRejected();
+        default:
+          if (err['message'] != null)
+            throw EthereumException(
+              err['code'],
+              err['message'],
+            );
+          else if (err['reason'] != null)
+            throw EthersException(
+              err['code'],
+              err['reason'],
+              err as Map<String, dynamic>,
+            );
+          else
+            rethrow;
+      }
     }
   }
-
-  Future<FeeData> getFeeData() async =>
-      FeeData._(await call<_FeeDataImpl>('getFeeData'));
 
   /// Returns the balance of [address] as of the [blockTag].
   ///
@@ -121,6 +140,14 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   /// Returns the contract code of [address] as of the [blockTag] block height. If there is no contract currently deployed, the result is `0x`.
   Future<String> getCode(String address, [dynamic blockTag]) => call<String>(
       'getCode', blockTag == null ? [address] : [address, blockTag]);
+
+  /// Returns the current recommended [FeeData] to use in a transaction.
+  ///
+  /// For an `EIP-1559` transaction, the [FeeData.maxFeePerGas] and [FeeData.maxPriorityFeePerGas] should be used.
+  ///
+  /// For legacy transactions and networks which do not support `EIP-1559`, the [FeeData.gasPrice] should be used.
+  Future<FeeData> getFeeData() async =>
+      FeeData._(await call<_FeeDataImpl>('getFeeData'));
 
   /// Returns the current gas price.
   Future<BigInt> getGasPrice() => call<BigInt>('getGasPrice');
