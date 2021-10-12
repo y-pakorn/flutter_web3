@@ -28,8 +28,6 @@ class ContractERC1155 {
   String _uri = '';
 
   /// Instantiate ERC1155 Contract using default abi if [abi] is not `null`.
-  ///
-  /// [isReadOnly] is determined by whether [providerOrSigner] is [Signer] or not.
   ContractERC1155(String address, dynamic providerOrSigner, [dynamic abi])
       : assert(providerOrSigner != null, 'providerOrSigner should not be null'),
         assert(address.isNotEmpty, 'address should not be empty'),
@@ -188,8 +186,6 @@ class ContractERC1155 {
 /// Dart Class for ERC1155Burnable Contract that allows token holders to destroy both their own tokens and those that they have been approved to use.
 class ContractERC1155Burnable extends ContractERC1155 with ERC1155Supply {
   /// Instantiate ERC1155 Contract using default abi if [abi] is not `null`.
-  ///
-  /// [isReadOnly] is determined by whether [providerOrSigner] is [Signer] or not.
   ContractERC1155Burnable(String address, dynamic providerOrSigner,
       [dynamic abi])
       : super(address, providerOrSigner, abi);
@@ -198,8 +194,6 @@ class ContractERC1155Burnable extends ContractERC1155 with ERC1155Supply {
 /// Dart Class for ERC1155Supply Contract that adds tracking of total supply per id to normal ERC1155.
 class ContractERC1155Supply extends ContractERC1155 with ERC1155Supply {
   /// Instantiate ERC1155 Contract using default abi if [abi] is not `null`.
-  ///
-  /// [isReadOnly] is determined by whether [providerOrSigner] is [Signer] or not.
   ContractERC1155Supply(String address, dynamic providerOrSigner, [dynamic abi])
       : super(address, providerOrSigner, abi);
 }
@@ -208,8 +202,6 @@ class ContractERC1155Supply extends ContractERC1155 with ERC1155Supply {
 class ContractERC1155SupplyBurnable extends ContractERC1155
     with ERC1155Supply, ERC1155Burnable {
   /// Instantiate ERC1155 Contract using default abi if [abi] is not `null`.
-  ///
-  /// [isReadOnly] is determined by whether [providerOrSigner] is [Signer] or not.
   ContractERC1155SupplyBurnable(String address, dynamic providerOrSigner,
       [dynamic abi])
       : super(address, providerOrSigner, abi);
