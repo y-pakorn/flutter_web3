@@ -1,3 +1,7 @@
+## 2.1.5
+
+- Fix list of BigInt as arguments not handled properly
+
 ## 2.1.4
 
 - Add wallet interaction through Ethers
