@@ -62,20 +62,18 @@ class Interface extends Interop<_InterfaceImpl> {
   ConstructorFragment get deploy => ConstructorFragment._(impl.deploy);
 
   /// All the [EventFragment] in the interface.
-  List<EventFragment> get events => impl.events
-      .cast<_EventFragmentImpl>()
-      .map((e) => EventFragment._(e))
-      .toList();
+  Map<String, EventFragment> get events =>
+      (dartify(impl.events) as Map<String, dynamic>)
+          .map((key, value) => MapEntry(key, EventFragment.from(jsify(value))));
 
   /// All the [Fragment] in the interface.
   List<Fragment> get fragments =>
       impl.fragments.cast<_FragmentImpl>().map((e) => Fragment._(e)).toList();
 
   /// All the [FunctionFragment] in the interface.
-  List<FunctionFragment> get functions => impl.functions
-      .cast<_FunctionFragmentImpl>()
-      .map((e) => FunctionFragment._(e))
-      .toList();
+  Map<String, FunctionFragment> get functions => (dartify(impl.functions)
+          as Map<String, dynamic>)
+      .map((key, value) => MapEntry(key, FunctionFragment.from(jsify(value))));
 
   /// Returns the decoded values from the result of a call for [function] (see Specifying Fragments) for the given [data].
   ///
