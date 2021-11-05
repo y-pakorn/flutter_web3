@@ -32,6 +32,16 @@ class EventFragment extends Fragment<_EventFragmentImpl> {
 
   /// This is whether the event is anonymous. An anonymous Event does not inject its topic hash as topic0 when creating a log.
   bool get anonymous => impl.anonymous;
+
+  @override
+  String format([FormatTypes? type]) {
+    return toString();
+  }
+
+  @override
+  String toString() {
+    return 'EventFragment: $name anonymous: $anonymous';
+  }
 }
 
 /// An ABI is a collection of Fragments.
@@ -84,6 +94,16 @@ class FunctionFragment extends ConstructorFragment<_FunctionFragmentImpl> {
   /// - pure
   /// - view
   String get stateMutability => impl.stateMutability;
+
+  @override
+  String format([FormatTypes? type]) {
+    return toString();
+  }
+
+  @override
+  String toString() {
+    return 'FunctionFragment: $name constant: $constant stateMutability: $stateMutability';
+  }
 }
 
 /// A representation of a solidity parameter.
