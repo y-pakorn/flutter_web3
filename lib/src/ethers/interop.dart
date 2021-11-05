@@ -30,7 +30,7 @@ class _ConstructorFragmentImpl extends _FragmentImpl {
 
   external String get stateMutability;
 
-  external static _ConstructorFragmentImpl from(String source);
+  external static _ConstructorFragmentImpl from(dynamic source);
 }
 
 @JS("Contract")
@@ -77,7 +77,7 @@ class _EventFilterImpl {
 class _EventFragmentImpl extends _FragmentImpl {
   external bool get anonymous;
 
-  external static _EventFragmentImpl from(String source);
+  external static _EventFragmentImpl from(dynamic source);
 }
 
 @JS()
@@ -161,7 +161,7 @@ class _FunctionFragmentImpl extends _ConstructorFragmentImpl {
 
   external String get stateMutability;
 
-  external static _FunctionFragmentImpl from(String source);
+  external static _FunctionFragmentImpl from(dynamic source);
 }
 
 @JS("utils.Interface")
@@ -170,11 +170,11 @@ class _InterfaceImpl {
 
   external _ConstructorFragmentImpl get deploy;
 
-  external List<_EventFragmentImpl> get events;
+  external dynamic get events;
 
   external List<_FragmentImpl> get fragments;
 
-  external List<_FunctionFragmentImpl> get functions;
+  external dynamic get functions;
 
   external List decodeFunctionResult(dynamic fragment, String data);
 
