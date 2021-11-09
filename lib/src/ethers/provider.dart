@@ -252,6 +252,12 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
     if (receipt != null) return TransactionReceipt._(receipt);
   }
 
+  /// Performs a reverse lookup of the address in ENS using the Reverse Registrar. If the name does not exist, or the forward lookup does not match, `null` is returned.
+  ///
+  /// An ENS name requries additional configuration to setup a reverse record, they are not automatically set up.
+  Future<String?> lookupAddress(String address) =>
+      call<String?>('lookupAddress', [address]);
+
   /// Add a [listener] to be triggered for each [event].
   on(dynamic event, Function listener) {
     assert(event is String || event is _EventFilterImpl,
@@ -318,6 +324,10 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
           : [transactionResponse?.impl ?? transactionRequest?.impl],
     );
   }
+
+  /// Looks up the address of name. If the name is not owned, or does not have a Resolver configured, or the Resolver does not have an address configured, `null` is returned.
+  Future<String?> resolveName(String name) =>
+      call<String?>('resolveName', [name]);
 
   /// Submits transaction [data] to the network to be mined.
   ///
