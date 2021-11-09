@@ -51,7 +51,9 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   Future<Network> get ready async =>
       Network._(await call<_NetworkImpl>('ready'));
 
-  /// Direct Ethers provider [method] call with [args] to access Blockchain data.
+  /// Call Ethers provider [method] with [args].
+  ///
+  /// To return the result of excecuting transaction, use [Provider.rawCall] instead.
   Future<T> call<T>(String method, [List<dynamic> args = const []]) async {
     try {
       switch (T) {
@@ -286,17 +288,36 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   void onFilter(EventFilter filter, Function listener) =>
       on(filter.impl, listener);
 
-  /// Returns the result of executing the transaction, using call.
+  /// Returns the result of executing the transaction in raw hex string, using either [transactionRequest] or [transactionResponse].
   ///
   /// A call does not require any ether, but cannot change any state. This is useful for calling getters on Contracts.
-  Future<T> rawCall<T>(String to, String data, [dynamic blockTag]) =>
-      promiseToFuture<T>(callMethod(
-        this,
-        'call',
-        blockTag != null
-            ? [_RawTxParamsImpl(to: to, data: data), blockTag]
-            : [_RawTxParamsImpl(to: to, data: data)],
-      ));
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final supp = await provider!.rawCall(
+  ///   transactionRequest: TransactionRequest(
+  ///     to: '0xed24fc36d5ee211ea25a80239fb8c4cfd80f12ee', // Some random ERC20 contract
+  ///     data: '0x18160ddd', // Function signature of totalSupply()
+  ///   ),
+  /// ); // 0x0000000000000000000000000000000000000000000d3c21bcecceda10000000
+  ///
+  /// BigInt.parse(supp); // 16000000000000000000000000
+  /// ```
+  Future<String> rawCall<String>({
+    TransactionRequest? transactionRequest,
+    TransactionResponse? transactionResponse,
+    dynamic blockTag,
+  }) {
+    assert((transactionRequest != null) ^ (transactionResponse != null),
+        'Only use either transactionRequest or transactionResponse');
+    return call<String>(
+      'call',
+      blockTag != null
+          ? [transactionResponse?.impl ?? transactionRequest?.impl, blockTag]
+          : [transactionResponse?.impl ?? transactionRequest?.impl],
+    );
+  }
 
   /// Submits transaction [data] to the network to be mined.
   ///
