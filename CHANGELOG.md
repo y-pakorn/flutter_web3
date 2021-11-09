@@ -1,3 +1,8 @@
+## 2.1.6
+
+- Add ENS support for address lookup and name resolver
+- BREAKING: Add rawCall ability to parse from various source
+
 ## 2.1.5
 
 - Fix list of BigInt as arguments not handled properly
