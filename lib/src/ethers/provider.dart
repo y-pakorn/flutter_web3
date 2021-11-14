@@ -51,7 +51,9 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   Future<Network> get ready async =>
       Network._(await call<_NetworkImpl>('ready'));
 
-  /// Direct Ethers provider [method] call with [args] to access Blockchain data.
+  /// Call Ethers provider [method] with [args].
+  ///
+  /// To return the result of excecuting transaction, use [Provider.rawCall] instead.
   Future<T> call<T>(String method, [List<dynamic> args = const []]) async {
     try {
       switch (T) {
@@ -250,6 +252,12 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
     if (receipt != null) return TransactionReceipt._(receipt);
   }
 
+  /// Performs a reverse lookup of the address in ENS using the Reverse Registrar. If the name does not exist, or the forward lookup does not match, `null` is returned.
+  ///
+  /// An ENS name requries additional configuration to setup a reverse record, they are not automatically set up.
+  Future<String?> lookupAddress(String address) =>
+      call<String?>('lookupAddress', [address]);
+
   /// Add a [listener] to be triggered for each [event].
   on(dynamic event, Function listener) {
     assert(event is String || event is _EventFilterImpl,
@@ -286,17 +294,40 @@ class Provider<T extends _ProviderImpl> extends Interop<T> {
   void onFilter(EventFilter filter, Function listener) =>
       on(filter.impl, listener);
 
-  /// Returns the result of executing the transaction, using call.
+  /// Returns the result of executing the transaction in raw hex string, using either [transactionRequest] or [transactionResponse].
   ///
   /// A call does not require any ether, but cannot change any state. This is useful for calling getters on Contracts.
-  Future<T> rawCall<T>(String to, String data, [dynamic blockTag]) =>
-      promiseToFuture<T>(callMethod(
-        this,
-        'call',
-        blockTag != null
-            ? [_RawTxParamsImpl(to: to, data: data), blockTag]
-            : [_RawTxParamsImpl(to: to, data: data)],
-      ));
+  ///
+  /// ---
+  ///
+  /// ```dart
+  /// final supp = await provider!.rawCall(
+  ///   transactionRequest: TransactionRequest(
+  ///     to: '0xed24fc36d5ee211ea25a80239fb8c4cfd80f12ee', // Some random ERC20 contract
+  ///     data: '0x18160ddd', // Function signature of totalSupply()
+  ///   ),
+  /// ); // 0x0000000000000000000000000000000000000000000d3c21bcecceda10000000
+  ///
+  /// BigInt.parse(supp); // 16000000000000000000000000
+  /// ```
+  Future<String> rawCall<String>({
+    TransactionRequest? transactionRequest,
+    TransactionResponse? transactionResponse,
+    dynamic blockTag,
+  }) {
+    assert((transactionRequest != null) ^ (transactionResponse != null),
+        'Only use either transactionRequest or transactionResponse');
+    return call<String>(
+      'call',
+      blockTag != null
+          ? [transactionResponse?.impl ?? transactionRequest?.impl, blockTag]
+          : [transactionResponse?.impl ?? transactionRequest?.impl],
+    );
+  }
+
+  /// Looks up the address of name. If the name is not owned, or does not have a Resolver configured, or the Resolver does not have an address configured, `null` is returned.
+  Future<String?> resolveName(String name) =>
+      call<String?>('resolveName', [name]);
 
   /// Submits transaction [data] to the network to be mined.
   ///

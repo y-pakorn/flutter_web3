@@ -1,6 +1,11 @@
-## 2.2.0-pre.5
+## 2.2.0-pre.6
 
 - Pre-release for utils
+
+## 2.1.6
+
+- Add ENS support for address lookup and name resolver
+- BREAKING: Add rawCall ability to parse from various source
 
 ## 2.1.5
 
@@ -13,7 +18,7 @@
 
 ## 2.1.3
 
-- Add provider call error catching 
+- Add provider call error catching
 - Fix ethereum error not thrown properly
 - Add documentation for getFeeData
 
