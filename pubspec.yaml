@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
   js: ^0.6.3
   meta: ^1.3.0
+  amdjs: ^2.0.1
 
 dev_dependencies:
   flutter_test:
