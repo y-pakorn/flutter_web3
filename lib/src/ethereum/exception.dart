@@ -16,8 +16,9 @@ class EthereumUserRejected implements Exception {
 class EthereumException implements Exception {
   final int code;
   final String message;
+  final dynamic data;
 
-  EthereumException(this.code, this.message);
+  EthereumException(this.code, this.message, this.data);
 
   @override
   String toString() => 'EthereumException: $code $message';
