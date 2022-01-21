@@ -22,11 +22,11 @@ class WalletConnectProvider extends Interop<_WalletConnectProviderImpl> {
   /// ---
   ///
   /// ```dart
-  /// final wc = WalletConnectProvider.fromInfura('https://foo.infura.io/v3/barbaz');
+  /// final wc = WalletConnectProvider.fromInfura('https://mainnet.infura.io/v3/7e792748b1ee47c39ee4593dcf72f518');
   ///
   /// await wc.connect();
   ///
-  /// print(wc); // WalletConnectProvider: connected to https://foo.infura.io/v3/barbaz with [0xfooBar]
+  /// print(wc); // WalletConnectProvider: connected to https://mainnet.infura.io/v3/7e792748b1ee47c39ee4593dcf72f518 with [0x6a164122d5cf7c840D26e829b46dCc4ED6C0ae48]
   /// print(wc.connected); // true
   /// print(wc.walletMeta); // WalletMeta: Trust Wallet on https://trustwallet.com
   /// ```
