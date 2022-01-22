@@ -211,10 +211,7 @@ class Contract extends Interop<_ContractImpl> {
           throw EthereumUserRejected();
         default:
           if (err['message'] != null)
-            throw EthereumException(
-              err['code'],
-              err['message'],
-            );
+            throw EthereumException(err['code'], err['message'], err['data']);
           else if (err['reason'] != null)
             throw EthersException(
               err['code'],
