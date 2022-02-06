@@ -183,5 +183,5 @@ class ContractERC20 {
   /// Transfer token from [sender] to [recipient] in [amount]. Emits `Transfer` events when called.
   Future<TransactionResponse> transferFrom(
           String sender, String recipient, BigInt amount) =>
-      contract.send('transfer', [sender, recipient, amount.toString()]);
+      contract.send('transferFrom', [sender, recipient, amount.toString()]);
 }
