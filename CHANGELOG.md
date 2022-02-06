@@ -1,4 +1,9 @@
-## 2.1.6
+## 2.1.8
+
+- Correct `transferFrom` handler in `ContractERC20` (#37)
+- Add `data` field in `EthereumException`
+
+## 2.1.7
 
 - Add ENS support for address lookup and name resolver
 - BREAKING: Add rawCall ability to parse from various source
