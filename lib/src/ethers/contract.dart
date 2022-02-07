@@ -199,7 +199,7 @@ class Contract extends Interop<_ContractImpl> {
                 } else if (e is List<BigInt>) {
                   return e.map((e) => e.toString()).toList();
                 } else if (e is List) {
-                  return e.map((e) => e is BigInt ? e.toString() : e);
+                  return e.map((e) => e is BigInt ? e.toString() : e).toList();
                 } else
                   return e;
               }).toList()));
