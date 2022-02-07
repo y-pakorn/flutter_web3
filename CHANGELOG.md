@@ -1,3 +1,7 @@
+## 2.1.9
+
+- Add `toList` for list case of argument (#38)
+
 ## 2.1.8
 
 - Correct `transferFrom` handler in `ContractERC20` (#37)
