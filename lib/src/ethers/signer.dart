@@ -74,6 +74,7 @@ class Signer<T extends _SignerImpl> extends Interop<T> {
             throw EthereumException(
               err['code'],
               err['message'],
+              err['data'],
             );
           else if (err['reason'] != null)
             throw EthersException(

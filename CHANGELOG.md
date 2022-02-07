@@ -1,8 +1,17 @@
-## 2.2.0-pre.6
+## 2.2.0-pre.7
 
 - Pre-release for utils
 
-## 2.1.6
+## 2.1.9
+
+- Add `toList` for list case of argument (#38)
+
+## 2.1.8
+
+- Correct `transferFrom` handler in `ContractERC20` (#37)
+- Add `data` field in `EthereumException`
+
+## 2.1.7
 
 - Add ENS support for address lookup and name resolver
 - BREAKING: Add rawCall ability to parse from various source

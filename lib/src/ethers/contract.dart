@@ -237,7 +237,7 @@ class Contract extends Interop<_ContractImpl> {
                 } else if (e is List<BigInt>) {
                   return e.map((e) => e.toString()).toList();
                 } else if (e is List) {
-                  return e.map((e) => e is BigInt ? e.toString() : e);
+                  return e.map((e) => e is BigInt ? e.toString() : e).toList();
                 } else
                   return e;
               }).toList()));
@@ -249,10 +249,7 @@ class Contract extends Interop<_ContractImpl> {
           throw EthereumUserRejected();
         default:
           if (err['message'] != null)
-            throw EthereumException(
-              err['code'],
-              err['message'],
-            );
+            throw EthereumException(err['code'], err['message'], err['data']);
           else if (err['reason'] != null)
             throw EthersException(
               err['code'],

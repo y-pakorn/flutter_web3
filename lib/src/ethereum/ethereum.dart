@@ -219,10 +219,7 @@ class Ethereum extends Interop<_EthereumImpl> {
           throw EthereumUserRejected();
         default:
           if (err['message'] != null)
-            throw EthereumException(
-              err['code'],
-              err['message'],
-            );
+            throw EthereumException(err['code'], err['message'], err['data']);
           else
             rethrow;
       }
