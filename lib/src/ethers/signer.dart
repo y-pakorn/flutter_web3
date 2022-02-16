@@ -8,24 +8,16 @@ part of ethers;
 class Signer<T extends _SignerImpl> extends Interop<T> {
   const Signer._(_SignerImpl impl) : super.internal(impl as T);
 
-  /// Returns `true` if an only if object is a [Signer].
-  static bool isSigner(Object object) {
-    if (object is Interop)
-      return object is Signer || _SignerImpl.isSigner(object.impl);
-    return false;
-  }
-
-  Future<T> _call<T>(String method, [List<dynamic> args = const []]) async {
-    switch (T) {
-      case BigInt:
-        return (await _call<BigNumber>(method, args)).toBigInt as T;
-      default:
-        return promiseToFuture<T>(callMethod(impl, method, args));
-    }
-  }
+  /// Returns the result of calling using the [request], with this account address being used as the from field.
+  Future<String> call(TransactionRequest request) =>
+      _call<String>('call', [request.impl]);
 
   /// Connect this [Signer] to new [provider]. May simply throw an error if changing providers is not supported.
   Signer connect(Provider provider) => Signer._(impl.connect(provider.impl));
+
+  /// Returns the result of estimating the cost to send the [request], with this account address being used as the from field.
+  Future<BigInt> estimateGas(TransactionRequest request) =>
+      _call<BigInt>('estimateGas', [request.impl]);
 
   /// Returns a Future that resolves to the account address.
   Future<String> getAddress() => _call<String>('getAddress');
@@ -52,10 +44,26 @@ class Signer<T extends _SignerImpl> extends Interop<T> {
   ///
   /// The transaction must be valid (i.e. the nonce is correct and the account has sufficient balance to pay for the transaction).
   Future<TransactionResponse> sendTransaction(
-      TransactionRequest request) async {
-    try {
-      return TransactionResponse._(await _call<_TransactionResponseImpl>(
+          TransactionRequest request) async =>
+      TransactionResponse._(await _call<_TransactionResponseImpl>(
           'sendTransaction', [request.impl]));
+
+  /// Returns a Future which resolves to the Raw Signature of [message].
+  Future<String> signMessage(String message) =>
+      _call<String>('signMessage', [message]);
+
+  /// Returns a Future which resolves to the signed transaction of the [request]. This method does not populate any missing fields.
+  Future<String> signTransaction(TransactionRequest request) =>
+      _call<String>('signTransaction', [request.impl]);
+
+  Future<T> _call<T>(String method, [List<dynamic> args = const []]) async {
+    try {
+      switch (T) {
+        case BigInt:
+          return (await _call<BigNumber>(method, args)).toBigInt as T;
+        default:
+          return await promiseToFuture<T>(callMethod(impl, method, args));
+      }
     } catch (error) {
       final err = dartify(error);
       switch (err['code']) {
@@ -80,19 +88,10 @@ class Signer<T extends _SignerImpl> extends Interop<T> {
     }
   }
 
-  /// Returns the result of calling using the [request], with this account address being used as the from field.
-  Future<String> call(TransactionRequest request) =>
-      _call<String>('call', [request.impl]);
-
-  /// Returns the result of estimating the cost to send the [request], with this account address being used as the from field.
-  Future<BigInt> estimateGas(TransactionRequest request) =>
-      _call<BigInt>('estimateGas', [request.impl]);
-
-  /// Returns a Future which resolves to the signed transaction of the [request]. This method does not populate any missing fields.
-  Future<String> signTransaction(TransactionRequest request) =>
-      _call<String>('signTransaction', [request.impl]);
-
-  /// Returns a Future which resolves to the Raw Signature of [message].
-  Future<String> signMessage(String message) =>
-      _call<String>('signMessage', [message]);
+  /// Returns `true` if an only if object is a [Signer].
+  static bool isSigner(Object object) {
+    if (object is Interop)
+      return object is Signer || _SignerImpl.isSigner(object.impl);
+    return false;
+  }
 }

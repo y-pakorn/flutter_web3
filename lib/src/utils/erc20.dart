@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'ethers.dart';
+import '../ethers/ethers.dart';
+import 'multicall.dart';
 
 /// Dart Class for ERC20 Contract, A standard API for tokens within smart contracts.
 ///
@@ -106,23 +107,56 @@ class ContractERC20 {
     contract = contract.connect(providerOrSigner);
   }
 
-  /// Multicall of [allowance], may not be in the same block.
+  /// Multicall of [allowance], may not be in the same block unless [multicall] is provided.
   Future<List<BigInt>> multicallAllowance(
-      List<String> owners, List<String> spenders) async {
+    List<String> owners,
+    List<String> spenders, [
+    Multicall? multicall,
+  ]) async {
     assert(owners.isNotEmpty, 'Owner list empty');
     assert(spenders.isNotEmpty, 'Spender list empty');
     assert(owners.length == spenders.length,
         'Owner list length must be same as spender');
-    return Future.wait(Iterable<int>.generate(owners.length).map(
-      (e) => allowance(owners[e], spenders[e]),
-    ));
+    if (multicall != null) {
+      final res =
+          await multicall.aggregate(Iterable<int>.generate(owners.length).map(
+        (e) {
+          final functionSig = contract.interface.getSighash('allowance');
+          final argData = abiCoder.encode(
+              ['address', 'address'], [owners[e], spenders[e]]).substring(2);
+          return MulticallPayload(contract.address, functionSig + argData);
+        },
+      ).toList());
+      return res.returnData.map((e) => BigInt.parse(e)).toList();
+    } else {
+      return Future.wait(Iterable<int>.generate(owners.length).map(
+        (e) => allowance(owners[e], spenders[e]),
+      ));
+    }
   }
 
-  /// Multicall of [balanceOf], may not be in the same block.
-  Future<List<BigInt>> multicallBalanceOf(List<String> addresses) async {
+  /// Multicall of [balanceOf], may not be in the same block unless [multicall] is provided.
+  Future<List<BigInt>> multicallBalanceOf(
+    List<String> addresses, [
+    Multicall? multicall,
+  ]) async {
     assert(addresses.isNotEmpty, 'address should not be empty');
-    return Future.wait(Iterable<int>.generate(addresses.length)
-        .map((e) => balanceOf(addresses[e])));
+
+    if (multicall != null) {
+      final res = await multicall
+          .aggregate(Iterable<int>.generate(addresses.length).map(
+        (e) {
+          final functionSig = contract.interface.getSighash('balanceOf');
+          final argData =
+              abiCoder.encode(['address'], [addresses[e]]).substring(2);
+          return MulticallPayload(contract.address, functionSig + argData);
+        },
+      ).toList());
+      return res.returnData.map((e) => BigInt.parse(e)).toList();
+    } else {
+      return Future.wait(Iterable<int>.generate(addresses.length)
+          .map((e) => balanceOf(addresses[e])));
+    }
   }
 
   /// Emitted when the allowance of a `spender` for an `owner` is set by a call to `approve`.

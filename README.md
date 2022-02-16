@@ -70,9 +70,19 @@ To use Ethers JS and Wallet Connect Provider, we need to include script to JS pa
 
 ```html
   <!--Ethers-->
-  <script src="https://cdn.ethers.io/lib/ethers-5.4.umd.min.js" type="application/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@latest/dist/ethers.umd.min.js" type="application/javascript"></script>
   <!--Wallet Connect-->
-  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.6.5/dist/umd/index.min.js" type="application/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@latest/dist/umd/index.min.js" type="application/javascript"></script>
+```
+
+Optinally, use injector by asynchronous calling `inject` or `injectAll` before `runApp`.
+
+```dart
+void main() async {
+  await FlutterWeb3.injectAll();
+
+  runApp(MyApp());
+}
 ```
 
 ---

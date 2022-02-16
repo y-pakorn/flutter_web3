@@ -1,3 +1,7 @@
+## 2.2.0-pre.7
+
+- Pre-release for utils
+
 ## 2.1.9
 
 - Add `toList` for list case of argument (#38)
@@ -23,7 +27,7 @@
 
 ## 2.1.3
 
-- Add provider call error catching 
+- Add provider call error catching
 - Fix ethereum error not thrown properly
 - Add documentation for getFeeData
 

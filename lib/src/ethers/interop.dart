@@ -22,6 +22,17 @@ class _BlockWithTransactionImpl extends _RawBlockImpl {
   external List<dynamic> get transactions;
 }
 
+@JS('utils.ConstructorFragment')
+class _ConstructorFragmentImpl extends _FragmentImpl {
+  external BigNumber? get gas;
+
+  external bool get payable;
+
+  external String get stateMutability;
+
+  external static _ConstructorFragmentImpl from(dynamic source);
+}
+
 @JS("Contract")
 class _ContractImpl {
   external _ContractImpl(String address, dynamic abi, dynamic providerOrSigner);
@@ -33,6 +44,8 @@ class _ContractImpl {
   external _ProviderImpl get provider;
 
   external _SignerImpl? get signer;
+
+  external _ContractImpl attach(String addressOrName);
 
   external _ContractImpl connect(dynamic providerOrSigner);
 
@@ -58,6 +71,13 @@ class _EventFilterImpl {
   external List<dynamic>? get topics;
 
   external set topics(List<dynamic>? topics);
+}
+
+@JS('utils.EventFragment')
+class _EventFragmentImpl extends _FragmentImpl {
+  external bool get anonymous;
+
+  external static _EventFragmentImpl from(dynamic source);
 }
 
 @JS()
@@ -116,17 +136,61 @@ class _FormatTypesImpl {
   external static dynamic full;
 
   external static dynamic minimal;
+
+  external static dynamic sighash;
+}
+
+@JS('utils.Fragment')
+class _FragmentImpl {
+  external List<_ParamTypeImpl> get inputs;
+
+  external String? get name;
+
+  external String get type;
+
+  external String format([dynamic types]);
+
+  external static _FragmentImpl from(String source);
+}
+
+@JS('utils.FunctionFragment')
+class _FunctionFragmentImpl extends _ConstructorFragmentImpl {
+  external bool get constant;
+
+  external List<_ParamTypeImpl> get outputs;
+
+  external String get stateMutability;
+
+  external static _FunctionFragmentImpl from(dynamic source);
 }
 
 @JS("utils.Interface")
 class _InterfaceImpl {
   external _InterfaceImpl(dynamic abi);
 
+  external _ConstructorFragmentImpl get deploy;
+
+  external dynamic get events;
+
+  external List<_FragmentImpl> get fragments;
+
+  external dynamic get functions;
+
+  external List decodeFunctionResult(dynamic fragment, String data);
+
+  external List encodeFilterTopics(dynamic fragment, List values);
+
+  external String encodeFunctionData(dynamic fragment, [List? values]);
+
   external dynamic format([dynamic types]);
+
+  external _EventFragmentImpl getEvent(dynamic fragment);
 
   external String getEventTopic(String event);
 
-  external String getSighash(String function);
+  external _FunctionFragmentImpl getFunction(dynamic fragment);
+
+  external String getSighash(dynamic function);
 }
 
 @JS("providers.JsonRpcProvider")
@@ -175,6 +239,27 @@ class _NetworkImpl {
   external String? get ensAddress;
 
   external String get name;
+}
+
+@JS('utils.ParamType')
+class _ParamTypeImpl {
+  external _ParamTypeImpl? get arrayChildren;
+
+  external int? get arrayLength;
+
+  external String get baseType;
+
+  external List<_ParamTypeImpl>? get components;
+
+  external bool get indexed;
+
+  external String? get name;
+
+  external String? get type;
+
+  external String format([dynamic types]);
+
+  external static _ParamTypeImpl from(String source);
 }
 
 @JS("providers")
