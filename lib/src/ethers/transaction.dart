@@ -1,5 +1,42 @@
 part of ethers;
 
+/// An unsigned transaction represents a transaction that has not been signed and its values are flexible as long as they are not ambiguous.
+class UnsignedTransaction<T extends _UnsignedTransactionImpl>
+    extends Interop<T> {
+  const UnsignedTransaction._(T impl) : super.internal(impl);
+
+  /// The address this transaction is to.
+  String get to => impl.to;
+
+  /// The nonce of this transaction.
+  int get nonce => impl.nonce;
+
+  /// The gas limit for this transaction.
+  BigInt get gasLimit => impl.gasLimit.toBigInt;
+
+  /// The gas price for this transaction.
+  BigInt get gasPrice => impl.gasPrice.toBigInt;
+
+  /// The maximum fee per unit of gas for this transaction.
+  BigInt get maxFeePerGas => impl.maxFeePerGas.toBigInt;
+
+  /// The maximum priority fee per unit of gas for this transaction.
+  BigInt get maxPriorityFeePerGas => impl.maxPriorityFeePerGas.toBigInt;
+
+  /// The data for this transaction.
+  String get data => impl.data;
+
+  /// The value (in wei) for this transaction.
+  BigInt get value => impl.value.toBigInt;
+
+  /// The chain ID for this transaction. If the chain ID is 0 or null, then EIP-155 is disabled and legacy signing is used, unless overridden in a signature.
+  int get chainId => impl.chainId;
+
+  @override
+  String toString() =>
+      'UnsignedTransaction: value $value with gas limit $gasLimit and gas price $gasPrice';
+}
+
 /// A generic object to represent a transaction.
 class Transaction<T extends _TransactionImpl> extends Interop<T> {
   const Transaction._(T impl) : super.internal(impl);
