@@ -185,7 +185,7 @@ class EthUtils {
   /// EthUtils.parseUnits("121.0", 9);
   /// // { BigNumber: "121000000000" }
   /// ```
-  external static BigNumber parseUnit(String value, [dynamic unit = 'ether']);
+  external static BigNumber parseUnits(String value, [dynamic unit = 'ether']);
 
   /// Returns the `KECCAK256` of the non-standard encoded [values] packed according to their respective type in [types].
   ///
