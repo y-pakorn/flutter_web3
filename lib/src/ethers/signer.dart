@@ -24,6 +24,36 @@ class Signer<T extends _SignerImpl> extends Interop<T> {
     }
   }
 
+  /// Call Ethers provider [method] with [args]
+  Future<T> call<T>(String method, [List<dynamic> args = const []]) async {
+    try {
+      switch (T) {
+        case BigInt:
+          return (await call<BigNumber>(method, args)).toBigInt as T;
+        default:
+          return await promiseToFuture<T>(callMethod(impl, method, args));
+      }
+    } catch (error) {
+      final err = dartify(error);
+      // debugPrint(stringify(error));
+      switch (err['code']) {
+        case 4001:
+          throw EthereumUserRejected();
+        default:
+          if (err['message'] != null)
+            throw EthereumException(err['code'], err['message'], err['data']);
+          else if (err['reason'] != null)
+            throw EthersException(
+              err['code'],
+              err['reason'],
+              err as Map<String, dynamic>,
+            );
+          else
+            rethrow;
+      }
+    }
+  }
+
   /// Connect this [Signer] to new [provider]. May simply throw an error if changing providers is not supported.
   Signer connect(Provider provider) => Signer._(impl.connect(provider.impl));
 
@@ -81,7 +111,7 @@ class Signer<T extends _SignerImpl> extends Interop<T> {
   }
 
   /// Returns the result of calling using the [request], with this account address being used as the from field.
-  Future<String> call(TransactionRequest request) =>
+  Future<String> rawCall(TransactionRequest request) =>
       _call<String>('call', [request.impl]);
 
   /// Returns the result of estimating the cost to send the [request], with this account address being used as the from field.
